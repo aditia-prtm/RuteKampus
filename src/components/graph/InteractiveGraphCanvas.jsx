@@ -125,12 +125,68 @@ export default function InteractiveGraphCanvas({
   }
 
   const highlightNodes = new Set(currentStep?.highlight?.nodes || []);
-  const fullTour = currentStep?.data?.fullTour || currentStep?.data?.tour || [];
+  const currentTourNodes = useMemo(() => {
+    if (!currentStep) return [];
+    return (
+      currentStep.data?.fullTour ||
+      currentStep.data?.tour ||
+      currentStep.data?.currentTour ||
+      currentStep.data?.visited ||
+      []
+    );
+  }, [currentStep]);
+
+  // Kumpulan edge kunci aktif (highlight saat dieksplorasi/ditukar)
+  const highlightEdgeKeys = useMemo(() => {
+    const set = new Set();
+    const rawEdges = currentStep?.highlight?.edges || [];
+    for (const item of rawEdges) {
+      if (typeof item === 'string') {
+        const parts = item.split('-');
+        if (parts.length === 2) {
+          const [u, v] = parts;
+          set.add(u < v ? `${u}--${v}` : `${v}--${u}`);
+        }
+      } else if (item && item.from && item.to) {
+        const { from, to } = item;
+        set.add(from < to ? `${from}--${to}` : `${to}--${from}`);
+      }
+    }
+    if (currentStep?.data?.from && currentStep?.data?.to) {
+      const u = currentStep.data.from;
+      const v = currentStep.data.to;
+      set.add(u < v ? `${u}--${v}` : `${v}--${u}`);
+    }
+    return set;
+  }, [currentStep]);
+
+  // Kumpulan edge tur (yang sudah dilalui/masuk ke dalam siklus)
+  const tourEdgeKeys = useMemo(() => {
+    const set = new Set();
+    const rawEdges = currentStep?.data?.tourEdges || [];
+    for (const item of rawEdges) {
+      if (typeof item === 'string') {
+        const parts = item.split('-');
+        if (parts.length === 2) {
+          const [u, v] = parts;
+          set.add(u < v ? `${u}--${v}` : `${v}--${u}`);
+        }
+      }
+    }
+    if (currentTourNodes.length >= 2) {
+      for (let i = 0; i < currentTourNodes.length - 1; i++) {
+        const u = currentTourNodes[i];
+        const v = currentTourNodes[i + 1];
+        set.add(u < v ? `${u}--${v}` : `${v}--${u}`);
+      }
+    }
+    return set;
+  }, [currentStep, currentTourNodes]);
+
   const isDeleteMode = currentMode === 'delete';
 
   return (
     <div
-      data-lenis-prevent
       className="w-full h-full min-h-[420px] bg-[#062648] rounded-2xl border border-blue-300/25 relative overflow-hidden flex flex-col shadow-xl shadow-[#021c38]/40"
     >
       {/* Banner Keterangan Mode */}
@@ -184,7 +240,7 @@ export default function InteractiveGraphCanvas({
 
         <rect width="600" height="450" fill="url(#grid-custom)" />
 
-        {/* 1. Sisi (Edges) yang Dibuat Pengguna */}
+        {/* 1. Sisi (Edges) yang Dibuat Pengguna dengan Visualisasi Warna Dinamis */}
         {edges.map((edge) => {
           const u = nodeMap.get(edge.from);
           const v = nodeMap.get(edge.to);
@@ -193,6 +249,41 @@ export default function InteractiveGraphCanvas({
           const midX = (u.x + v.x) / 2;
           const midY = (u.y + v.y) / 2;
           const weight = edge.weight !== undefined ? edge.weight : Math.round(Math.hypot(u.x - v.x, u.y - v.y));
+
+          const edgeKey = edge.from < edge.to ? `${edge.from}--${edge.to}` : `${edge.to}--${edge.from}`;
+          const isHighlighted = highlightEdgeKeys.has(edgeKey);
+          const isTourEdge = tourEdgeKeys.has(edgeKey);
+
+          let strokeColor = '#475569';
+          let strokeWidth = 2.5;
+          let strokeOpacity = 0.5;
+
+          let badgeFill = '#051b36';
+          let badgeStroke = '#1e4976';
+          let badgeTextColor = '#94a3b8';
+
+          if (isDeleteMode) {
+            strokeColor = '#f43f5e';
+            strokeWidth = 4;
+            strokeOpacity = 0.85;
+            badgeFill = '#881337';
+            badgeStroke = '#f43f5e';
+            badgeTextColor = '#fecdd3';
+          } else if (isHighlighted) {
+            strokeColor = '#f59e0b';
+            strokeWidth = 5;
+            strokeOpacity = 1;
+            badgeFill = '#78350f';
+            badgeStroke = '#f59e0b';
+            badgeTextColor = '#fef08a';
+          } else if (isTourEdge) {
+            strokeColor = '#10b981';
+            strokeWidth = 4;
+            strokeOpacity = 0.95;
+            badgeFill = '#064e3b';
+            badgeStroke = '#10b981';
+            badgeTextColor = '#a7f3d0';
+          }
 
           return (
             <g
@@ -207,16 +298,18 @@ export default function InteractiveGraphCanvas({
                 x2={v.x}
                 y2={v.y}
                 stroke="transparent"
-                strokeWidth={14}
+                strokeWidth={16}
               />
               <line
                 x1={u.x}
                 y1={u.y}
                 x2={v.x}
                 y2={v.y}
-                stroke={isDeleteMode ? '#f43f5e' : '#475569'}
-                strokeWidth={isDeleteMode ? 4 : 3}
+                stroke={strokeColor}
+                strokeWidth={strokeWidth}
+                strokeOpacity={strokeOpacity}
                 strokeLinecap="round"
+                filter={isHighlighted ? 'url(#glow-custom-graph)' : undefined}
                 className="group-hover:stroke-rose-400 transition-all duration-150"
               />
               {/* Badge Bobot Sisi */}
@@ -227,17 +320,17 @@ export default function InteractiveGraphCanvas({
                   width={32}
                   height={18}
                   rx={4}
-                  fill={isDeleteMode ? '#881337' : '#051b36'}
-                  stroke={isDeleteMode ? '#f43f5e' : '#1e4976'}
-                  strokeWidth={1}
-                  className="group-hover:stroke-rose-400"
+                  fill={badgeFill}
+                  stroke={badgeStroke}
+                  strokeWidth={isHighlighted || isTourEdge ? 1.5 : 1}
+                  className="group-hover:stroke-rose-400 transition-colors"
                 />
                 <text
                   x={midX}
                   y={midY + 3}
-                  fill={isDeleteMode ? '#fecdd3' : '#94a3b8'}
+                  fill={badgeTextColor}
                   fontSize="10"
-                  fontWeight="bold"
+                  fontWeight={isHighlighted ? '900' : 'bold'}
                   textAnchor="middle"
                   className="font-mono select-none pointer-events-none"
                 >
@@ -249,10 +342,10 @@ export default function InteractiveGraphCanvas({
         })}
 
         {/* 2. Rute Siklus Hamilton Bus yang Aktif (Garis Hijau) */}
-        {fullTour.length > 1 &&
-          fullTour.slice(0, -1).map((uId, idx) => {
+        {currentTourNodes.length > 1 &&
+          currentTourNodes.slice(0, -1).map((uId, idx) => {
             const u = nodeMap.get(uId);
-            const v = nodeMap.get(fullTour[idx + 1]);
+            const v = nodeMap.get(currentTourNodes[idx + 1]);
             if (!u || !v) return null;
 
             return (
@@ -263,7 +356,7 @@ export default function InteractiveGraphCanvas({
                 x2={v.x}
                 y2={v.y}
                 stroke="#10b981"
-                strokeWidth={5}
+                strokeWidth={4.5}
                 strokeLinecap="round"
                 opacity={0.9}
                 className="transition-all duration-200 pointer-events-none"
@@ -275,11 +368,11 @@ export default function InteractiveGraphCanvas({
         {nodes.map((node) => {
           const isHighlighted = highlightNodes.has(node.id);
           const isSelected = selectedNodeForEdge === node.id;
-          const isVisited = fullTour.includes(node.id);
+          const isVisited = currentTourNodes.includes(node.id);
           const isDragging = draggingId === node.id;
 
           let color = '#3b82f6';
-          if (isInTour(node.id, fullTour)) color = '#10b981';
+          if (isVisited) color = '#10b981';
           if (isHighlighted) color = '#f59e0b';
           if (isSelected) color = '#38bdf8';
           if (isDeleteMode) color = '#f43f5e';
