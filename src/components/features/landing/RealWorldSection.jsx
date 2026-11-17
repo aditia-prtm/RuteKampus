@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bus, Clock, Fuel, Sparkles } from 'lucide-react';
+import { Bus, Clock, Fuel } from 'lucide-react';
 import Card from '../../common/Card.jsx';
 import Badge from '../../common/Badge.jsx';
 
@@ -23,7 +23,7 @@ export default function RealWorldSection() {
   ];
 
   return (
-    <section className="space-y-8 pt-6">
+    <section className="space-y-8 pt-4">
       <div className="text-center space-y-2">
         <Badge variant="blue" dot className="mx-auto">
           Relevansi Lapangan
@@ -31,7 +31,7 @@ export default function RealWorldSection() {
         <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
           Mengapa <span className="text-amber-400 font-serif italic">Optimasi Rute Kampus</span> Krusial?
         </h2>
-        <p className="text-xs sm:text-sm text-blue-200/70 max-w-xl mx-auto leading-relaxed">
+        <p className="text-xs sm:text-sm text-blue-100/80 max-w-xl mx-auto leading-relaxed">
           Dalam dunia nyata, pencarian rute tertutup terpendek (Traveling Salesperson Problem) menjadi fondasi efisiensi operasional armada transportasi publik.
         </p>
       </div>
@@ -40,14 +40,14 @@ export default function RealWorldSection() {
         {points.map((item, idx) => {
           const Icon = item.icon;
           return (
-            <Card key={idx} hoverEffect className="space-y-3 flex flex-col justify-start">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-400/20 text-amber-400 flex items-center justify-center">
+            <Card key={idx} hoverEffect className="space-y-3.5 flex flex-col justify-start">
+              <div className="w-11 h-11 rounded-xl bg-white/15 border border-white/20 text-amber-300 flex items-center justify-center shadow-inner">
                 <Icon className="w-5 h-5" />
               </div>
               <h3 className="text-base font-bold text-white">
                 {item.title}
               </h3>
-              <p className="text-xs text-blue-200/70 leading-relaxed">
+              <p className="text-xs text-blue-100/80 leading-relaxed">
                 {item.desc}
               </p>
             </Card>

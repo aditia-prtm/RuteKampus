@@ -51,6 +51,7 @@ src/
 │   └── features/               # Komponen terbagi berdasarkan domain fitur
 │       ├── landing/            # Bagian-bagian modular Halaman Beranda
 │       │   ├── HeroSection.jsx           # Hero: langit, awan berarak marquee, responsive campus, CTA+text
+│       │   ├── MemberSection.jsx         # Profil 4 developer (toggle slider Framer Motion, foto & NIM)
 │       │   ├── ModeSelectionSection.jsx  # Kartu pilihan Peta Kampus vs Graf Sendiri
 │       │   ├── RealWorldSection.jsx      # Relevansi dunia nyata shuttle bus kampus
 │       │   └── GraphTheorySection.jsx    # Landasan teori graf & siklus Hamilton

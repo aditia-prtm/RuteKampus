@@ -22,6 +22,33 @@ function ScrollToTop() {
   return null;
 }
 
+function AppShell() {
+  const location = useLocation();
+  const isLanding = location.pathname === '/';
+
+  return (
+    <div className="min-h-screen flex flex-col bg-[#021124] font-sans text-slate-100 selection:bg-amber-400 selection:text-slate-950">
+      {/* Navbar Fixed di atas */}
+      <Navbar />
+
+      {/* Main Content: non-landing diberi pt-16 agar tidak tertimpa navbar fixed */}
+      <main className={`flex-1 flex flex-col ${isLanding ? '' : 'pt-16'}`}>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/campus" element={<CampusVisualizerPage />} />
+          <Route path="/custom" element={<CustomGraphPage />} />
+          {/* Alias /visualizer diarahkan ke peta kampus */}
+          <Route path="/visualizer" element={<Navigate to="/campus" replace />} />
+          {/* Fallback ke beranda */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
+
 export default function App() {
   useEffect(() => {
     // Inisialisasi Lenis smooth scrolling
@@ -54,23 +81,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <div className="min-h-screen flex flex-col bg-[#021124] font-sans text-slate-100 selection:bg-amber-400 selection:text-slate-950">
-        <Navbar />
-
-        <main className="flex-1 flex flex-col">
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/campus" element={<CampusVisualizerPage />} />
-            <Route path="/custom" element={<CustomGraphPage />} />
-            {/* Alias /visualizer diarahkan ke peta kampus */}
-            <Route path="/visualizer" element={<Navigate to="/campus" replace />} />
-            {/* Fallback ke beranda */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </main>
-
-        <Footer />
-      </div>
+      <AppShell />
     </BrowserRouter>
   );
 }

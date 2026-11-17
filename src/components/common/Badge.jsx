@@ -2,7 +2,7 @@ import React from 'react';
 
 /**
  * Reusable Badge Component
- * Mengikuti palet Hero RuteKampus UNSRI (Royal Navy + Amber/Gold).
+ * Mengikuti palet University Blue UNSRI (#0a3a6b) + Amber/Gold.
  */
 export default function Badge({
   children,
@@ -12,15 +12,15 @@ export default function Badge({
   dotColor = ''
 }) {
   const variantStyles = {
-    blue: 'bg-blue-950/70 border-blue-400/30 text-blue-200',
-    amber: 'bg-amber-500/10 border-amber-400/30 text-amber-300',
-    teal: 'bg-teal-500/10 border-teal-400/30 text-teal-300',
-    glass: 'bg-white/10 backdrop-blur-md border-white/20 text-white',
-    rose: 'bg-rose-500/10 border-rose-400/30 text-rose-300'
+    blue: 'bg-[#083561]/90 border-blue-300/35 text-blue-100 shadow-sm',
+    amber: 'bg-amber-400/15 border-amber-400/40 text-amber-300 shadow-sm',
+    teal: 'bg-teal-500/15 border-teal-300/35 text-teal-200 shadow-sm',
+    glass: 'bg-white/15 backdrop-blur-md border-white/25 text-white shadow-sm',
+    rose: 'bg-rose-500/15 border-rose-400/35 text-rose-200 shadow-sm'
   };
 
   const defaultDotColors = {
-    blue: 'bg-blue-400',
+    blue: 'bg-sky-400',
     amber: 'bg-amber-400',
     teal: 'bg-teal-400',
     glass: 'bg-amber-400',
@@ -29,7 +29,7 @@ export default function Badge({
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border shadow-sm transition-colors ${
+      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border transition-colors ${
         variantStyles[variant] || variantStyles.blue
       } ${className}`}
     >
