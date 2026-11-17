@@ -155,7 +155,10 @@ export default function LeafletMapView({
   };
 
   return (
-    <div className="w-full h-full min-h-[400px] rounded-xl overflow-hidden border border-slate-800 shadow-inner relative">
+    <div
+      data-lenis-prevent
+      className="w-full h-full min-h-[400px] rounded-xl overflow-hidden border border-slate-800 shadow-inner relative"
+    >
       {/* Banner Keterangan Mode Edit */}
       {isEditing && (
         <div className="absolute top-3 left-14 z-[1000] bg-slate-900/95 text-white px-3 py-1.5 rounded-lg shadow-lg flex items-center gap-2 text-xs font-semibold backdrop-blur border border-slate-700">

@@ -18,7 +18,7 @@ export default function DataPanel({ currentStep }) {
           <p className="text-[11px] text-slate-400">
             Matriks Jarak Lengkap (Meter) Antar Seluruh Titik:
           </p>
-          <div className="overflow-x-auto max-h-56">
+          <div data-lenis-prevent className="overflow-x-auto max-h-56">
             <table className="w-full text-center border border-slate-800 font-mono text-[11px]">
               <thead>
                 <tr className="bg-slate-800/80 text-slate-300">
@@ -62,7 +62,7 @@ export default function DataPanel({ currentStep }) {
             Kandidat Halte Belum Dikunjungi (Diurutkan dari Terdekat):
           </p>
 
-          <div className="space-y-1 max-h-44 overflow-y-auto pr-1">
+          <div data-lenis-prevent className="space-y-1 max-h-44 overflow-y-auto pr-1">
             {data.candidates.map((c, idx) => {
               const isChosen = c.node === data.to;
               return (

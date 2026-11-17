@@ -12,7 +12,7 @@ export default function PseudocodePanel({ currentStep }) {
         <span>Pseudocode Algoritma CPP</span>
       </div>
 
-      <div className="font-mono text-xs space-y-1 overflow-x-auto">
+      <div data-lenis-prevent className="font-mono text-xs space-y-1 overflow-x-auto">
         {PSEUDOCODE.map((item) => {
           const isActive = activeLines.includes(item.line);
           return (

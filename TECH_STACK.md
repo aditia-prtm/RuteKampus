@@ -19,6 +19,7 @@ Dokumen ini mencatat seluruh teknologi, pustaka (*library*), alat bantu (*tools*
 | **react-leaflet** | `^5.0.x` | React Leaflet Wrapper | `src/components/map/LeafletMapView.jsx` | Komponen React untuk peta (`MapContainer`, `TileLayer`, `Marker`, `Polyline`, `Popup`, `Tooltip`, `useMapEvents`). |
 | **Lucide React** | `^1.73.x` | Icon Pack | `src/components/`, `src/pages/` | Ikon visual SVG yang konsisten dan ringan (Play, Pause, Step, Flag, MapPin, Building, Trash, Move, Link, dll.). |
 | **Framer Motion** | `^14.14.x` | Motion / Animasi | `src/pages/LandingPage.jsx`, `src/components/` | Menangani animasi transisi UI serta animasi rombongan awan yang bergerak mulus ke kanan tanpa henti (*infinite seamless marquee*) pada hero section. |
+| **Lenis** | `^1.3.x` | Smooth Scrolling Engine | `src/App.jsx`, `src/index.css`, `src/components/map/LeafletMapView.jsx` | Memberikan pengalaman scrolling halus dengan inersia alami (*smooth scroll physics* berbasis requestAnimationFrame), otomatisasi scroll-ke-atas saat perpindahan rute (`ScrollToTop`), serta proteksi isolasi scroll `data-lenis-prevent` pada peta Leaflet dan kanvas graf. |
 | **Vitest** | `^5.1.x` | Unit Testing Framework | `src/algorithms/__tests__/tsp.test.js`, `package.json` | Menjalankan unit test otomatis untuk memvalidasi invariant matematika algoritma TSP secara independen dari UI. |
 | **Google Fonts (Poppins & Playfair Display)** | Web CDN | Tipografi & Web Font | `index.html`, `src/index.css` | Menyediakan font modern **Poppins** untuk tampilan UI/teks sans-serif utama dan **Playfair Display (Serif Italic)** untuk aksen tipografi hero section. |
 | **JavaScript Murni (ES Modules)** | ES2022+ | Algoritma & Logika | `src/algorithms/` (`geo.js`, `distanceMatrix.js`, `nearestNeighbor.js`, `twoOpt.js`, `solveTSP.js`) | Logika matematika murni (rumus Haversine, Floyd-Warshall, Heuristik Greedy, 2-Opt) tanpa dependensi React/browser. |
@@ -64,9 +65,9 @@ Dokumen ini mencatat seluruh teknologi, pustaka (*library*), alat bantu (*tools*
   * `PseudocodePanel.jsx`: Penyorotan baris pseudocode algoritma TSP yang sinkron dengan langkah aktif.
 
 ### E. `src/pages/` & `src/components/layout/` (Routing & Navigasi)
-* **Teknologi:** `react-router-dom`, Tailwind CSS.
+* **Teknologi:** `react-router-dom`, Tailwind CSS, `lenis`.
 * **File & Peran:**
-  * `App.jsx`: Root router yang memetakan rute `/`, `/campus`, dan `/custom`.
+  * `App.jsx`: Root router yang memetakan rute `/`, `/campus`, dan `/custom`. Menginisialisasi instance global **Lenis** dengan requestAnimationFrame, serta komponen `ScrollToTop` agar setiap navigasi halaman kembali ke bagian paling atas secara mulus.
   * `Navbar.jsx`: Header navigasi responsif dengan highlight rute aktif.
   * `LandingPage.jsx`: Halaman beranda dengan 2 kartu pilihan mode utama (Peta Kampus vs Graf Sendiri) dan teori graf.
   * `CampusVisualizerPage.jsx`: Halaman simulasi Peta Kampus Unsri dengan sakelar izin edit (`APP_CONFIG.ALLOW_CAMPUS_EDIT`).

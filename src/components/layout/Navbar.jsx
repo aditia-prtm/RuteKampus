@@ -27,9 +27,6 @@ export default function Navbar() {
               Layanan Navigasi Kampus Unsri
             </span>
           </div>
-          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30 hidden md:inline-block ml-1">
-            Strukdis 2
-          </span>
         </Link>
 
         {/* Navigation Links */}

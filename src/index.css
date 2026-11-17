@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
+@import "lenis/dist/lenis.css";
 
 /* Font default: Poppins, Serif untuk aksen italic */
 body {
@@ -8,6 +9,11 @@ body {
 
 .font-serif {
   font-family: 'Playfair Display', Georgia, Cambria, 'Times New Roman', Times, serif;
+}
+
+/* Lenis smooth scrolling compatibility */
+html.lenis {
+  scroll-behavior: auto !important;
 }
 
 /* Leaflet fix for z-index and animations */

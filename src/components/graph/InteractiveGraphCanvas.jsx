@@ -127,7 +127,10 @@ export default function InteractiveGraphCanvas({
   const isDeleteMode = currentMode === 'delete';
 
   return (
-    <div className="w-full h-full min-h-[420px] bg-slate-950 rounded-xl border border-slate-800 relative overflow-hidden flex flex-col shadow-inner">
+    <div
+      data-lenis-prevent
+      className="w-full h-full min-h-[420px] bg-slate-950 rounded-xl border border-slate-800 relative overflow-hidden flex flex-col shadow-inner"
+    >
       {/* Banner Keterangan Mode */}
       <div className="absolute top-3 left-3 right-3 z-10 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
         <div className="bg-slate-900/90 backdrop-blur border border-slate-800 text-slate-300 text-xs px-3 py-1.5 rounded-lg shadow flex items-center gap-2">
