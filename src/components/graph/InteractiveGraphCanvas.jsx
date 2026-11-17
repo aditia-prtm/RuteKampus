@@ -129,11 +129,11 @@ export default function InteractiveGraphCanvas({
   return (
     <div
       data-lenis-prevent
-      className="w-full h-full min-h-[420px] bg-[#03152c] rounded-2xl border border-blue-500/20 relative overflow-hidden flex flex-col shadow-xl shadow-blue-950/40"
+      className="w-full h-full min-h-[420px] bg-[#062648] rounded-2xl border border-blue-300/25 relative overflow-hidden flex flex-col shadow-xl shadow-[#021c38]/40"
     >
       {/* Banner Keterangan Mode */}
       <div className="absolute top-3 left-3 right-3 z-10 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
-        <div className="bg-[#072449]/90 backdrop-blur border border-blue-400/25 text-blue-100 text-xs px-3.5 py-1.5 rounded-xl shadow-md flex items-center gap-2">
+        <div className="bg-[#0e4984]/90 backdrop-blur border border-blue-300/25 text-blue-100 text-xs px-3.5 py-1.5 rounded-xl shadow-md flex items-center gap-2">
           <span className={`w-2 h-2 rounded-full ${isDeleteMode ? 'bg-rose-400' : 'bg-amber-400'} animate-pulse`} />
           <span>
             {currentMode === 'add-node' && 'Mode Tambah Simpul: Klik bidang kanvas untuk menaruh simpul.'}
@@ -145,7 +145,7 @@ export default function InteractiveGraphCanvas({
             {currentMode === 'delete' && 'Mode Hapus: Klik simpul atau garis sisi apa saja untuk langsung menghapusnya.'}
           </span>
         </div>
-        <div className="bg-[#072449]/90 backdrop-blur border border-blue-400/25 text-xs px-3 py-1.5 rounded-xl text-amber-300 font-mono">
+        <div className="bg-[#0e4984]/90 backdrop-blur border border-blue-300/25 text-xs px-3 py-1.5 rounded-xl text-amber-300 font-mono font-medium">
           {nodes.length} Simpul • {edges.length} Sisi
         </div>
       </div>

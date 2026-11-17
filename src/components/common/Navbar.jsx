@@ -55,7 +55,7 @@ export default function Navbar() {
           ? scrolled
             ? 'bg-[#0a3a6b]/95 backdrop-blur-md border-b border-blue-300/20 shadow-xl shadow-[#021830]/40'
             : 'bg-gradient-to-b from-[#031d3d]/90 via-[#031d3d]/30 to-transparent border-transparent'
-          : 'bg-[#021124]/95 backdrop-blur-md border-b border-blue-900/60 shadow-md shadow-black/40'
+          : 'bg-[#083461]/95 backdrop-blur-md border-b border-blue-300/20 shadow-md shadow-[#021830]/30'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 lg:px-6 h-16 flex items-center justify-between relative">
@@ -208,7 +208,7 @@ export default function Navbar() {
             className={`md:hidden backdrop-blur-xl border-b px-5 py-4 overflow-hidden shadow-2xl ${
               isLanding
                 ? 'bg-[#0a3a6b]/98 border-blue-300/25'
-                : 'bg-[#021124]/98 border-blue-900/60'
+                : 'bg-[#083461]/98 border-blue-300/25'
             }`}
           >
             {isLanding ? (

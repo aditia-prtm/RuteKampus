@@ -12,17 +12,17 @@ export default function CustomGraphHeader({
   onClear
 }) {
   return (
-    <div className="mb-4 bg-gradient-to-r from-[#072449]/90 to-[#03152c]/95 border border-blue-500/20 backdrop-blur-md rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4 shadow-xl shadow-blue-950/40">
+    <div className="mb-5 bg-gradient-to-r from-[#0e4984]/75 to-[#072f59]/90 border border-blue-300/25 backdrop-blur-md rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4 shadow-xl shadow-[#021c38]/40">
       <div className="flex flex-wrap items-center gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-teal-500/10 border border-teal-400/20 text-teal-300">
+          <div className="p-2.5 rounded-xl bg-white/10 border border-white/15 text-amber-400">
             <Shapes className="w-5 h-5" />
           </div>
           <div>
             <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">
               Mode Bikin Graf Sendiri
             </h1>
-            <div className="flex items-center gap-2 text-xs text-blue-200/70 mt-0.5">
+            <div className="flex items-center gap-2 text-xs text-blue-200/80 mt-0.5 font-medium">
               <span>{nodeCount} Simpul</span>
               <span>•</span>
               <span>{edgeCount} Sisi Berbobot</span>
@@ -30,34 +30,34 @@ export default function CustomGraphHeader({
           </div>
         </div>
 
-        <div className="h-6 w-px bg-blue-900/50 hidden lg:block" />
+        <div className="h-6 w-px bg-blue-300/20 hidden lg:block" />
 
         {/* Preset Graf Cepat */}
-        <div className="flex items-center gap-1.5 bg-[#031429] p-1 rounded-xl border border-blue-900/50 text-xs">
+        <div className="flex items-center gap-1.5 bg-[#062648]/85 p-1 rounded-xl border border-blue-300/20 text-xs">
           <button
             onClick={() => onSelectPreset('triangle')}
-            className="px-3 py-1 rounded-lg text-blue-200 hover:text-white hover:bg-white/10 transition cursor-pointer"
+            className="px-3 py-1.5 rounded-lg text-blue-200/90 hover:text-white hover:bg-white/10 transition cursor-pointer font-medium"
           >
             Segitiga (3)
           </button>
           <button
             onClick={() => onSelectPreset('square')}
-            className="px-3 py-1 rounded-lg text-blue-200 hover:text-white hover:bg-white/10 transition cursor-pointer"
+            className="px-3 py-1.5 rounded-lg text-blue-200/90 hover:text-white hover:bg-white/10 transition cursor-pointer font-medium"
           >
             Persegi (4)
           </button>
           <button
             onClick={() => onSelectPreset('k5')}
-            className="px-3 py-1 rounded-lg text-blue-200 hover:text-white hover:bg-white/10 transition cursor-pointer"
+            className="px-3 py-1.5 rounded-lg text-blue-200/90 hover:text-white hover:bg-white/10 transition cursor-pointer font-medium"
           >
             Pentagon (5)
           </button>
           <button
             onClick={onConnectAll}
             title="Hubungkan semua simpul dengan sisi berbobot Euclidean otomatis"
-            className="flex items-center gap-1 px-3 py-1 rounded-lg text-amber-300 hover:bg-amber-400/10 transition cursor-pointer font-medium"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-amber-300 hover:bg-amber-400/20 transition cursor-pointer font-semibold"
           >
-            <Sparkles className="w-3 h-3 text-amber-400" />
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
             <span>Hubungkan Semua</span>
           </button>
         </div>
@@ -65,7 +65,7 @@ export default function CustomGraphHeader({
 
       {/* Start Node Selector & Clear */}
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2 bg-[#041935]/80 px-3 py-1.5 rounded-xl border border-blue-400/25">
+        <div className="flex items-center gap-2 bg-[#062648]/85 px-3 py-1.5 rounded-xl border border-blue-300/25">
           <Flag className="w-3.5 h-3.5 text-amber-400" />
           <label htmlFor="start-custom" className="text-xs text-blue-100 font-medium">
             Simpul Awal:
@@ -74,7 +74,7 @@ export default function CustomGraphHeader({
             id="start-custom"
             value={effectiveStartNode}
             onChange={(e) => onStartNodeChange(e.target.value)}
-            className="bg-[#072449] border border-blue-400/30 text-amber-300 font-semibold text-xs rounded-lg px-2.5 py-1 focus:outline-none focus:ring-1 focus:ring-amber-400 cursor-pointer"
+            className="bg-[#093563] border border-blue-300/30 text-amber-300 font-semibold text-xs rounded-lg px-2.5 py-1 focus:outline-none focus:ring-1 focus:ring-amber-400 cursor-pointer"
           >
             {nodes.map((n) => (
               <option key={n.id} value={n.id}>
@@ -87,7 +87,7 @@ export default function CustomGraphHeader({
         <button
           onClick={onClear}
           title="Kosongkan Kanvas Graf"
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 transition cursor-pointer"
+          className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-medium bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-400/30 transition cursor-pointer"
         >
           <Trash2 className="w-3.5 h-3.5" />
           <span>Kosongkan</span>

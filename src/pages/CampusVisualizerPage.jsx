@@ -6,9 +6,7 @@ import { useGraphEditor } from '../hooks/useGraphEditor.js';
 import { APP_CONFIG } from '../data/config.js';
 import LeafletMapView from '../components/map/LeafletMapView.jsx';
 import StepControls from '../components/stepper/StepControls.jsx';
-import ExplanationPanel from '../components/stepper/ExplanationPanel.jsx';
-import PseudocodePanel from '../components/stepper/PseudocodePanel.jsx';
-import DataPanel from '../components/stepper/DataPanel.jsx';
+import StepperInspector from '../components/stepper/StepperInspector.jsx';
 import CampusHeader from '../components/features/campus/CampusHeader.jsx';
 import CampusToolbar from '../components/features/campus/CampusToolbar.jsx';
 import { AlertCircle } from 'lucide-react';
@@ -65,7 +63,7 @@ export default function CampusVisualizerPage() {
   };
 
   return (
-    <div className="flex-1 flex flex-col min-h-[calc(100vh-4rem)] bg-[#021124] p-4 sm:p-6 lg:p-8 font-['Poppins',sans-serif]">
+    <div className="flex-1 flex flex-col min-h-[calc(100vh-4rem)] bg-gradient-to-b from-[#093563] via-[#0a3a6b] to-[#072d54] p-4 sm:p-6 lg:p-8 font-['Poppins',sans-serif] text-white">
       {/* 1. Header Informasi & Kontrol Awal */}
       <CampusHeader
         placeNodes={placeNodes}
@@ -90,7 +88,7 @@ export default function CampusVisualizerPage() {
 
       {/* Alert Error Graf */}
       {!solverOutput.ok && (
-        <div className="mb-4 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 flex items-center gap-3 text-xs sm:text-sm shadow-lg">
+        <div className="mb-4 p-4 rounded-2xl bg-rose-500/15 border border-rose-400/30 text-rose-200 flex items-center gap-3 text-xs sm:text-sm shadow-lg">
           <AlertCircle className="w-5 h-5 shrink-0 text-rose-400" />
           <div>
             <strong>Gagal Membentuk Rute TSP:</strong> {solverOutput.error}
@@ -98,7 +96,7 @@ export default function CampusVisualizerPage() {
         </div>
       )}
 
-      {/* 3. Main Layout: Map & Stepper Panels */}
+      {/* 3. Main Layout: Map & Stepper Inspector */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 items-start">
         <div className="lg:col-span-7 flex flex-col gap-4">
           <div className="h-[460px] sm:h-[540px] w-full">
@@ -132,10 +130,8 @@ export default function CampusVisualizerPage() {
           />
         </div>
 
-        <div className="lg:col-span-5 flex flex-col gap-4">
-          <ExplanationPanel currentStep={stepPlayer.currentStep} />
-          <DataPanel currentStep={stepPlayer.currentStep} />
-          <PseudocodePanel currentStep={stepPlayer.currentStep} />
+        <div className="lg:col-span-5 flex flex-col">
+          <StepperInspector currentStep={stepPlayer.currentStep} />
         </div>
       </div>
     </div>

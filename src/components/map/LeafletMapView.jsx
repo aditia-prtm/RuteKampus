@@ -157,29 +157,29 @@ export default function LeafletMapView({
   return (
     <div
       data-lenis-prevent
-      className="w-full h-full min-h-[400px] rounded-2xl overflow-hidden border border-blue-500/25 shadow-xl shadow-blue-950/40 relative"
+      className="w-full h-full min-h-[400px] rounded-2xl overflow-hidden border border-blue-300/25 shadow-xl shadow-[#021c38]/40 relative"
     >
       {/* Banner Keterangan Mode Edit */}
       {isEditing && (
-        <div className="absolute top-3 left-14 z-[1000] bg-[#072449]/95 text-white px-3.5 py-1.5 rounded-xl shadow-lg flex items-center gap-2 text-xs font-semibold backdrop-blur border border-blue-400/30">
+        <div className="absolute top-3 left-14 z-[1000] bg-[#062648]/95 text-white px-3.5 py-1.5 rounded-xl shadow-lg flex items-center gap-2 text-xs font-semibold backdrop-blur border border-blue-300/30">
           {editTool === 'place' && (
-            <span className="text-emerald-400">● Klik peta untuk tambah Gedung/Tempat</span>
+            <span className="text-amber-300">● Klik peta untuk tambah Gedung/Tempat</span>
           )}
           {editTool === 'waypoint' && (
-            <span className="text-amber-400">◆ Klik peta untuk tambah Tikungan/Jalan</span>
+            <span className="text-blue-200">◆ Klik peta untuk tambah Tikungan/Jalan</span>
           )}
           {editTool === 'connect' && (
-            <span className="text-sky-400">
+            <span className="text-sky-300">
               {selectedNodeForEdge
                 ? `Pilih simpul kedua untuk menyambung dari [${selectedNodeForEdge}]`
                 : 'Klik simpul pertama untuk menarik jalan'}
             </span>
           )}
           {editTool === 'move' && (
-            <span className="text-teal-400">✥ Tarik (drag) simpul mana saja untuk memindahkan posisinya di peta</span>
+            <span className="text-blue-100">✥ Tarik (drag) simpul mana saja untuk memindahkan posisinya di peta</span>
           )}
           {editTool === 'delete' && (
-            <span className="text-rose-400">✕ Klik simpul atau garis jalan yang ingin dihapus</span>
+            <span className="text-rose-300">✕ Klik simpul atau garis jalan yang ingin dihapus</span>
           )}
         </div>
       )}

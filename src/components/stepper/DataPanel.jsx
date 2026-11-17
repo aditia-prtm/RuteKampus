@@ -1,13 +1,13 @@
 import React from 'react';
-import { Table, Sparkles } from 'lucide-react';
+import { Table, Sparkles, CheckCircle2 } from 'lucide-react';
 
 export default function DataPanel({ currentStep }) {
   if (!currentStep || !currentStep.data) return null;
   const { type, data } = currentStep;
 
   return (
-    <div className="bg-gradient-to-b from-[#072449]/85 to-[#03152c]/90 border border-blue-500/20 rounded-2xl p-4 shadow-xl shadow-blue-950/40 text-white backdrop-blur-md">
-      <div className="flex items-center gap-2 mb-3 pb-2 border-b border-blue-900/50 text-xs font-semibold text-blue-200">
+    <div className="space-y-3">
+      <div className="flex items-center gap-2 pb-2 border-b border-blue-300/20 text-xs font-semibold text-blue-100">
         <Table className="w-4 h-4 text-amber-400" />
         <span>Data & Analisis Algoritma TSP</span>
       </div>
@@ -15,28 +15,28 @@ export default function DataPanel({ currentStep }) {
       {/* 1. Tipe: Matriks Jarak */}
       {type === 'matrix' && data.distMatrix && (
         <div className="space-y-2 text-xs">
-          <p className="text-[11px] text-blue-200/70">
+          <p className="text-[11px] text-blue-200/80">
             Matriks Jarak Lengkap (Meter) Antar Seluruh Titik:
           </p>
-          <div data-lenis-prevent className="overflow-x-auto max-h-56 rounded-lg border border-blue-900/60">
+          <div className="overflow-x-auto max-h-72 rounded-xl border border-blue-300/20 bg-[#062648]/85">
             <table className="w-full text-center font-mono text-[11px]">
               <thead>
-                <tr className="bg-[#03152c] text-blue-200">
-                  <th className="p-1.5 border border-blue-900/50">Lokasi</th>
+                <tr className="bg-[#093563] text-blue-100 border-b border-blue-300/20">
+                  <th className="p-2 border-r border-blue-300/20">Lokasi</th>
                   {data.nodeIds.map((id) => (
-                    <th key={id} className="p-1.5 border border-blue-900/50">{id}</th>
+                    <th key={id} className="p-2 border-r border-blue-300/15 last:border-r-0">{id}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {data.nodeIds.map((u) => (
-                  <tr key={u}>
-                    <td className="p-1.5 bg-[#041a38] font-bold border border-blue-900/50 text-amber-300">{u}</td>
+                  <tr key={u} className="border-b border-blue-300/10 last:border-b-0">
+                    <td className="p-2 bg-[#093563]/60 font-bold border-r border-blue-300/20 text-amber-300">{u}</td>
                     {data.nodeIds.map((v) => (
                       <td
                         key={v}
-                        className={`p-1.5 border border-blue-950 ${
-                          u === v ? 'text-blue-500/40' : 'text-blue-100'
+                        className={`p-2 border-r border-blue-300/10 last:border-r-0 ${
+                          u === v ? 'text-blue-300/30' : 'text-blue-100'
                         }`}
                       >
                         {data.distMatrix[u]?.[v] ?? '-'}
@@ -52,17 +52,17 @@ export default function DataPanel({ currentStep }) {
 
       {/* 2. Tipe: Nearest Neighbor Step */}
       {type === 'nn-step' && data.candidates && (
-        <div className="space-y-2.5 text-xs">
-          <div className="flex items-center justify-between text-[11px] text-blue-200/70">
-            <span>Posisi Saat Ini: <strong className="text-amber-400 font-semibold">{data.from}</strong></span>
-            <span>Jarak Tempuh: <strong className="text-white font-mono">{data.currentCost} m</strong></span>
+        <div className="space-y-3 text-xs">
+          <div className="flex items-center justify-between p-3 rounded-xl bg-[#062648]/85 border border-blue-300/20 text-xs">
+            <span className="text-blue-200/80">Posisi Saat Ini: <strong className="text-amber-400 font-semibold">{data.from}</strong></span>
+            <span className="text-blue-200/80">Jarak Tempuh: <strong className="text-white font-mono">{data.currentCost} m</strong></span>
           </div>
 
-          <p className="text-[11px] text-blue-200/70">
+          <p className="text-[11px] text-blue-200/80">
             Kandidat Halte Belum Dikunjungi (Diurutkan dari Terdekat):
           </p>
 
-          <div data-lenis-prevent className="space-y-1.5 max-h-44 overflow-y-auto pr-1">
+          <div className="space-y-1.5 max-h-60 overflow-y-auto pr-1">
             {data.candidates.map((c, idx) => {
               const isChosen = c.node === data.to;
               return (
@@ -70,16 +70,22 @@ export default function DataPanel({ currentStep }) {
                   key={c.node}
                   className={`p-2.5 rounded-xl border flex items-center justify-between text-xs transition ${
                     isChosen
-                      ? 'bg-amber-400/20 border-amber-400/50 text-amber-300 font-semibold shadow-sm'
-                      : 'bg-[#031429]/60 border-blue-900/50 text-blue-200/70'
+                      ? 'bg-amber-400/20 border-amber-400/40 text-amber-300 font-semibold shadow-sm'
+                      : 'bg-[#062648]/60 border-blue-300/15 text-blue-100/80'
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="w-4 text-blue-400/50 font-mono text-[10px]">#{idx + 1}</span>
-                    <span className="font-mono text-white">{c.node}</span>
+                    <span className="w-4 text-blue-300/50 font-mono text-[10px]">#{idx + 1}</span>
+                    <span className="font-mono text-white font-bold">{c.node}</span>
                   </div>
-                  <div className="font-mono text-right">
-                    {c.distance} meter {isChosen && '★ Terpilih'}
+                  <div className="font-mono text-right flex items-center gap-1.5">
+                    <span>{c.distance} meter</span>
+                    {isChosen && (
+                      <span className="inline-flex items-center gap-1 text-amber-300 font-bold ml-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>Terpilih</span>
+                      </span>
+                    )}
                   </div>
                 </div>
               );
@@ -91,23 +97,23 @@ export default function DataPanel({ currentStep }) {
       {/* 3. Tipe: 2-Opt Optimization */}
       {type === 'two-opt-step' && data.swappedNodes && (
         <div className="space-y-3 text-xs">
-          <div className="p-3.5 rounded-xl bg-amber-400/10 border border-amber-400/30 text-amber-300 space-y-1">
+          <div className="p-3.5 rounded-xl bg-amber-400/15 border border-amber-400/30 text-amber-300 space-y-1">
             <div className="flex items-center gap-2 font-semibold">
               <Sparkles className="w-4 h-4 text-amber-400" />
-              <span>Pemotongan Persilangan Sisi Berhasil</span>
+              <span>Optimasi 2-Opt: Pemotongan Persilangan Sisi</span>
             </div>
-            <p className="text-blue-100/80 text-[11px]">
-              Menukar sisi yang saling bersilangan untuk membentuk lintasan paralel yang lebih pendek.
+            <p className="text-blue-100/90 text-[11px] leading-relaxed">
+              Menukar sisi jalan yang saling bersilangan untuk membentuk rute alternatif yang lebih pendek tanpa persilangan.
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-2 text-center">
-            <div className="p-2.5 rounded-xl bg-[#041a38] border border-blue-900/50">
-              <span className="text-[10px] text-blue-300/60 block">Jarak Dihemat</span>
+            <div className="p-2.5 rounded-xl bg-[#062648]/85 border border-blue-300/20">
+              <span className="text-[10px] text-blue-200/70 block">Jarak Dihemat</span>
               <span className="text-sm font-bold text-amber-400 font-mono">-{data.savedDistance} m</span>
             </div>
-            <div className="p-2.5 rounded-xl bg-[#041a38] border border-blue-900/50">
-              <span className="text-[10px] text-blue-300/60 block">Jarak Rute Baru</span>
+            <div className="p-2.5 rounded-xl bg-[#062648]/85 border border-blue-300/20">
+              <span className="text-[10px] text-blue-200/70 block">Jarak Rute Baru</span>
               <span className="text-sm font-bold text-white font-mono">{data.currentTotalCost} m</span>
             </div>
           </div>
@@ -118,27 +124,27 @@ export default function DataPanel({ currentStep }) {
       {(type === 'nn-complete' || type === 'result') && data.tour && (
         <div className="space-y-3 text-xs">
           <div>
-            <span className="text-[11px] text-blue-200/70 block mb-1.5 font-medium">
+            <span className="text-[11px] text-blue-200/80 block mb-1.5 font-medium">
               Urutan Singgah Bus Kampus (Siklus Hamilton):
             </span>
-            <div className="p-3 bg-[#031429] border border-blue-500/30 rounded-xl font-mono text-amber-300 text-xs leading-relaxed break-words">
+            <div className="p-3 bg-[#062648]/85 border border-blue-300/20 rounded-xl font-mono text-amber-300 text-xs leading-relaxed break-words">
               {data.tour.join(' → ')}
             </div>
           </div>
 
           {type === 'result' && (
-            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-blue-900/50 text-center">
-              <div className="p-2 rounded-xl bg-[#041a38] border border-blue-900/40">
-                <span className="text-[10px] text-blue-300/60 block">Rute Awal</span>
+            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-blue-300/20 text-center">
+              <div className="p-2.5 rounded-xl bg-[#062648]/85 border border-blue-300/20">
+                <span className="text-[10px] text-blue-200/70 block">Rute Awal</span>
                 <span className="text-xs sm:text-sm font-bold text-blue-100 font-mono">{data.initialWeight} m</span>
               </div>
-              <div className="p-2 rounded-xl bg-amber-400/10 border border-amber-400/25">
-                <span className="text-[10px] text-amber-300 block">Hemat 2-Opt</span>
+              <div className="p-2.5 rounded-xl bg-amber-400/15 border border-amber-400/30">
+                <span className="text-[10px] text-amber-300 block font-medium">Hemat 2-Opt</span>
                 <span className="text-xs sm:text-sm font-bold text-amber-400 font-mono">-{data.savedWeight} m</span>
               </div>
-              <div className="p-2 rounded-xl bg-[#133e75] border border-blue-400/40">
-                <span className="text-[10px] text-blue-200 block">Jarak Optimal</span>
-                <span className="text-xs sm:text-sm font-bold text-white font-mono">{data.totalWeight} m</span>
+              <div className="p-2.5 rounded-xl bg-amber-400 text-slate-950 font-bold shadow-md shadow-black/25">
+                <span className="text-[10px] text-slate-900 block font-semibold">Jarak Optimal</span>
+                <span className="text-xs sm:text-sm font-extrabold font-mono">{data.totalWeight} m</span>
               </div>
             </div>
           )}
