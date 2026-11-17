@@ -28,7 +28,7 @@ export default function LandingPage() {
   return (
     <div className="relative w-full bg-[#021124] text-white flex flex-col font-['Poppins',sans-serif]">
       {/* 1. HERO SECTION PINNED (Parallax Base: Pinned di viewport saat discroll) */}
-      <div className="sticky top-0 h-screen h-[100dvh] w-full z-0 overflow-hidden pointer-events-auto">
+      <div className="sticky top-0 h-screen-svh min-h-screen-svh w-full z-0 overflow-hidden pointer-events-auto">
         <HeroSection />
       </div>
 

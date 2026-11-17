@@ -6,6 +6,17 @@
   --font-poppins: 'Poppins', sans-serif;
 }
 
+/* Viewport height utility with 100svh for accurate mobile viewport calculation */
+.h-screen-svh {
+  height: 100vh;
+  height: 100svh;
+}
+
+.min-h-screen-svh {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
 /* Font default: Poppins, Serif untuk aksen italic */
 body {
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;

@@ -158,7 +158,7 @@ function SmallCloudBank() {
 
 export default function HeroSection() {
   return (
-    <section className="relative w-full h-screen h-[100dvh] overflow-hidden bg-gradient-to-b from-[#031d3d] via-[#083768] via-55% to-[#145fa8] flex flex-col items-center justify-center lg:justify-start">
+    <section className="relative w-full h-screen-svh min-h-screen-svh overflow-hidden bg-gradient-to-b from-[#031d3d] via-[#083768] via-55% to-[#145fa8] flex flex-col items-center justify-center lg:justify-start">
       {/* LAYER 1: LANGIT (Biru Langit Realistis dengan Gradasi Alami & Horizon Atmosphere Bloom) */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#031d3d] via-[#083768] via-55% to-[#145fa8] z-0 select-none" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_100%_65%_at_50%_65%,rgba(35,130,225,0.25),transparent_75%)] z-1 pointer-events-none select-none" />
