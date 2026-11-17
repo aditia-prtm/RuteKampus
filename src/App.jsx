@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
-import Navbar from './components/layout/Navbar.jsx';
+import Navbar from './components/common/Navbar.jsx';
+import Footer from './components/common/Footer.jsx';
 import LandingPage from './pages/LandingPage.jsx';
 import CampusVisualizerPage from './pages/CampusVisualizerPage.jsx';
 import CustomGraphPage from './pages/CustomGraphPage.jsx';
@@ -53,7 +54,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <div className="min-h-screen flex flex-col bg-slate-950 font-sans text-slate-100 selection:bg-emerald-500 selection:text-slate-950">
+      <div className="min-h-screen flex flex-col bg-[#021124] font-sans text-slate-100 selection:bg-amber-400 selection:text-slate-950">
         <Navbar />
 
         <main className="flex-1 flex flex-col">
@@ -68,9 +69,7 @@ export default function App() {
           </Routes>
         </main>
 
-        <footer className="border-t border-slate-900 bg-slate-950 py-4 px-6 text-center text-xs text-slate-500">
-          RuteKampus UNSRI — Tugas Besar Struktur Diskrit 2 &copy; {new Date().getFullYear()}
-        </footer>
+        <Footer />
       </div>
     </BrowserRouter>
   );

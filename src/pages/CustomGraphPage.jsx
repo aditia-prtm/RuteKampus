@@ -6,16 +6,9 @@ import StepControls from '../components/stepper/StepControls.jsx';
 import ExplanationPanel from '../components/stepper/ExplanationPanel.jsx';
 import PseudocodePanel from '../components/stepper/PseudocodePanel.jsx';
 import DataPanel from '../components/stepper/DataPanel.jsx';
-import {
-  Plus,
-  Link2,
-  Move,
-  Trash2,
-  AlertCircle,
-  Shapes,
-  Sparkles,
-  Flag
-} from 'lucide-react';
+import CustomGraphHeader from '../components/features/custom-graph/CustomGraphHeader.jsx';
+import CustomGraphToolbar from '../components/features/custom-graph/CustomGraphToolbar.jsx';
+import { AlertCircle } from 'lucide-react';
 
 const PRESETS = {
   triangle: {
@@ -67,6 +60,11 @@ const PRESETS = {
   }
 };
 
+/**
+ * CustomGraphPage
+ * Sandbox pembuatan graf kustom interaktif (Simpul, Sisi Berbobot, 2-Opt TSP).
+ * Direfactor dengan arsitektur fitur modular dan styling selaras Hero.
+ */
 export default function CustomGraphPage() {
   const [nodes, setNodes] = useState(PRESETS.square.nodes);
   const [edges, setEdges] = useState(PRESETS.square.edges);
@@ -151,6 +149,14 @@ export default function CustomGraphPage() {
     setSelectedNodeForEdge(null);
   };
 
+  const handleSelectPreset = (key) => {
+    if (PRESETS[key]) {
+      setNodes(PRESETS[key].nodes);
+      setEdges(PRESETS[key].edges);
+      setSelectedNodeForEdge(null);
+    }
+  };
+
   // Pastikan simpul awal valid
   const effectiveStartNode = useMemo(() => {
     if (startNodeId && nodes.some((n) => n.id === startNodeId)) {
@@ -169,170 +175,31 @@ export default function CustomGraphPage() {
   const stepPlayer = useStepPlayer(solverOutput.steps || [], 1200);
 
   return (
-    <div className="flex-1 flex flex-col min-h-[calc(100vh-4rem)] bg-slate-950 p-4 sm:p-6 lg:p-8">
-      {/* Top Bar: Kontrol Preset & Aksi Kanvas */}
-      <div className="mb-4 bg-slate-900 border border-slate-800 rounded-xl p-3 sm:p-4 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-teal-500/20 text-teal-400">
-              <Shapes className="w-4 h-4" />
-            </div>
-            <div>
-              <h2 className="text-sm font-bold text-slate-100">
-                Mode Bikin Graf Sendiri (Simpul & Sisi Berbobot)
-              </h2>
-              <span className="text-[11px] text-slate-400">
-                {nodes.length} Simpul • {edges.length} Sisi
-              </span>
-            </div>
-          </div>
+    <div className="flex-1 flex flex-col min-h-[calc(100vh-4rem)] bg-[#021124] p-4 sm:p-6 lg:p-8 font-['Poppins',sans-serif]">
+      {/* 1. Header Informasi & Preset */}
+      <CustomGraphHeader
+        nodeCount={nodes.length}
+        edgeCount={edges.length}
+        nodes={nodes}
+        effectiveStartNode={effectiveStartNode}
+        onStartNodeChange={setStartNodeId}
+        onSelectPreset={handleSelectPreset}
+        onConnectAll={handleConnectAll}
+        onClear={handleClear}
+      />
 
-          <div className="h-6 w-px bg-slate-800 hidden sm:block" />
-
-          {/* Preset Buttons */}
-          <div className="flex items-center gap-1.5 bg-slate-800/80 p-1 rounded-lg border border-slate-700/60">
-            <button
-              onClick={() => {
-                setNodes(PRESETS.triangle.nodes);
-                setEdges(PRESETS.triangle.edges);
-              }}
-              className="px-2.5 py-1 rounded text-xs text-slate-300 hover:text-white hover:bg-slate-700 transition cursor-pointer"
-            >
-              Segitiga (3)
-            </button>
-            <button
-              onClick={() => {
-                setNodes(PRESETS.square.nodes);
-                setEdges(PRESETS.square.edges);
-              }}
-              className="px-2.5 py-1 rounded text-xs text-slate-300 hover:text-white hover:bg-slate-700 transition cursor-pointer"
-            >
-              Persegi (4)
-            </button>
-            <button
-              onClick={() => {
-                setNodes(PRESETS.k5.nodes);
-                setEdges(PRESETS.k5.edges);
-              }}
-              className="px-2.5 py-1 rounded text-xs text-slate-300 hover:text-white hover:bg-slate-700 transition cursor-pointer"
-            >
-              Pentagon (5)
-            </button>
-            <button
-              onClick={handleConnectAll}
-              title="Hubungkan semua simpul dengan sisi berbobot Euclidean otomatis"
-              className="flex items-center gap-1 px-2.5 py-1 rounded text-xs text-teal-400 hover:bg-teal-500/10 transition cursor-pointer"
-            >
-              <Sparkles className="w-3 h-3" />
-              <span>Hubungkan Semua</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Start Node Selector & Clear */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-slate-800/80 px-2.5 py-1 rounded-lg border border-slate-700">
-            <Flag className="w-3.5 h-3.5 text-purple-400" />
-            <label htmlFor="start-custom" className="text-xs text-slate-300 font-medium">
-              Simpul Awal:
-            </label>
-            <select
-              id="start-custom"
-              value={effectiveStartNode}
-              onChange={(e) => setStartNodeId(e.target.value)}
-              className="bg-slate-900 border border-slate-700 text-purple-300 font-semibold text-xs rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-purple-400 cursor-pointer"
-            >
-              {nodes.map((n) => (
-                <option key={n.id} value={n.id}>
-                  Simpul {n.id}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <button
-            onClick={handleClear}
-            title="Kosongkan Kanvas"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 transition cursor-pointer"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-            <span>Kosongkan</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Toolbar Pilihan Alat Mode Interaksi */}
-      <div className="mb-4 bg-slate-900/90 border border-slate-800 rounded-xl p-3 flex flex-wrap items-center justify-between gap-3 text-xs">
-        <div className="flex items-center gap-2">
-          <span className="text-slate-300 font-semibold">Alat Interaksi:</span>
-          <div className="flex items-center gap-1.5 bg-slate-800 p-1 rounded-lg border border-slate-700">
-            <button
-              onClick={() => {
-                setCurrentMode('add-node');
-                setSelectedNodeForEdge(null);
-              }}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded text-xs transition cursor-pointer ${
-                currentMode === 'add-node'
-                  ? 'bg-emerald-600 text-white font-semibold shadow'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>1. Tambah Simpul</span>
-            </button>
-            <button
-              onClick={() => setCurrentMode('add-edge')}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded text-xs transition cursor-pointer ${
-                currentMode === 'add-edge'
-                  ? 'bg-sky-600 text-white font-semibold shadow'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <Link2 className="w-3.5 h-3.5" />
-              <span>2. Sambung Sisi & Beri Bobot</span>
-            </button>
-            <button
-              onClick={() => {
-                setCurrentMode('drag');
-                setSelectedNodeForEdge(null);
-              }}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded text-xs transition cursor-pointer ${
-                currentMode === 'drag'
-                  ? 'bg-amber-600 text-white font-semibold shadow'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <Move className="w-3.5 h-3.5" />
-              <span>3. Geser Simpul (Drag)</span>
-            </button>
-            <button
-              onClick={() => {
-                setCurrentMode('delete');
-                setSelectedNodeForEdge(null);
-              }}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded text-xs transition cursor-pointer ${
-                currentMode === 'delete'
-                  ? 'bg-rose-600 text-white font-semibold shadow'
-                  : 'text-rose-400 hover:text-rose-300 hover:bg-rose-500/10'
-              }`}
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-              <span>4. Hapus Simpul/Sisi</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="text-slate-400 text-[11px]">
-          {currentMode === 'add-node' && 'Klik kanvas untuk membuat simpul baru.'}
-          {currentMode === 'add-edge' && 'Klik simpul pertama, lalu klik simpul kedua dan masukkan bobotnya.'}
-          {currentMode === 'drag' && 'Tarik simpul untuk memindahkan posisinya.'}
-          {currentMode === 'delete' && 'Klik simpul atau garis sisi mana saja untuk langsung menghapusnya.'}
-        </div>
-      </div>
+      {/* 2. Toolbar Pilihan Alat Mode Interaksi */}
+      <CustomGraphToolbar
+        currentMode={currentMode}
+        onSelectMode={(mode) => {
+          setCurrentMode(mode);
+          setSelectedNodeForEdge(null);
+        }}
+      />
 
       {/* Warning jika graf belum terhubung atau simpul < 3 */}
       {!solverOutput.ok && (
-        <div className="mb-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 flex items-center gap-3 text-sm">
+        <div className="mb-4 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 flex items-center gap-3 text-xs sm:text-sm shadow-lg">
           <AlertCircle className="w-5 h-5 shrink-0 text-amber-400" />
           <div>
             <strong>Graf Belum Membentuk Siklus:</strong> {solverOutput.error}
@@ -340,10 +207,10 @@ export default function CustomGraphPage() {
         </div>
       )}
 
-      {/* Main Grid: Canvas (Kiri) & Stepper Panels (Kanan) */}
+      {/* 3. Main Layout: Canvas (Kiri) & Stepper Panels (Kanan) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 items-start">
         <div className="lg:col-span-7 flex flex-col gap-4">
-          <div className="h-[460px] sm:h-[520px] w-full">
+          <div className="h-[460px] sm:h-[540px] w-full">
             <InteractiveGraphCanvas
               nodes={nodes}
               edges={edges}

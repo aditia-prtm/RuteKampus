@@ -32,12 +32,9 @@ src/
 ├── algorithms/   # Pure JavaScript, NO React / Leaflet imports
 │   └── __tests__/
 ├── components/
-│   ├── layout/   # navbar, footer, wrappers
-│   ├── map/      # Leaflet view: nodes, edges, shuttle bus marker, click-to-add editor
-│   ├── graph/    # abstract (non-map) graph view
-│   ├── stepper/  # play/pause/next/prev controls, explanation, pseudocode panel, data panel
-│   └── ui/       # basic elements
-├── pages/        # LandingPage.jsx, VisualizerPage.jsx
+│   ├── common/   # Universal shared components (Navbar, Footer, Card, Badge, etc.)
+│   └── features/ # Feature-driven components (landing, campus, custom-graph, stepper, map, graph)
+├── pages/        # Lightweight orchestrators: LandingPage.jsx, CampusVisualizerPage.jsx, CustomGraphPage.jsx
 ├── hooks/        # useStepPlayer.js, useGraphEditor.js
 ├── data/         # sampleGraphs.js, content.js (static text and pseudocode)
 ├── lib/          # generic helpers (formatting, haversine)
@@ -51,7 +48,8 @@ src/
 3. Interaction logic (playback, graph editing) lives in `hooks/`.
 4. Static text, pseudocode and sample graphs live in `data/`, not inside components.
 5. Support two modes: Real Map (Unsri Palembang) and Abstract Graph, with interactive Click-to-Add Node / Custom Graph Editor.
-6. **Maintain `TECH_STACK.md`:** Any agent or developer adding a new dependency, library, or technology, or expanding an existing module to use a new tool MUST update `TECH_STACK.md` immediately to reflect the changes.
+6. **No monolithic files / Keep code modular**: Avoid piling up massive code in single files (>150-200 lines). Break sections down into subcomponents in `components/features/<feature>/` and common elements in `components/common/`.
+7. **Maintain `TECH_STACK.md`:** Any agent or developer adding a new dependency, library, or technology, or expanding an existing module to use a new tool MUST update `TECH_STACK.md` immediately to reflect the changes.
 
 ## 4. Algorithms (in `src/algorithms/`)
 

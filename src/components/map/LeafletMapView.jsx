@@ -157,11 +157,11 @@ export default function LeafletMapView({
   return (
     <div
       data-lenis-prevent
-      className="w-full h-full min-h-[400px] rounded-xl overflow-hidden border border-slate-800 shadow-inner relative"
+      className="w-full h-full min-h-[400px] rounded-2xl overflow-hidden border border-blue-500/25 shadow-xl shadow-blue-950/40 relative"
     >
       {/* Banner Keterangan Mode Edit */}
       {isEditing && (
-        <div className="absolute top-3 left-14 z-[1000] bg-slate-900/95 text-white px-3 py-1.5 rounded-lg shadow-lg flex items-center gap-2 text-xs font-semibold backdrop-blur border border-slate-700">
+        <div className="absolute top-3 left-14 z-[1000] bg-[#072449]/95 text-white px-3.5 py-1.5 rounded-xl shadow-lg flex items-center gap-2 text-xs font-semibold backdrop-blur border border-blue-400/30">
           {editTool === 'place' && (
             <span className="text-emerald-400">● Klik peta untuk tambah Gedung/Tempat</span>
           )}
