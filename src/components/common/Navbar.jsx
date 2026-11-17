@@ -118,7 +118,7 @@ export default function Navbar() {
             <div className="hidden md:flex items-center shrink-0 z-10">
               <Link
                 to="/campus"
-                className="inline-flex items-center gap-1.5 px-6 py-2 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs sm:text-sm font-poppins shadow-md shadow-black/25 transition-all transform hover:-translate-y-0.5 cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-6 py-2 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs font-poppins shadow-md shadow-black/25 transition-all transform hover:-translate-y-0.5 cursor-pointer"
               >
                 <span>Visualisasi</span>
               </Link>
@@ -147,7 +147,7 @@ export default function Navbar() {
              ============================================================== */
           <>
             {/* Desktop Navigation Visualisasi di Kanan */}
-            <nav aria-label="Navigasi Visualisasi" className="hidden md:flex items-center gap-8 text-sm font-semibold font-poppins">
+            <nav aria-label="Navigasi Visualisasi" className="hidden md:flex items-center gap-8 text-xs font-semibold font-poppins">
               <Link
                 to="/campus"
                 className={`transition-colors relative py-1 cursor-pointer ${
@@ -213,7 +213,7 @@ export default function Navbar() {
           >
             {isLanding ? (
               /* Menu Seluler untuk Landing Page */
-              <nav aria-label="Navigasi Seluler Landing" className="flex flex-col space-y-2 text-sm font-semibold font-poppins">
+              <nav aria-label="Navigasi Seluler Landing" className="flex flex-col space-y-2 text-xs font-semibold font-poppins">
                 <a
                   href="#developer"
                   onClick={(e) => scrollToSection(e, '#developer')}
@@ -247,7 +247,7 @@ export default function Navbar() {
                   <Link
                     to="/campus"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-sm font-poppins shadow-md transition"
+                    className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs font-poppins shadow-md transition"
                   >
                     <span>Mulai Visualisasi</span>
                   </Link>
@@ -255,7 +255,7 @@ export default function Navbar() {
               </nav>
             ) : (
               /* Menu Seluler untuk Halaman Visualisasi */
-              <nav aria-label="Navigasi Seluler Visualisasi" className="flex flex-col space-y-2 text-sm font-semibold font-poppins">
+              <nav aria-label="Navigasi Seluler Visualisasi" className="flex flex-col space-y-2 text-xs font-semibold font-poppins">
                 <Link
                   to="/campus"
                   onClick={() => setMobileMenuOpen(false)}
