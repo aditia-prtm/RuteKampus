@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, Tooltip, Popup, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { Trash2, Flag, Move, Lock, Unlock } from 'lucide-react';
+import { Trash2, Flag, Lock, Unlock } from 'lucide-react';
 import { haversine } from '../../algorithms/geo.js';
 
 // Format jarak dalam meter atau km
@@ -45,11 +45,12 @@ function MapLockController({ isLocked }) {
 }
 
 // Buat custom circular pin icon untuk Leaflet Marker agar mendukung draggable
-function createNodeIcon(isWaypoint, isStartNode, isHighlighted, isSelectedForEdge, isDeleteMode) {
+function createNodeIcon(isWaypoint, isStartNode, isHighlighted, isSelectedForEdge, isDeleteMode, isInTour) {
   let bg = isWaypoint ? '#64748b' : '#2563eb';
   if (isStartNode) bg = '#8b5cf6';
   else if (isHighlighted) bg = '#f59e0b';
   else if (isSelectedForEdge) bg = '#38bdf8';
+  else if (isInTour && !isWaypoint) bg = '#10b981';
   else if (isDeleteMode) bg = '#f43f5e';
 
   const size = isWaypoint ? 12 : isStartNode || isSelectedForEdge ? 22 : 18;
@@ -437,7 +438,8 @@ export default function LeafletMapView({
             isStartNode,
             isHighlighted,
             isSelectedForEdge,
-            isDeleteMode
+            isDeleteMode,
+            isInTour
           );
 
           // Simpul bisa di-drag saat mode edit aktif

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback, useMemo } from 'react';
 
 /**
  * Kanvas Interaktif untuk Mode Bikin Graf Sendiri (Custom Graph Canvas).
