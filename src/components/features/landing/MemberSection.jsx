@@ -8,51 +8,51 @@ import Badge from '../../common/Badge.jsx';
 const MEMBERS = [
   {
     id: 1,
-    tabLabel: 'Developer 1',
-    name: 'M. Aditia Putra Pratama',
-    nim: '09021182328001',
-    role: 'Lead Developer & Algoritma TSP',
+    tabLabel: 'RAFA',
+    name: 'Rafa Rasyad Anfero',
+    nim: '09021282530057',
+    role: 'null',
     prodi: 'Teknik Informatika',
     faculty: 'Fakultas Ilmu Komputer, Universitas Sriwijaya',
-    quote: 'Fokus pada implementasi logika murni algoritma Nearest Neighbor, 2-Opt local search, dan integrasi peta Leaflet.',
+    quote: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et.',
     avatarColor: 'from-blue-600 via-indigo-700 to-blue-900',
-    initial: 'AP'
+    initial: 'D1'
   },
   {
     id: 2,
-    tabLabel: 'Developer 2',
-    name: 'Anggota Tim 2',
-    nim: '09021182328002',
-    role: 'UI/UX & Visualisasi Graf',
+    tabLabel: 'SABIL',
+    name: 'Sabil Alaudin',
+    nim: '09021282530121',
+    role: 'null',
     prodi: 'Teknik Informatika',
     faculty: 'Fakultas Ilmu Komputer, Universitas Sriwijaya',
-    quote: 'Bertanggung jawab atas arsitektur kanvas graf interaktif SVG, sistem drag and drop simpul, dan penataan tema.',
+    quote: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et.',
     avatarColor: 'from-amber-500 via-amber-700 to-amber-950',
     initial: 'D2'
   },
   {
     id: 3,
-    tabLabel: 'Developer 3',
-    name: 'Anggota Tim 3',
-    nim: '09021182328003',
-    role: 'Data Jaringan Jalan & Geospasial',
+    tabLabel: 'NAHES',
+    name: 'Muhammad Syehan Fahrezi Prashya',
+    nim: '09021282530051',
+    role: 'null',
     prodi: 'Teknik Informatika',
     faculty: 'Fakultas Ilmu Komputer, Universitas Sriwijaya',
-    quote: 'Menyusun koordinat GPS fasilitas kampus Unsri Bukit Besar Palembang serta perhitungan matriks jarak Haversine.',
+    quote: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et.',
     avatarColor: 'from-teal-500 via-teal-700 to-teal-950',
     initial: 'D3'
   },
   {
     id: 4,
-    tabLabel: 'Developer 4',
-    name: 'Anggota Tim 4',
-    nim: '09021182328004',
-    role: 'Dokumentasi Teori & Stepper Player',
+    tabLabel: 'ADIT',
+    name: 'M. Aditia Putra Pratama',
+    nim: '09021282530045',
+    role: 'null',
     prodi: 'Teknik Informatika',
     faculty: 'Fakultas Ilmu Komputer, Universitas Sriwijaya',
-    quote: 'Menyusun perumusan konsep Siklus Hamilton, sinkronisasi pseudocode, dan pengujian kebenaran matematis rute.',
+    quote: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et.',
     avatarColor: 'from-sky-600 via-blue-800 to-indigo-950',
-    initial: 'D4'
+    initial: 'AD'
   }
 ];
 

@@ -58,7 +58,7 @@ export default function Navbar() {
           : 'bg-[#021124]/95 backdrop-blur-md border-b border-blue-900/60 shadow-md shadow-black/40'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between relative">
+      <div className="max-w-7xl mx-auto px-4 lg:px-6 h-16 flex items-center justify-between relative">
         {/* Brand Link: ruteKAMPUS (Klik logo langsung kembali ke beranda) */}
         <Link to="/" className="flex items-center gap-2.5 group shrink-0 z-10 font-poppins">
           <div className="flex flex-col">
@@ -82,7 +82,7 @@ export default function Navbar() {
             {/* Desktop Navigation Landing Page (Tepat di Tengah Horizontal) */}
             <nav
               aria-label="Navigasi Landing Page"
-              className="hidden md:flex items-center gap-7 lg:gap-8 text-sm font-semibold font-poppins absolute left-1/2 -translate-x-1/2"
+              className="hidden md:flex items-center gap-7 lg:gap-8 text-xs font-semibold font-poppins absolute left-1/2 -translate-x-1/2"
             >
               <a
                 href="#developer"
