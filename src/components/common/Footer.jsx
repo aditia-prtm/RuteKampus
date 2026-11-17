@@ -5,10 +5,10 @@ import { MapPin, Shapes, Home } from 'lucide-react';
 export default function Footer() {
   return (
     <footer className="border-t border-blue-300/20 bg-[#062447] text-blue-100/75 py-10 px-4 sm:px-6 lg:px-8 mt-auto">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="max-w-7xl mx-auto flex flex-col font-poppins md:flex-row items-center justify-between gap-6">
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
           <div className="flex items-center text-xl font-bold tracking-tight text-white mb-1">
-            <span className="font-medium">rute</span>
+            <span>Rute</span>
             <span className="text-amber-400 font-extrabold tracking-wider">KAMPUS</span>
           </div>
           <p className="text-xs text-blue-200/80 max-w-sm">
