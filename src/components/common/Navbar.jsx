@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, MapPin, Shapes, ArrowRight } from 'lucide-react';
+import { Menu, X, MapPin, Shapes } from 'lucide-react';
 
 export default function Navbar() {
   const location = useLocation();
@@ -60,10 +60,10 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between relative">
         {/* Brand Link: ruteKAMPUS (Klik logo langsung kembali ke beranda) */}
-        <Link to="/" className="flex items-center gap-2.5 group shrink-0 z-10">
+        <Link to="/" className="flex items-center gap-2.5 group shrink-0 z-10 font-poppins">
           <div className="flex flex-col">
             <div className="flex items-center text-lg sm:text-2xl font-bold tracking-tight">
-              <span className="text-white font-medium">rute</span>
+              <span className="text-white">Rute</span>
               <span className="text-amber-400 font-extrabold tracking-wider">KAMPUS</span>
             </div>
             <span className="text-[9px] uppercase tracking-widest text-blue-200/80 font-semibold -mt-1">
@@ -82,7 +82,7 @@ export default function Navbar() {
             {/* Desktop Navigation Landing Page (Tepat di Tengah Horizontal) */}
             <nav
               aria-label="Navigasi Landing Page"
-              className="hidden md:flex items-center gap-7 lg:gap-8 text-sm font-semibold absolute left-1/2 -translate-x-1/2"
+              className="hidden md:flex items-center gap-7 lg:gap-8 text-sm font-semibold font-poppins absolute left-1/2 -translate-x-1/2"
             >
               <a
                 href="#developer"
@@ -118,10 +118,9 @@ export default function Navbar() {
             <div className="hidden md:flex items-center shrink-0 z-10">
               <Link
                 to="/campus"
-                className="inline-flex items-center gap-1.5 px-6 py-2 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs sm:text-sm shadow-md shadow-black/25 transition-all transform hover:-translate-y-0.5 cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-6 py-2 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs sm:text-sm font-poppins shadow-md shadow-black/25 transition-all transform hover:-translate-y-0.5 cursor-pointer"
               >
                 <span>Visualisasi</span>
-                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
 
@@ -148,7 +147,7 @@ export default function Navbar() {
              ============================================================== */
           <>
             {/* Desktop Navigation Visualisasi di Kanan */}
-            <nav aria-label="Navigasi Visualisasi" className="hidden md:flex items-center gap-8 text-sm font-semibold">
+            <nav aria-label="Navigasi Visualisasi" className="hidden md:flex items-center gap-8 text-sm font-semibold font-poppins">
               <Link
                 to="/campus"
                 className={`transition-colors relative py-1 cursor-pointer ${
@@ -214,7 +213,7 @@ export default function Navbar() {
           >
             {isLanding ? (
               /* Menu Seluler untuk Landing Page */
-              <nav aria-label="Navigasi Seluler Landing" className="flex flex-col space-y-2 text-sm font-semibold">
+              <nav aria-label="Navigasi Seluler Landing" className="flex flex-col space-y-2 text-sm font-semibold font-poppins">
                 <a
                   href="#developer"
                   onClick={(e) => scrollToSection(e, '#developer')}
@@ -248,16 +247,15 @@ export default function Navbar() {
                   <Link
                     to="/campus"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-sm shadow-md transition"
+                    className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-sm font-poppins shadow-md transition"
                   >
                     <span>Mulai Visualisasi</span>
-                    <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
               </nav>
             ) : (
               /* Menu Seluler untuk Halaman Visualisasi */
-              <nav aria-label="Navigasi Seluler Visualisasi" className="flex flex-col space-y-2 text-sm font-semibold">
+              <nav aria-label="Navigasi Seluler Visualisasi" className="flex flex-col space-y-2 text-sm font-semibold font-poppins">
                 <Link
                   to="/campus"
                   onClick={() => setMobileMenuOpen(false)}

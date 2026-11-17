@@ -201,13 +201,13 @@ export default function HeroSection() {
         {/* Heading persis gaya laporUNSRI: Font Poppins + Serif Italic */}
         <h1 className="text-3xl sm:text-4xl lg:text-5xl pt-7 font-extrabold tracking-tight text-white drop-shadow-xl leading-tight font-['Poppins',sans-serif]">
           Travelling Salesman Problem{' '}
-          <span className="text-amber-400 italic font-serif font-normal text-3xl sm:text-4xl lg:text-5xl ml-1">
+          <span className="text-amber-400 italic font-serif font-extrabold text-3xl sm:text-4xl lg:text-5xl ml-1">
             Visualization
           </span>
         </h1>
 
         {/* Subtitle font Poppins */}
-        <p className="max-w-2xl mx-auto text-xs sm:text-sm lg:text-base text-slate-100/95 drop-shadow-md leading-relaxed">
+        <p className="max-w-2xl mx-auto text-sm sm:text-base lg:text-lg text-slate-100/95 drop-shadow-md leading-relaxed">
           Temukan rute terpendek untuk mengunjungi setiap fakultas di Universitas Sriwijaya dan kembali ke titik awal dengan total jarak paling minimum.
         </p>
 

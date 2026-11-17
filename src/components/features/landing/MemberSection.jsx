@@ -70,7 +70,7 @@ export default function MemberSection() {
           Tim Pengembang
         </Badge>
         <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white font-['Poppins',sans-serif]">
-          Meet our <span className="text-amber-400 font-serif italic font-normal text-3xl sm:text-5xl ml-1">developer</span>
+          Meet our <span className="text-amber-400 font-serif italic ml-1">developer</span>
         </h2>
         <p className="text-xs sm:text-sm text-blue-100/80 max-w-xl mx-auto leading-relaxed">
           Tim mahasiswa pengembang simulasi rute shuttle bus dan visualisasi Siklus Hamilton Kampus Universitas Sriwijaya.
