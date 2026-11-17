@@ -25,16 +25,16 @@ export default function StepperInspector({ currentStep }) {
       {/* 2. Bagian Detail & Analisis Interaktif */}
       <div className="space-y-3">
         {/* Toggle Pilihan: Data & Matriks vs Pseudocode */}
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-[11px] font-semibold text-blue-200/80 uppercase tracking-wider">
+        <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2">
+          <span className="text-[11px] font-semibold text-blue-200/80 uppercase tracking-wider shrink-0">
             Inspeksi Langkah:
           </span>
 
-          <div className="flex items-center gap-1 p-1 bg-[#062648]/90 rounded-xl border border-blue-300/20 text-xs">
+          <div className="flex items-center gap-1 p-1 bg-[#062648]/90 rounded-xl border border-blue-300/20 text-xs w-full sm:w-auto justify-end">
             <button
               type="button"
               onClick={() => setDetailTab('data')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
                 detailTab === 'data'
                   ? 'bg-amber-400 text-slate-950 font-bold shadow-sm'
                   : 'text-blue-200/80 hover:text-white hover:bg-white/10'
@@ -47,7 +47,7 @@ export default function StepperInspector({ currentStep }) {
             <button
               type="button"
               onClick={() => setDetailTab('pseudocode')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
                 detailTab === 'pseudocode'
                   ? 'bg-amber-400 text-slate-950 font-bold shadow-sm'
                   : 'text-blue-200/80 hover:text-white hover:bg-white/10'

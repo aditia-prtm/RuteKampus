@@ -159,27 +159,27 @@ export default function LeafletMapView({
       data-lenis-prevent
       className="w-full h-full min-h-[400px] rounded-2xl overflow-hidden border border-blue-300/25 shadow-xl shadow-[#021c38]/40 relative"
     >
-      {/* Banner Keterangan Mode Edit */}
+      {/* Banner Keterangan Mode Edit (Responsif di HP) */}
       {isEditing && (
-        <div className="absolute top-3 left-14 z-[1000] bg-[#062648]/95 text-white px-3.5 py-1.5 rounded-xl shadow-lg flex items-center gap-2 text-xs font-semibold backdrop-blur border border-blue-300/30">
+        <div className="absolute top-2.5 sm:top-3 left-12 sm:left-14 right-2.5 sm:right-auto z-[1000] bg-[#062648]/95 text-white px-3 py-1.5 rounded-xl shadow-lg flex items-center gap-2 text-[11px] sm:text-xs font-semibold backdrop-blur border border-blue-300/30 max-w-[calc(100%-3.5rem)] sm:max-w-none truncate">
           {editTool === 'place' && (
-            <span className="text-amber-300">● Klik peta untuk tambah Gedung/Tempat</span>
+            <span className="text-amber-300 truncate">● Klik peta untuk tambah Gedung/Tempat</span>
           )}
           {editTool === 'waypoint' && (
-            <span className="text-blue-200">◆ Klik peta untuk tambah Tikungan/Jalan</span>
+            <span className="text-blue-200 truncate">◆ Klik peta untuk tambah Tikungan/Jalan</span>
           )}
           {editTool === 'connect' && (
-            <span className="text-sky-300">
+            <span className="text-sky-300 truncate">
               {selectedNodeForEdge
-                ? `Pilih simpul kedua untuk menyambung dari [${selectedNodeForEdge}]`
+                ? `Pilih simpul ke-2 dari [${selectedNodeForEdge}]`
                 : 'Klik simpul pertama untuk menarik jalan'}
             </span>
           )}
           {editTool === 'move' && (
-            <span className="text-blue-100">✥ Tarik (drag) simpul mana saja untuk memindahkan posisinya di peta</span>
+            <span className="text-blue-100 truncate">✥ Tarik simpul untuk pindah posisi</span>
           )}
           {editTool === 'delete' && (
-            <span className="text-rose-300">✕ Klik simpul atau garis jalan yang ingin dihapus</span>
+            <span className="text-rose-300 truncate">✕ Klik simpul/garis untuk hapus</span>
           )}
         </div>
       )}

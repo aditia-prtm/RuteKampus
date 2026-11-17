@@ -15,27 +15,28 @@ export default function DataPanel({ currentStep }) {
       {/* 1. Tipe: Matriks Jarak */}
       {type === 'matrix' && data.distMatrix && (
         <div className="space-y-2 text-xs">
-          <p className="text-[11px] text-blue-200/80">
-            Matriks Jarak Lengkap (Meter) Antar Seluruh Titik:
-          </p>
+          <div className="flex items-center justify-between text-[11px] text-blue-200/80">
+            <span>Matriks Jarak Lengkap (Meter) Antar Seluruh Titik:</span>
+            <span className="text-[10px] text-amber-300 sm:hidden font-medium">Geser ↔</span>
+          </div>
           <div className="overflow-x-auto max-h-72 rounded-xl border border-blue-300/20 bg-[#062648]/85">
             <table className="w-full text-center font-mono text-[11px]">
               <thead>
                 <tr className="bg-[#093563] text-blue-100 border-b border-blue-300/20">
-                  <th className="p-2 border-r border-blue-300/20">Lokasi</th>
+                  <th className="p-2 border-r border-blue-300/20 whitespace-nowrap">Lokasi</th>
                   {data.nodeIds.map((id) => (
-                    <th key={id} className="p-2 border-r border-blue-300/15 last:border-r-0">{id}</th>
+                    <th key={id} className="p-2 border-r border-blue-300/15 last:border-r-0 whitespace-nowrap">{id}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {data.nodeIds.map((u) => (
                   <tr key={u} className="border-b border-blue-300/10 last:border-b-0">
-                    <td className="p-2 bg-[#093563]/60 font-bold border-r border-blue-300/20 text-amber-300">{u}</td>
+                    <td className="p-2 bg-[#093563]/60 font-bold border-r border-blue-300/20 text-amber-300 whitespace-nowrap">{u}</td>
                     {data.nodeIds.map((v) => (
                       <td
                         key={v}
-                        className={`p-2 border-r border-blue-300/10 last:border-r-0 ${
+                        className={`p-2 border-r border-blue-300/10 last:border-r-0 whitespace-nowrap ${
                           u === v ? 'text-blue-300/30' : 'text-blue-100'
                         }`}
                       >
@@ -133,18 +134,18 @@ export default function DataPanel({ currentStep }) {
           </div>
 
           {type === 'result' && (
-            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-blue-300/20 text-center">
-              <div className="p-2.5 rounded-xl bg-[#062648]/85 border border-blue-300/20">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2 pt-2 border-t border-blue-300/20 text-center">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-[#062648]/85 border border-blue-300/20">
                 <span className="text-[10px] text-blue-200/70 block">Rute Awal</span>
-                <span className="text-xs sm:text-sm font-bold text-blue-100 font-mono">{data.initialWeight} m</span>
+                <span className="text-[11px] sm:text-sm font-bold text-blue-100 font-mono">{data.initialWeight} m</span>
               </div>
-              <div className="p-2.5 rounded-xl bg-amber-400/15 border border-amber-400/30">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-amber-400/15 border border-amber-400/30">
                 <span className="text-[10px] text-amber-300 block font-medium">Hemat 2-Opt</span>
-                <span className="text-xs sm:text-sm font-bold text-amber-400 font-mono">-{data.savedWeight} m</span>
+                <span className="text-[11px] sm:text-sm font-bold text-amber-400 font-mono">-{data.savedWeight} m</span>
               </div>
-              <div className="p-2.5 rounded-xl bg-amber-400 text-slate-950 font-bold shadow-md shadow-black/25">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-amber-400 text-slate-950 font-bold shadow-md shadow-black/25">
                 <span className="text-[10px] text-slate-900 block font-semibold">Jarak Optimal</span>
-                <span className="text-xs sm:text-sm font-extrabold font-mono">{data.totalWeight} m</span>
+                <span className="text-[11px] sm:text-sm font-extrabold font-mono">{data.totalWeight} m</span>
               </div>
             </div>
           )}

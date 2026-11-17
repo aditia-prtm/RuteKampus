@@ -173,7 +173,7 @@ export default function CustomGraphPage() {
   const stepPlayer = useStepPlayer(solverOutput.steps || [], 1200);
 
   return (
-    <div className="flex-1 flex flex-col min-h-[calc(100vh-4rem)] bg-gradient-to-b from-[#093563] via-[#0a3a6b] to-[#072d54] p-4 sm:p-6 lg:p-8 font-['Poppins',sans-serif] text-white">
+    <div className="flex-1 flex flex-col min-h-[calc(100svh-4rem)] bg-gradient-to-b from-[#093563] via-[#0a3a6b] to-[#072d54] p-3.5 sm:p-6 lg:p-8 font-['Poppins',sans-serif] text-white">
       {/* 1. Header Informasi & Preset */}
       <CustomGraphHeader
         nodeCount={nodes.length}
@@ -197,7 +197,7 @@ export default function CustomGraphPage() {
 
       {/* Warning jika graf belum terhubung atau simpul < 3 */}
       {!solverOutput.ok && (
-        <div className="mb-4 p-4 rounded-2xl bg-amber-500/15 border border-amber-400/35 text-amber-200 flex items-center gap-3 text-xs sm:text-sm shadow-lg">
+        <div className="mb-4 p-3.5 sm:p-4 rounded-2xl bg-amber-500/15 border border-amber-400/35 text-amber-200 flex items-center gap-3 text-xs sm:text-sm shadow-lg">
           <AlertCircle className="w-5 h-5 shrink-0 text-amber-400" />
           <div>
             <strong>Graf Belum Membentuk Siklus:</strong> {solverOutput.error}
@@ -206,9 +206,9 @@ export default function CustomGraphPage() {
       )}
 
       {/* 3. Main Layout: Canvas (Kiri) & Stepper Inspector (Kanan) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 flex-1 items-start">
         <div className="lg:col-span-7 flex flex-col gap-4">
-          <div className="h-[460px] sm:h-[540px] w-full">
+          <div className="h-[340px] sm:h-[460px] lg:h-[540px] w-full">
             <InteractiveGraphCanvas
               nodes={nodes}
               edges={edges}

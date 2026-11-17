@@ -31,9 +31,11 @@ export default function InteractiveGraphCanvas({
     const rect = svgRef.current.getBoundingClientRect();
     const scaleX = 600 / rect.width;
     const scaleY = 450 / rect.height;
+    const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+    const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
     return {
-      x: Math.round((e.clientX - rect.left) * scaleX),
-      y: Math.round((e.clientY - rect.top) * scaleY)
+      x: Math.round((clientX - rect.left) * scaleX),
+      y: Math.round((clientY - rect.top) * scaleY)
     };
   }, []);
 
@@ -132,20 +134,20 @@ export default function InteractiveGraphCanvas({
       className="w-full h-full min-h-[420px] bg-[#062648] rounded-2xl border border-blue-300/25 relative overflow-hidden flex flex-col shadow-xl shadow-[#021c38]/40"
     >
       {/* Banner Keterangan Mode */}
-      <div className="absolute top-3 left-3 right-3 z-10 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
-        <div className="bg-[#0e4984]/90 backdrop-blur border border-blue-300/25 text-blue-100 text-xs px-3.5 py-1.5 rounded-xl shadow-md flex items-center gap-2">
-          <span className={`w-2 h-2 rounded-full ${isDeleteMode ? 'bg-rose-400' : 'bg-amber-400'} animate-pulse`} />
-          <span>
-            {currentMode === 'add-node' && 'Mode Tambah Simpul: Klik bidang kanvas untuk menaruh simpul.'}
+      <div className="absolute top-2.5 sm:top-3 left-2.5 sm:left-3 right-2.5 sm:right-3 z-10 flex flex-wrap items-center justify-between gap-1.5 sm:gap-2 pointer-events-none">
+        <div className="bg-[#0e4984]/95 backdrop-blur border border-blue-300/25 text-blue-100 text-[11px] sm:text-xs px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-xl shadow-md flex items-center gap-1.5 sm:gap-2 max-w-[calc(100%-6rem)] sm:max-w-none truncate">
+          <span className={`w-2 h-2 rounded-full shrink-0 ${isDeleteMode ? 'bg-rose-400' : 'bg-amber-400'} animate-pulse`} />
+          <span className="truncate">
+            {currentMode === 'add-node' && 'Tambah Simpul: Klik kanvas untuk simpul baru.'}
             {currentMode === 'add-edge' &&
               (selectedNodeForEdge
-                ? `Pilih simpul kedua untuk menyambung dari [${selectedNodeForEdge}].`
-                : 'Mode Sambung Sisi: Klik simpul pertama lalu klik simpul kedua.')}
-            {currentMode === 'drag' && 'Mode Geser: Drag & drop simpul untuk memindahkan posisinya.'}
-            {currentMode === 'delete' && 'Mode Hapus: Klik simpul atau garis sisi apa saja untuk langsung menghapusnya.'}
+                ? `Pilih simpul kedua dari [${selectedNodeForEdge}].`
+                : 'Sambung Sisi: Klik simpul 1 lalu simpul 2.')}
+            {currentMode === 'drag' && 'Mode Geser: Drag simpul untuk pindah posisi.'}
+            {currentMode === 'delete' && 'Mode Hapus: Klik simpul/sisi untuk menghapus.'}
           </span>
         </div>
-        <div className="bg-[#0e4984]/90 backdrop-blur border border-blue-300/25 text-xs px-3 py-1.5 rounded-xl text-amber-300 font-mono font-medium">
+        <div className="bg-[#0e4984]/95 backdrop-blur border border-blue-300/25 text-[11px] sm:text-xs px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-amber-300 font-mono font-medium shrink-0">
           {nodes.length} Simpul • {edges.length} Sisi
         </div>
       </div>
@@ -154,10 +156,13 @@ export default function InteractiveGraphCanvas({
         ref={svgRef}
         viewBox="0 0 600 450"
         onClick={handleSvgClick}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        className={`w-full h-full select-none flex-1 ${
+        onPointerDown={(e) => {
+          if (currentMode === 'add-node') handleSvgClick(e);
+        }}
+        onPointerMove={handleMouseMove}
+        onPointerUp={handleMouseUp}
+        onPointerCancel={handleMouseUp}
+        className={`w-full h-full select-none flex-1 touch-none ${
           currentMode === 'add-node'
             ? 'cursor-crosshair'
             : currentMode === 'drag'
@@ -290,6 +295,7 @@ export default function InteractiveGraphCanvas({
                   : 'cursor-pointer'
               }
               onMouseDown={(e) => handleNodeMouseDown(e, node.id, node.x, node.y)}
+              onPointerDown={(e) => handleNodeMouseDown(e, node.id, node.x, node.y)}
               onContextMenu={(e) => {
                 e.preventDefault();
                 onRemoveNode(node.id);
