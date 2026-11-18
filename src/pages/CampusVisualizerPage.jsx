@@ -13,7 +13,7 @@ import { AlertCircle } from 'lucide-react';
 
 /**
  * CampusVisualizerPage
- * Visualisasi Siklus Hamilton Shuttle Bus di Kampus Unsri Bukit Besar Palembang.
+ * Visualisasi Traveling Salesperson Problem (TSP) & Siklus Hamilton di Kampus Unsri Bukit Besar Palembang.
  * Direfactor dengan arsitektur fitur modular dan styling selaras Hero.
  */
 export default function CampusVisualizerPage() {

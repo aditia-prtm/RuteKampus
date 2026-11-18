@@ -32,7 +32,7 @@ export default function ModeSelectionSection() {
                 Studi Kasus Kampus Unsri
               </div>
               <h3 className="text-xl font-bold text-white group-hover:text-amber-300 transition-colors">
-                Rute Shuttle Bus Unsri Palembang
+                Peta Kampus Unsri Palembang
               </h3>
               <p className="text-xs sm:text-sm text-blue-100/80 mt-2 leading-relaxed">
                 Simulasi penjelajahan antar fakultas (FK, FH, Fasilkom, Pascasarjana, dan fasilitas utama) di Kampus Unsri Bukit Besar Palembang di atas peta koordinat GPS nyata.

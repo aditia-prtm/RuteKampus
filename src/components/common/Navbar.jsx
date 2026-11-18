@@ -59,15 +59,15 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 lg:px-6 h-16 flex items-center justify-between relative">
-        {/* Brand Link: ruteKAMPUS (Klik logo langsung kembali ke beranda) */}
+        {/* Brand Link: TourKAMPUS (Klik logo langsung kembali ke beranda) */}
         <Link to="/" className="flex items-center gap-2.5 group shrink-0 z-10 font-poppins">
           <div className="flex flex-col">
             <div className="flex items-center text-lg sm:text-2xl font-bold tracking-tight">
-              <span className="text-white">Rute</span>
+              <span className="text-white">Tour</span>
               <span className="text-amber-400 font-extrabold tracking-wider">KAMPUS</span>
             </div>
             <span className="text-[9px] uppercase tracking-widest text-blue-200/80 font-semibold -mt-1">
-              Layanan Navigasi Kampus Unsri
+              Navigasi & Tur Kampus Unsri
             </span>
           </div>
         </Link>

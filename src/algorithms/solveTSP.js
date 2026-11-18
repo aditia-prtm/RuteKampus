@@ -175,7 +175,7 @@ export function solveTSP(graph, startNodeId) {
     id: stepId++,
     type: 'result',
     title: 'Hasil Akhir Rute Optimal Siklus Hamilton',
-    explanation: `Rute optimal selesai! Shuttle bus mengelilingi seluruh ${targetNodeIds.length} lokasi tepat satu kali dan kembali ke [${start}]. Total jarak: ${finalTotalCost} meter (Hemat ${savedCost} m melalui 2-Opt).`,
+    explanation: `Rute optimal selesai! Tur keliling mengitari seluruh ${targetNodeIds.length} lokasi kampus tepat satu kali dan kembali ke [${start}]. Total jarak: ${finalTotalCost} meter (Hemat ${savedCost} m melalui 2-Opt).`,
     highlight: {
       nodes: finalTour,
       edges: tourEdges

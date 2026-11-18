@@ -4,28 +4,28 @@
  */
 
 export const APP_INFO = {
-  title: 'RuteKampus UNSRI',
-  subtitle: 'Layanan Navigasi & Optimasi Rute Shuttle Bus Kampus Unsri (Struktur Diskrit 2)',
+  title: 'TourKampus UNSRI',
+  subtitle: 'Visualisasi & Optimasi Rute Kampus Unsri (Struktur Diskrit 2)',
   description:
-    'Menemukan rute tertutup terpendek (Siklus Hamilton) yang mengunjungi setiap fakultas/gedung kampus tepat satu kali dan kembali ke terminal awal dengan jarak minimum.',
+    'Menemukan rute tertutup terpendek (Siklus Hamilton) yang mengunjungi setiap fakultas/gedung kampus tepat satu kali dan kembali ke titik awal dengan jarak minimum.',
   assumptions: [
     'Rute bersifat simetris (jarak A ke B sama dengan B ke A).',
     'Jarak antar gedung dihitung otomatis menggunakan formula Haversine (meter) berdasarkan koordinat GPS.',
-    'Setiap gedung/fakultas wajib dikunjungi tepat satu kali sebelum bus kembali ke titik asal (Siklus Hamilton).',
-    'Bus berangkat dan mengakhiri perjalanan pada terminal/halte yang sama (closed tour).'
+    'Setiap gedung/fakultas wajib dikunjungi tepat satu kali sebelum kembali ke titik asal (Siklus Hamilton).',
+    'Perjalanan berangkat dan berakhir pada lokasi/gedung yang sama (closed tour).'
   ],
   realWorldExamples: [
     {
       title: 'Shuttle Bus Kampus Unsri',
-      desc: 'Mengantar mahasiswa dari terminal gerbang utama mengelilingi seluruh fakultas (FK, FH, Fasilkom, dll.) dengan rute terpendek.'
+      desc: 'Mengantar mahasiswa dari gerbang utama mengelilingi seluruh fakultas (FK, FH, Fasilkom, dll.) dengan rute terpendek.'
     },
     {
       title: 'Logistik & Distribusi Paket',
-      desc: 'Kurir mengantarkan paket ke beberapa alamat penerima tanpa mendatangi alamat yang sama dua kali.'
+      desc: 'Kurir mengantarkan dokumen dan paket ke beberapa fakultas tanpa mendatangi lokasi yang sama dua kali.'
     },
     {
       title: 'Rute Inspeksi Gedung & Lab',
-      desc: 'Petugas teknisi memeriksa sarana di setiap fasilitas kampus dengan urutan paling hemat waktu.'
+      desc: 'Petugas keamanan atau teknisi memeriksa sarana di setiap fasilitas kampus dengan urutan paling hemat waktu.'
     }
   ]
 };
@@ -38,7 +38,7 @@ export const PSEUDOCODE = [
   { line: 5, text: '  while unvisited locations exist:' },
   { line: 6, text: '    next = nearestUnvisited(current, distMatrix)' },
   { line: 7, text: '    tour.append(next); current = next' },
-  { line: 8, text: '  tour.append(startNode) // Kembali ke terminal' },
+  { line: 8, text: '  tour.append(startNode) // Kembali ke titik awal' },
   { line: 9, text: '  // Tahap 2: Optimasi Lokal (2-Opt Edge Swap)' },
   { line: 10, text: '  while edges cross and swap improves distance:' },
   { line: 11, text: '    tour = swapEdges(tour) // Memperpendek rute' },
@@ -54,17 +54,17 @@ export const STEP_EXPLANATIONS = {
   'nn-start': {
     badge: 'Langkah 2: Titik Awal',
     concept: 'Inisialisasi Siklus Hamilton',
-    detail: 'Menentukan terminal atau halte keberangkatan awal bus kampus.'
+    detail: 'Menentukan lokasi keberangkatan awal rute tur kampus.'
   },
   'nn-step': {
     badge: 'Langkah 3: Heuristik Greedy',
     concept: 'Pemilihan Lokasi Terdekat (Nearest Neighbor)',
-    detail: 'Bus selalu memilih fakultas terdekat berikutnya yang belum pernah dikunjungi untuk meminimalkan jarak lokal.'
+    detail: 'Algoritma selalu memilih fakultas terdekat berikutnya yang belum pernah dikunjungi untuk meminimalkan jarak lokal.'
   },
   'nn-complete': {
     badge: 'Langkah 4: Rute Awal',
     concept: 'Siklus Hamilton Terbentuk',
-    detail: 'Seluruh fakultas telah dikunjungi, bus kembali ke terminal awal untuk melengkapi putaran.'
+    detail: 'Seluruh fakultas telah dikunjungi, rute kembali ke titik awal untuk melengkapi putaran.'
   },
   'two-opt-step': {
     badge: 'Langkah 5: Optimasi 2-Opt',
@@ -74,6 +74,6 @@ export const STEP_EXPLANATIONS = {
   result: {
     badge: 'Langkah 6: Hasil Optimal',
     concept: 'Siklus Hamilton Terpendek (TSP)',
-    detail: 'Rute optimal final bus kampus beserta total jarak dan penghematan jarak dari optimasi.'
+    detail: 'Rute optimal final tur kampus beserta total jarak dan penghematan jarak dari optimasi.'
   }
 };

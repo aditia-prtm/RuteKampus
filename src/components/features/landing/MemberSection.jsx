@@ -73,7 +73,7 @@ export default function MemberSection() {
           Meet our <span className="text-amber-400 font-serif italic ml-1">developer</span>
         </h2>
         <p className="text-xs sm:text-sm text-blue-100/80 max-w-xl mx-auto leading-relaxed">
-          Tim mahasiswa pengembang simulasi rute shuttle bus dan visualisasi Siklus Hamilton Kampus Universitas Sriwijaya.
+          Tim mahasiswa pengembang TourKampus Universitas Sriwijaya.
         </p>
       </div>
 
@@ -203,7 +203,7 @@ export default function MemberSection() {
                     Pilih Salah Satu Developer di Atas
                   </h4>
                   <p className="text-xs text-blue-100/75 max-w-md mx-auto mt-1 leading-relaxed">
-                    Klik tombol Developer 1, 2, 3, atau 4 untuk menampilkan foto, nama lengkap, NIM, serta peran kontribusi dalam proyek ini.
+                    Klik tombol nama developer untuk menampilkan foto, nama lengkap, NIM, serta peran kontribusi dalam proyek ini.
                   </p>
                 </div>
               </div>

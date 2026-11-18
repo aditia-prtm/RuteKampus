@@ -19,7 +19,7 @@ function SectionDivider() {
 }
 
 /**
- * LandingPage RuteKampus UNSRI
+ * LandingPage TourKampus UNSRI
  * Efek Parallax Curtain: Hero tetap tersemat (sticky), sementara MemberSection dan konten di bawahnya
  * meluncur naik ke atas menutupi Hero saat discroll.
  * Setiap section memiliki ID yang sinkron dengan navigasi navbar landing page.
@@ -54,7 +54,7 @@ export default function LandingPage() {
           {/* Pembatas Visual 2 */}
           <SectionDivider />
 
-          {/* Section 3: Real World Context (Shuttle Bus Kampus UNSRI) */}
+          {/* Section 3: Real World Context (Studi Kasus Kampus UNSRI) */}
           <section id="relevansi" className="relative scroll-mt-24">
             <RealWorldSection />
           </section>

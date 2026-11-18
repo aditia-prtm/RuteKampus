@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto flex flex-col font-poppins md:flex-row items-center justify-between gap-6">
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
           <div className="flex items-center text-xl font-bold tracking-tight text-white mb-1">
-            <span>Rute</span>
+            <span>Tour</span>
             <span className="text-amber-400 font-extrabold tracking-wider">KAMPUS</span>
           </div>
           <p className="text-xs text-blue-200/80 max-w-sm">

@@ -60,7 +60,7 @@ export default function DataPanel({ currentStep }) {
           </div>
 
           <p className="text-[11px] text-blue-200/80">
-            Kandidat Halte Belum Dikunjungi (Diurutkan dari Terdekat):
+            Kandidat Lokasi Belum Dikunjungi (Diurutkan dari Terdekat):
           </p>
 
           <div className="space-y-1.5 max-h-60 overflow-y-auto pr-1">
@@ -126,7 +126,7 @@ export default function DataPanel({ currentStep }) {
         <div className="space-y-3 text-xs">
           <div>
             <span className="text-[11px] text-blue-200/80 block mb-1.5 font-medium">
-              Urutan Singgah Bus Kampus (Siklus Hamilton):
+              Urutan Kunjungan Lokasi (Siklus Hamilton):
             </span>
             <div className="p-3 bg-[#062648]/85 border border-blue-300/20 rounded-xl font-mono text-amber-300 text-xs leading-relaxed break-words">
               {data.tour.join(' → ')}

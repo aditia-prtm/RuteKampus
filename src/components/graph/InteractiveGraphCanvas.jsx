@@ -341,7 +341,7 @@ export default function InteractiveGraphCanvas({
           );
         })}
 
-        {/* 2. Rute Siklus Hamilton Bus yang Aktif (Garis Hijau) */}
+        {/* 2. Rute Siklus Hamilton yang Aktif (Garis Hijau) */}
         {currentTourNodes.length > 1 &&
           currentTourNodes.slice(0, -1).map((uId, idx) => {
             const u = nodeMap.get(uId);

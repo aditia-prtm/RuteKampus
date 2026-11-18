@@ -97,7 +97,7 @@ function MapClickHandler({ isEditing, editTool, onAddNode }) {
         }
       } else if (editTool === 'place') {
         const label = window.prompt(
-          'Nama Tempat / Gedung / Halte Tujuan Bus:',
+          'Nama Tempat / Gedung Tujuan Kampus:',
           'Gedung Baru'
         );
         if (label && label.trim()) {
@@ -376,7 +376,7 @@ export default function LeafletMapView({
                   <strong>Jalan: {u.label || u.id} ↔ {v.label || v.id}</strong>
                   <div>Jarak: <span className="font-mono font-bold">{formatDist(weight)}</span></div>
                   {isHighlighted && <div className="text-amber-500 font-bold">● Sedang Diperiksa / Aktif</div>}
-                  {isTourEdge && !isHighlighted && <div className="text-emerald-500 font-bold">✓ Bagian Tur / Rute Bus</div>}
+                  {isTourEdge && !isHighlighted && <div className="text-emerald-500 font-bold">✓ Bagian Rute Tur Kampus</div>}
                   {isDeleteMode && <div className="text-rose-600 font-bold">Klik untuk hapus jalan</div>}
                 </div>
               </Tooltip>
@@ -402,7 +402,7 @@ export default function LeafletMapView({
           );
         })}
 
-        {/* 2. Garis Rute Siklus Hamilton Bus (Mengikuti Jalan) */}
+        {/* 2. Garis Rute Siklus Hamilton (Mengikuti Jalan) */}
         {tourPolylinePositions.length > 1 && (
           <Polyline
             positions={tourPolylinePositions}
@@ -416,7 +416,7 @@ export default function LeafletMapView({
           >
             <Tooltip sticky>
               <div className="font-sans text-xs font-bold text-emerald-700">
-                Rute Shuttle Bus Kampus ({tourPolylinePositions.length} Titik)
+                Rute Tur Keliling Kampus ({tourPolylinePositions.length} Titik)
               </div>
             </Tooltip>
           </Polyline>
@@ -468,7 +468,7 @@ export default function LeafletMapView({
                   {isWaypoint ? (
                     <span className="text-slate-500 block text-[10px]">(Tikungan/Waypoint)</span>
                   ) : (
-                    <span className="text-emerald-600 block text-[10px]">(Tujuan Bus)</span>
+                    <span className="text-emerald-600 block text-[10px]">(Lokasi Tujuan)</span>
                   )}
                   {isEditing && <span className="text-teal-600 block text-[10px]">Tarik (drag) untuk geser</span>}
                 </div>

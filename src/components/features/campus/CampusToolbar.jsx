@@ -46,7 +46,7 @@ export default function CampusToolbar({
 
       <div className="text-blue-100/80 text-[11px] font-medium leading-relaxed">
         {editTool === 'place' && '● Klik peta untuk menambah gedung tujuan baru.'}
-        {editTool === 'waypoint' && '● Klik peta pada tikungan atau persimpangan rute bus.'}
+        {editTool === 'waypoint' && '● Klik peta pada tikungan atau persimpangan jalan kampus.'}
         {editTool === 'connect' && '● Klik simpul pertama lalu klik simpul kedua untuk menyambung jalan.'}
         {editTool === 'move' && '● Tarik (drag & drop) simpul mana saja untuk memindahkan posisinya di peta.'}
         {editTool === 'delete' && '✕ Klik simpul atau garis jalan mana saja untuk langsung menghapusnya.'}

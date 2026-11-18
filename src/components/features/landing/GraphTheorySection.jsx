@@ -34,7 +34,7 @@ export default function GraphTheorySection() {
               <span>Prinsip & Asumsi Model</span>
             </div>
             <h3 className="text-lg font-bold text-white">
-              Formulasi Masalah Tur Bus Kampus
+              Formulasi Masalah Tur Keliling Kampus (TSP)
             </h3>
             <p className="text-xs text-blue-100/90 leading-relaxed">
               Diberikan himpunan simpul lokasi fasilitas kampus <code className="text-amber-300 font-mono font-bold bg-[#062447] px-1 py-0.5 rounded">V</code> dan matriks jarak <code className="text-amber-300 font-mono font-bold bg-[#062447] px-1 py-0.5 rounded">D[u][v]</code>. Algoritma mencari permutasi simpul <code className="text-sky-200 font-mono font-bold bg-[#062447] px-1 py-0.5 rounded">T = (v_1, v_2, ..., v_n, v_1)</code> yang meminimalkan total bobot jarak perjalanan.

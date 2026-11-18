@@ -8,17 +8,17 @@ export default function RealWorldSection() {
     {
       icon: Bus,
       title: 'Konektivitas Antar Fakultas',
-      desc: 'Menghubungkan Fakultas Kedokteran, Hukum, Fasilkom, hingga Gedung KPA tanpa ada satu pun gedung yang terlewat dalam sekali putaran shuttle.'
+      desc: 'Menghubungkan Fakultas Kedokteran, Hukum, Fasilkom, hingga Gedung KPA tanpa ada satu pun gedung yang terlewat dalam sekali putaran tur keliling kampus.'
     },
     {
       icon: Fuel,
       title: 'Efisiensi Jarak & Bahan Bakar',
-      desc: 'Optimasi 2-Opt memangkas persilangan jalan sehingga jarak tempuh kendaraan diminimalkan hingga jarak paling ekonomis.'
+      desc: 'Optimasi 2-Opt memangkas persilangan jalan sehingga total jarak tempuh diminimalkan hingga jarak paling ekonomis.'
     },
     {
       icon: Clock,
       title: 'Ketepatan Waktu Perjalanan',
-      desc: 'Jadwal putaran bus menjadi konsisten dan terprediksi, membantu mobilitas mahasiswa dan dosen yang berpindah ruang kuliah tepat waktu.'
+      desc: 'Waktu tempuh keliling menjadi konsisten dan terprediksi, mempercepat mobilitas antarfakultas dan distribusi logistik internal kampus.'
     }
   ];
 
@@ -32,7 +32,7 @@ export default function RealWorldSection() {
           Mengapa <span className="text-amber-400 font-serif italic">Optimasi Rute Kampus</span> Krusial?
         </h2>
         <p className="text-xs sm:text-sm text-blue-100/80 max-w-xl mx-auto leading-relaxed">
-          Dalam dunia nyata, pencarian rute tertutup terpendek (Traveling Salesperson Problem) menjadi fondasi efisiensi operasional armada transportasi publik.
+          Dalam dunia nyata, pencarian rute tertutup terpendek (Traveling Salesperson Problem) menjadi fondasi efisiensi operasional keliling kampus, logistik kurir, hingga transportasi publik.
         </p>
       </div>
 

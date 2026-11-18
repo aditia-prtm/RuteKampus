@@ -1,7 +1,7 @@
 /**
  * Kumpulan contoh graf untuk visualisasi Traveling Salesperson Problem (TSP).
  * Mendukung 2 jenis simpul:
- * - 'place': Gedung / Fakultas / Halte tujuan bus yang wajib dikunjungi tepat 1 kali.
+ * - 'place': Gedung / Fakultas tujuan yang wajib dikunjungi tepat 1 kali.
  * - 'waypoint': Persimpangan / Tikungan jalan sebagai penghubung rute jalan.
  */
 
@@ -9,12 +9,12 @@ export const SAMPLE_GRAPHS = [
   {
     id: 'unsri-palembang',
     name: 'Unsri Bukit Besar Palembang (Jaringan Jalan)',
-    description: 'Rute shuttle bus antar fakultas dan gedung di Kampus Unsri Bukit Besar melewati ruas jalan kampus.',
+    description: 'Rute tur keliling antar fakultas dan gedung di Kampus Unsri Bukit Besar melewati ruas jalan kampus.',
     isGeographic: true,
     initialCenter: [-2.9855, 104.7328],
     initialZoom: 17,
     nodes: [
-      // 1. Simpul Tempat / Gedung (Wajib Dikunjungi Bus)
+      // 1. Simpul Tempat / Gedung (Wajib Dikunjungi)
       { id: 'Terminal', label: 'Terminal / Gerbang Utama', type: 'place', lat: -2.9839, lng: 104.7312 },
       { id: 'FK', label: 'Fakultas Kedokteran', type: 'place', lat: -2.9848, lng: 104.7332 },
       { id: 'FH', label: 'Fakultas Hukum', type: 'place', lat: -2.9858, lng: 104.7345 },

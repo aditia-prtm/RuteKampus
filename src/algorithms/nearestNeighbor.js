@@ -25,8 +25,8 @@ export function solveNearestNeighbor(nodeIds, dist, startNode) {
 
   steps.push({
     type: 'nn-start',
-    title: 'Titik Awal Rute Bus Kampus',
-    explanation: `Perjalanan shuttle bus dimulai dari terminal/halte awal: [${start}].`,
+    title: 'Titik Awal Tur Kampus',
+    explanation: `Perjalanan tur keliling kampus dimulai dari titik awal: [${start}].`,
     highlight: { nodes: [start], edges: [] },
     pseudocodeLines: [1, 2],
     data: {
@@ -88,7 +88,7 @@ export function solveNearestNeighbor(nodeIds, dist, startNode) {
   steps.push({
     type: 'nn-complete',
     title: 'Siklus Hamilton Awal Selesai Terbentuk',
-    explanation: `Semua fakultas/gedung telah dikunjungi tepat satu kali. Bus kembali ke terminal awal [${start}] (+${returnDistance} m). Total jarak rute awal: ${Math.round(totalCost * 100) / 100} meter.`,
+    explanation: `Semua fakultas/gedung telah dikunjungi tepat satu kali. Rute kembali ke lokasi awal [${start}] (+${returnDistance} m). Total jarak rute awal: ${Math.round(totalCost * 100) / 100} meter.`,
     highlight: {
       nodes: tour,
       edges: tour.slice(0, -1).map((u, i) => `${u}-${tour[i + 1]}`)
