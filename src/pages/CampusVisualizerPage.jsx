@@ -21,6 +21,7 @@ export default function CampusVisualizerPage() {
   const [startNodeId, setStartNodeId] = useState('');
   const [copied, setCopied] = useState(false);
   const [editTool, setEditTool] = useState('place'); // 'place' | 'waypoint' | 'connect' | 'move' | 'delete'
+  const [algorithm, setAlgorithm] = useState('nearest-neighbor'); // 'nearest-neighbor' | 'brute-force'
 
   // Hook editor graf peta kampus
   const editor = useGraphEditor(campusPreset.nodes, campusPreset.edges || []);
@@ -36,6 +37,9 @@ export default function CampusVisualizerPage() {
   const placeNodes = currentGraph.nodes.filter((n) => n.type !== 'waypoint');
   const waypointNodes = currentGraph.nodes.filter((n) => n.type === 'waypoint');
 
+  // Pastikan algoritma kembali ke nearest-neighbor jika tempat > 8
+  const activeAlgorithm = placeNodes.length > 8 ? 'nearest-neighbor' : algorithm;
+
   // Pastikan simpul awal yang dipilih valid
   const effectiveStartNode = useMemo(() => {
     if (startNodeId && placeNodes.some((p) => p.id === startNodeId)) {
@@ -46,8 +50,8 @@ export default function CampusVisualizerPage() {
 
   // Eksekusi algoritma solveTSP murni
   const solverOutput = useMemo(() => {
-    return solveTSP(currentGraph, effectiveStartNode);
-  }, [currentGraph, effectiveStartNode]);
+    return solveTSP(currentGraph, effectiveStartNode, { algorithm: activeAlgorithm });
+  }, [currentGraph, effectiveStartNode, activeAlgorithm]);
 
   const stepPlayer = useStepPlayer(solverOutput.steps || [], 1200);
 
@@ -71,6 +75,8 @@ export default function CampusVisualizerPage() {
         edgeCount={currentGraph.edges.length}
         effectiveStartNode={effectiveStartNode}
         onStartNodeChange={setStartNodeId}
+        algorithm={activeAlgorithm}
+        onAlgorithmChange={setAlgorithm}
         isEditing={editor.isEditing}
         onToggleEdit={() => editor.setIsEditing(!editor.isEditing)}
         onCopyJSON={handleCopyJSON}

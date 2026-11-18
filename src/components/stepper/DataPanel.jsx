@@ -16,7 +16,7 @@ export default function DataPanel({ currentStep }) {
       {type === 'matrix' && data.distMatrix && (
         <div className="space-y-2 text-xs">
           <div className="flex items-center justify-between text-[11px] text-blue-200/80">
-            <span>Matriks Jarak Lengkap (Meter) Antar Seluruh Titik:</span>
+            <span>Matriks Sisi Langsung (Meter): <strong className="text-amber-300 font-normal">(- = Tidak ada jalan langsung)</strong></span>
             <span className="text-[10px] text-amber-300 sm:hidden font-medium">Geser ↔</span>
           </div>
           <div className="overflow-x-auto max-h-72 rounded-xl border border-blue-300/20 bg-[#062648]/85">
@@ -51,7 +51,157 @@ export default function DataPanel({ currentStep }) {
         </div>
       )}
 
-      {/* 2. Tipe: Nearest Neighbor Step */}
+      {/* 2. Tipe: Brute Force Summary */}
+      {type === 'bf-summary' && (
+        <div className="space-y-3 text-xs">
+          <div className="p-3.5 rounded-xl bg-blue-500/15 border border-blue-400/30 text-blue-200 space-y-1">
+            <div className="flex items-center gap-2 font-semibold text-white">
+              <Sparkles className="w-4 h-4 text-amber-400" />
+              <span>Persiapan Siklus Hamilton (Brute Force)</span>
+            </div>
+            <p className="text-blue-100/90 text-[11px] leading-relaxed">
+              Seluruh permutasi siklus Hamilton unik telah dihasilkan dan disiapkan dalam memori. Selanjutnya sistem akan memindai untuk menemukan rute dengan bobot jarak paling minimum.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 text-center">
+            <div className="p-2.5 rounded-xl bg-[#062648]/85 border border-blue-300/20">
+              <span className="text-[10px] text-blue-200/70 block">Jumlah Lokasi (n)</span>
+              <span className="text-sm font-bold text-white font-mono">{data.nodeCount} Lokasi</span>
+            </div>
+            <div className="p-2.5 rounded-xl bg-[#062648]/85 border border-blue-300/20">
+              <span className="text-[10px] text-blue-200/70 block">Total Rute Disiapkan</span>
+              <span className="text-sm font-bold text-amber-400 font-mono">{data.totalCycles} Rute</span>
+            </div>
+          </div>
+
+          {data.allCycles && data.allCycles.length > 0 && (
+            <div className="space-y-1.5 pt-2 border-t border-blue-300/15">
+              <div className="flex items-center justify-between text-[11px] text-blue-200/80">
+                <span>Daftar Siklus yang Disiapkan:</span>
+                <span className="text-[10px] text-blue-300/60 font-mono">15 Palet Warna</span>
+              </div>
+              <div className="max-h-48 overflow-y-auto space-y-1 pr-1 font-mono text-[11px]">
+                {data.allCycles.slice(0, 25).map((c) => (
+                  <div
+                    key={c.cycleIndex}
+                    className="p-1.5 rounded-lg border bg-[#062648]/60 border-blue-300/10 text-blue-100/80 flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-1.5 truncate mr-2">
+                      <span
+                        className="w-2.5 h-2.5 rounded-full shrink-0"
+                        style={{ backgroundColor: c.color }}
+                      />
+                      <span className="text-[10px] text-blue-300/70 shrink-0">#{c.cycleIndex}</span>
+                      <span className="truncate text-[10px]">{c.tour.join(' → ')}</span>
+                    </div>
+                    <span className="shrink-0 font-bold text-[10px]">{c.distance} m</span>
+                  </div>
+                ))}
+                {data.allCycles.length > 25 && (
+                  <div className="text-center py-1 text-[10px] text-blue-300/50 italic">
+                    + {data.allCycles.length - 25} rute lainnya telah disiapkan dalam memori algoritma
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 3. Tipe: Brute Force Cycle Inspection */}
+      {type === 'bf-cycle' && data.currentTour && (
+        <div className="space-y-3 text-xs">
+          <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#062648]/85 border border-blue-300/20">
+            <div className="flex items-center gap-2">
+              <span
+                className="w-3.5 h-3.5 rounded-full shrink-0 shadow-md"
+                style={{ backgroundColor: data.color }}
+              />
+              <span className="font-semibold text-white">
+                Rute #{data.cycleIndex} <span className="text-blue-200/60 font-normal">dari {data.totalCycles}</span>
+              </span>
+            </div>
+            {data.isNewRecord && (
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-400/25 border border-amber-400/50 text-amber-300">
+                🏆 Rekor Baru!
+              </span>
+            )}
+          </div>
+
+          <div>
+            <span className="text-[11px] text-blue-200/80 block mb-1 font-medium">
+              Urutan Jalur yang Diuji:
+            </span>
+            <div
+              className="p-2.5 bg-[#062648]/90 border rounded-xl font-mono text-xs leading-relaxed break-words"
+              style={{ borderColor: data.color, color: data.color }}
+            >
+              {data.currentTour.join(' → ')}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 text-center">
+            <div className="p-2.5 rounded-xl bg-[#062648]/85 border border-blue-300/20">
+              <span className="text-[10px] text-blue-200/70 block">Jarak Rute Ini</span>
+              <span className="text-sm font-bold text-white font-mono">{data.distance} m</span>
+            </div>
+            <div className="p-2.5 rounded-xl bg-amber-400/15 border border-amber-400/30">
+              <span className="text-[10px] text-amber-300 block font-medium">Rekor Terpendek</span>
+              <span className="text-sm font-bold text-amber-400 font-mono">
+                {data.bestDistance} m <span className="text-[10px] font-normal text-amber-200/80">(#{data.bestCycleIndex})</span>
+              </span>
+            </div>
+          </div>
+
+          {data.allCycles && data.allCycles.length > 0 && (
+            <div className="space-y-1.5 pt-2 border-t border-blue-300/15">
+              <div className="flex items-center justify-between text-[11px] text-blue-200/80">
+                <span>Daftar Rute Siklus Disiapkan:</span>
+                <span className="text-[10px] text-blue-300/60 font-mono">Total {data.totalCycles} rute</span>
+              </div>
+              <div className="max-h-36 overflow-y-auto space-y-1 pr-1 font-mono text-[11px]">
+                {data.allCycles.slice(0, 25).map((c) => {
+                  const isCurrent = c.cycleIndex === data.cycleIndex;
+                  const isBest = c.cycleIndex === data.bestCycleIndex;
+                  return (
+                    <div
+                      key={c.cycleIndex}
+                      className={`p-1.5 rounded-lg border flex items-center justify-between transition ${
+                        isCurrent
+                          ? 'bg-blue-500/25 border-blue-400 text-white font-semibold'
+                          : isBest
+                          ? 'bg-amber-400/15 border-amber-400/40 text-amber-300'
+                          : 'bg-[#062648]/60 border-blue-300/10 text-blue-100/70'
+                      }`}
+                    >
+                      <div className="flex items-center gap-1.5 truncate mr-2">
+                        <span
+                          className="w-2.5 h-2.5 rounded-full shrink-0"
+                          style={{ backgroundColor: c.color }}
+                        />
+                        <span className="text-[10px] text-blue-300/70 shrink-0">#{c.cycleIndex}</span>
+                        <span className="truncate text-[10px]">{c.tour.join(' → ')}</span>
+                      </div>
+                      <div className="shrink-0 text-right">
+                        <span className="font-bold text-[10px]">{c.distance} m</span>
+                        {isBest && <span className="ml-1 text-[9px] text-amber-300 font-sans">🏆</span>}
+                      </div>
+                    </div>
+                  );
+                })}
+                {data.allCycles.length > 25 && (
+                  <div className="text-center py-1 text-[10px] text-blue-300/50 italic">
+                    + {data.allCycles.length - 25} rute lainnya telah disiapkan dalam memori algoritma
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 4. Tipe: Nearest Neighbor Step */}
       {type === 'nn-step' && data.candidates && (
         <div className="space-y-3 text-xs">
           <div className="flex items-center justify-between p-3 rounded-xl bg-[#062648]/85 border border-blue-300/20 text-xs">
@@ -133,18 +283,31 @@ export default function DataPanel({ currentStep }) {
             </div>
           </div>
 
-          {type === 'result' && (
+          {type === 'result' && data.algorithm === 'brute-force' && (
             <div className="grid grid-cols-3 gap-1.5 sm:gap-2 pt-2 border-t border-blue-300/20 text-center">
               <div className="p-2 sm:p-2.5 rounded-xl bg-[#062648]/85 border border-blue-300/20">
-                <span className="text-[10px] text-blue-200/70 block">Rute Awal</span>
-                <span className="text-[11px] sm:text-sm font-bold text-blue-100 font-mono">{data.initialWeight} m</span>
+                <span className="text-[10px] text-blue-200/70 block">Total Rute</span>
+                <span className="text-[11px] sm:text-sm font-bold text-blue-100 font-mono">{data.totalCycles} Siklus</span>
               </div>
-              <div className="p-2 sm:p-2.5 rounded-xl bg-amber-400/15 border border-amber-400/30">
-                <span className="text-[10px] text-amber-300 block font-medium">Hemat 2-Opt</span>
-                <span className="text-[11px] sm:text-sm font-bold text-amber-400 font-mono">-{data.savedWeight} m</span>
+              <div className="p-2 sm:p-2.5 rounded-xl bg-purple-500/15 border border-purple-400/30">
+                <span className="text-[10px] text-purple-300 block font-medium">Juara Terpendek</span>
+                <span className="text-[11px] sm:text-sm font-bold text-purple-300 font-mono">Rute #{data.bestCycleIndex}</span>
               </div>
               <div className="p-2 sm:p-2.5 rounded-xl bg-amber-400 text-slate-950 font-bold shadow-md shadow-black/25">
-                <span className="text-[10px] text-slate-900 block font-semibold">Jarak Optimal</span>
+                <span className="text-[10px] text-slate-900 block font-semibold">100% Minimum</span>
+                <span className="text-[11px] sm:text-sm font-extrabold font-mono">{data.totalWeight} m</span>
+              </div>
+            </div>
+          )}
+
+          {type === 'result' && data.algorithm !== 'brute-force' && (
+            <div className="grid grid-cols-2 gap-1.5 sm:gap-2 pt-2 border-t border-blue-300/20 text-center">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-[#062648]/85 border border-blue-300/20">
+                <span className="text-[10px] text-blue-200/70 block">Metode</span>
+                <span className="text-[11px] sm:text-sm font-bold text-blue-100">Nearest Neighbor</span>
+              </div>
+              <div className="p-2 sm:p-2.5 rounded-xl bg-amber-400 text-slate-950 font-bold shadow-md shadow-black/25">
+                <span className="text-[10px] text-slate-900 block font-semibold">Total Jarak</span>
                 <span className="text-[11px] sm:text-sm font-extrabold font-mono">{data.totalWeight} m</span>
               </div>
             </div>

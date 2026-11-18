@@ -262,6 +262,8 @@ export default function InteractiveGraphCanvas({
           let badgeStroke = '#1e4976';
           let badgeTextColor = '#94a3b8';
 
+          const stepColor = currentStep?.data?.color || '#10b981';
+
           if (isDeleteMode) {
             strokeColor = '#f43f5e';
             strokeWidth = 4;
@@ -269,7 +271,7 @@ export default function InteractiveGraphCanvas({
             badgeFill = '#881337';
             badgeStroke = '#f43f5e';
             badgeTextColor = '#fecdd3';
-          } else if (isHighlighted) {
+          } else if (isHighlighted && !isTourEdge) {
             strokeColor = '#f59e0b';
             strokeWidth = 5;
             strokeOpacity = 1;
@@ -277,12 +279,12 @@ export default function InteractiveGraphCanvas({
             badgeStroke = '#f59e0b';
             badgeTextColor = '#fef08a';
           } else if (isTourEdge) {
-            strokeColor = '#10b981';
-            strokeWidth = 4;
+            strokeColor = stepColor;
+            strokeWidth = 4.5;
             strokeOpacity = 0.95;
-            badgeFill = '#064e3b';
-            badgeStroke = '#10b981';
-            badgeTextColor = '#a7f3d0';
+            badgeFill = '#062648';
+            badgeStroke = stepColor;
+            badgeTextColor = '#ffffff';
           }
 
           return (
@@ -341,7 +343,7 @@ export default function InteractiveGraphCanvas({
           );
         })}
 
-        {/* 2. Rute Siklus Hamilton yang Aktif (Garis Hijau) */}
+        {/* 2. Rute Siklus Hamilton yang Aktif */}
         {currentTourNodes.length > 1 &&
           currentTourNodes.slice(0, -1).map((uId, idx) => {
             const u = nodeMap.get(uId);
@@ -355,7 +357,7 @@ export default function InteractiveGraphCanvas({
                 y1={u.y}
                 x2={v.x}
                 y2={v.y}
-                stroke="#10b981"
+                stroke={currentStep?.data?.color || '#10b981'}
                 strokeWidth={4.5}
                 strokeLinecap="round"
                 opacity={0.9}
@@ -372,7 +374,7 @@ export default function InteractiveGraphCanvas({
           const isDragging = draggingId === node.id;
 
           let color = '#3b82f6';
-          if (isVisited) color = '#10b981';
+          if (isVisited) color = currentStep?.data?.color || '#10b981';
           if (isHighlighted) color = '#f59e0b';
           if (isSelected) color = '#38bdf8';
           if (isDeleteMode) color = '#f43f5e';

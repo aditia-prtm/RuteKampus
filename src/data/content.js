@@ -31,25 +31,32 @@ export const APP_INFO = {
 };
 
 export const PSEUDOCODE = [
-  { line: 1, text: 'function solveTSP(locations, startNode):' },
+  { line: 1, text: 'function solveTSP_NearestNeighbor(locations, startNode):' },
   { line: 2, text: '  distMatrix = computeDistanceMatrix(locations)' },
-  { line: 3, text: '  // Tahap 1: Konstruksi Rute Awal (Greedy / Nearest Neighbor)' },
-  { line: 4, text: '  current = startNode; tour = [startNode]' },
-  { line: 5, text: '  while unvisited locations exist:' },
-  { line: 6, text: '    next = nearestUnvisited(current, distMatrix)' },
-  { line: 7, text: '    tour.append(next); current = next' },
-  { line: 8, text: '  tour.append(startNode) // Kembali ke titik awal' },
-  { line: 9, text: '  // Tahap 2: Optimasi Lokal (2-Opt Edge Swap)' },
-  { line: 10, text: '  while edges cross and swap improves distance:' },
-  { line: 11, text: '    tour = swapEdges(tour) // Memperpendek rute' },
-  { line: 12, text: '  return tour, totalDistance' }
+  { line: 3, text: '  current = startNode; tour = [startNode]' },
+  { line: 4, text: '  while unvisited locations exist:' },
+  { line: 5, text: '    next = nearestUnvisited(current, distMatrix)' },
+  { line: 6, text: '    tour.append(next); current = next' },
+  { line: 7, text: '  tour.append(startNode) // Kembali ke titik awal' },
+  { line: 8, text: '  return tour, totalDistance' }
+];
+
+export const PSEUDOCODE_BRUTE_FORCE = [
+  { line: 1, text: 'function solveTSP_BruteForce(graph, startNode):' },
+  { line: 2, text: '  cycles = findHamiltonianCyclesOnGraph(graph, startNode)' },
+  { line: 3, text: '  minDistance = Infinity; bestTour = null' },
+  { line: 4, text: '  for each cycle in cycles:' },
+  { line: 5, text: '    currentDist = calculateCycleDistance(cycle)' },
+  { line: 6, text: '    if currentDist < minDistance:' },
+  { line: 7, text: '      minDistance = currentDist; bestTour = cycle' },
+  { line: 8, text: '  return bestTour, minDistance // 100% Minimum Optimal' }
 ];
 
 export const STEP_EXPLANATIONS = {
   matrix: {
-    badge: 'Langkah 1: Matriks Jarak',
-    concept: 'Representasi Graf Berbobot Lengkap',
-    detail: 'Menghitung matriks jarak berpasangan antar seluruh fakultas dan gedung di Kampus Unsri Palembang.'
+    badge: 'Langkah 1: Matriks Sisi Graf',
+    concept: 'Matriks Ketetanggaan Sisi Berbobot',
+    detail: 'Menampilkan bobot jarak untuk setiap pasangan simpul yang terhubung langsung oleh sisi jalan pada graf.'
   },
   'nn-start': {
     badge: 'Langkah 2: Titik Awal',
@@ -58,22 +65,32 @@ export const STEP_EXPLANATIONS = {
   },
   'nn-step': {
     badge: 'Langkah 3: Heuristik Greedy',
-    concept: 'Pemilihan Lokasi Terdekat (Nearest Neighbor)',
-    detail: 'Algoritma selalu memilih fakultas terdekat berikutnya yang belum pernah dikunjungi untuk meminimalkan jarak lokal.'
+    concept: 'Pemilihan Sisi Terdekat (Nearest Neighbor)',
+    detail: 'Algoritma memilih simpul tetangga terdekat berikutnya yang terhubung langsung oleh sisi jalan dan belum dikunjungi.'
   },
   'nn-complete': {
     badge: 'Langkah 4: Rute Awal',
     concept: 'Siklus Hamilton Terbentuk',
-    detail: 'Seluruh fakultas telah dikunjungi, rute kembali ke titik awal untuk melengkapi putaran.'
+    detail: 'Seluruh fakultas telah dikunjungi, rute kembali ke titik awal lewat sisi langsung untuk melengkapi putaran.'
   },
   'two-opt-step': {
     badge: 'Langkah 5: Optimasi 2-Opt',
     concept: 'Penyempurnaan Lokal (Untangling Edges)',
     detail: 'Memotong dua sisi yang saling bersilangan dan menyambungkannya kembali secara paralel untuk memangkas jarak tempuh.'
   },
+  'bf-summary': {
+    badge: 'Brute Force: Penemuan Siklus',
+    concept: 'Penelusuran Sisi Graf (Backtracking / DFS)',
+    detail: 'Menelusuri seluruh jalur sisi yang ada di graf untuk menemukan seluruh Siklus Hamilton nyata yang valid.'
+  },
+  'bf-cycle': {
+    badge: 'Brute Force: Uji Rute',
+    concept: 'Evaluasi Bobot Jarak & Pembaruan Rekor',
+    detail: 'Menguji setiap rute siklus yang ditemukan dan melacak rute dengan bobot jarak paling minimum.'
+  },
   result: {
-    badge: 'Langkah 6: Hasil Optimal',
+    badge: 'Langkah Terakhir: Hasil Optimal',
     concept: 'Siklus Hamilton Terpendek (TSP)',
-    detail: 'Rute optimal final tur kampus beserta total jarak dan penghematan jarak dari optimasi.'
+    detail: 'Rute optimal final tur kampus beserta total jarak minimum yang berhasil ditemukan.'
   }
 };

@@ -1,19 +1,23 @@
 /**
- * Konstruksi rute awal TSP menggunakan Heuristik Greedy / Nearest Neighbor.
- * Menghasilkan data langkah demi langkah untuk visualisasi.
+ * Konstruksi rute awal TSP menggunakan Heuristik Greedy / Nearest Neighbor
+ * HANYA pada sisi-sisi (edges) yang terhubung langsung di graf.
  *
- * @param {string[]} nodeIds
- * @param {Record<string, Record<string, number>>} dist
- * @param {string} startNode
+ * @param {string[]} nodeIds - Seluruh simpul target
+ * @param {Record<string, string[]>} adj - Daftar tetangga langsung
+ * @param {Record<string, number>} edgeWeights - Bobot sisi langsung u-v
+ * @param {string} startNode - Simpul awal
  * @returns {{
+ *   ok: boolean,
  *   tour: string[],
  *   totalCost: number,
- *   steps: Array<any>
+ *   steps: Array<any>,
+ *   error?: string,
+ *   code?: string
  * }}
  */
-export function solveNearestNeighbor(nodeIds, dist, startNode) {
+export function solveNearestNeighborStrict(nodeIds, adj, edgeWeights, startNode) {
   if (!nodeIds || nodeIds.length === 0) {
-    return { tour: [], totalCost: 0, steps: [] };
+    return { ok: false, tour: [], totalCost: 0, steps: [] };
   }
 
   const start = nodeIds.includes(startNode) ? startNode : nodeIds[0];
@@ -28,7 +32,7 @@ export function solveNearestNeighbor(nodeIds, dist, startNode) {
     title: 'Titik Awal Tur Kampus',
     explanation: `Perjalanan tur keliling kampus dimulai dari titik awal: [${start}].`,
     highlight: { nodes: [start], edges: [] },
-    pseudocodeLines: [1, 2],
+    pseudocodeLines: [2, 3],
     data: {
       current,
       visited: [...tour],
@@ -38,38 +42,47 @@ export function solveNearestNeighbor(nodeIds, dist, startNode) {
   });
 
   while (unvisited.size > 0) {
-    let nearestNode = null;
-    let minDistance = Infinity;
-    const candidates = [];
+    const rawNeighbors = adj[current] || [];
+    const directUnvisited = rawNeighbors.filter(nbr => unvisited.has(nbr));
 
-    for (const candidate of unvisited) {
-      const d = dist[current]?.[candidate] ?? Infinity;
-      candidates.push({ node: candidate, distance: d });
-      if (d < minDistance) {
-        minDistance = d;
-        nearestNode = candidate;
-      }
+    if (directUnvisited.length === 0) {
+      return {
+        ok: false,
+        error: `Heuristik Greedy terhenti pada simpul [${current}] karena tidak memiliki sisi jalan langsung ke lokasi yang belum dikunjungi (${Array.from(unvisited).join(', ')}).`,
+        code: 'GREEDY_STUCK'
+      };
     }
 
-    candidates.sort((a, b) => a.distance - b.distance);
+    const candidates = directUnvisited.map(nbr => {
+      const key = current < nbr ? `${current}-${nbr}` : `${nbr}-${current}`;
+      return {
+        node: nbr,
+        distance: edgeWeights[key] ?? Infinity
+      };
+    });
 
-    totalCost += minDistance;
-    tour.push(nearestNode);
-    unvisited.delete(nearestNode);
+    candidates.sort((a, b) => a.distance - b.distance);
+    const chosen = candidates[0];
+
+    totalCost += chosen.distance;
+    tour.push(chosen.node);
+    unvisited.delete(chosen.node);
+
+    const edgeKey = current < chosen.node ? `${current}-${chosen.node}` : `${chosen.node}-${current}`;
 
     steps.push({
       type: 'nn-step',
-      title: `Kunjungan Halte Terdekat: ${nearestNode}`,
-      explanation: `Dari [${current}], lokasi terdekat yang belum dikunjungi adalah [${nearestNode}] dengan jarak ${minDistance} meter.`,
+      title: `Pilih Sisi Terdekat: Menuju [${chosen.node}]`,
+      explanation: `Dari [${current}], tetangga terhubung langsung yang terdekat adalah [${chosen.node}] dengan jarak ${chosen.distance} meter.`,
       highlight: {
-        nodes: [current, nearestNode],
-        edges: [`${current}-${nearestNode}`]
+        nodes: [current, chosen.node],
+        edges: [edgeKey]
       },
-      pseudocodeLines: [3, 4],
+      pseudocodeLines: [4, 5, 6],
       data: {
         from: current,
-        to: nearestNode,
-        distance: minDistance,
+        to: chosen.node,
+        distance: chosen.distance,
         candidates,
         visited: [...tour],
         unvisited: Array.from(unvisited),
@@ -77,35 +90,55 @@ export function solveNearestNeighbor(nodeIds, dist, startNode) {
       }
     });
 
-    current = nearestNode;
+    current = chosen.node;
   }
 
-  // Kembali ke titik awal
-  const returnDistance = dist[current]?.[start] ?? 0;
-  totalCost += returnDistance;
+  // Cek sisi kembali ke titik awal
+  const startNeighbors = adj[current] || [];
+  if (!startNeighbors.includes(start)) {
+    return {
+      ok: false,
+      error: `Seluruh lokasi telah dikunjungi, namun simpul terakhir [${current}] tidak memiliki sisi langsung untuk kembali ke titik awal [${start}].`,
+      code: 'NO_RETURN_EDGE'
+    };
+  }
+
+  const returnKey = current < start ? `${current}-${start}` : `${start}-${current}`;
+  const returnDist = edgeWeights[returnKey] ?? 0;
+  totalCost += returnDist;
   tour.push(start);
+
+  const tourEdges = [];
+  for (let i = 0; i < tour.length - 1; i++) {
+    const u = tour[i];
+    const v = tour[i + 1];
+    tourEdges.push(u < v ? `${u}-${v}` : `${v}-${u}`);
+  }
 
   steps.push({
     type: 'nn-complete',
-    title: 'Siklus Hamilton Awal Selesai Terbentuk',
-    explanation: `Semua fakultas/gedung telah dikunjungi tepat satu kali. Rute kembali ke lokasi awal [${start}] (+${returnDistance} m). Total jarak rute awal: ${Math.round(totalCost * 100) / 100} meter.`,
+    title: 'Siklus Hamilton Terbentuk',
+    explanation: `Semua fakultas/gedung telah dikunjungi tepat satu kali lewat sisi-sisi yang ada. Rute kembali ke titik awal [${start}] (+${returnDist} m). Total jarak rute: ${Math.round(totalCost * 100) / 100} meter.`,
     highlight: {
       nodes: tour,
-      edges: tour.slice(0, -1).map((u, i) => `${u}-${tour[i + 1]}`)
+      edges: tourEdges
     },
-    pseudocodeLines: [5, 6],
+    pseudocodeLines: [7],
     data: {
       from: current,
       to: start,
-      distance: returnDistance,
-      tour: [...tour],
-      totalCost: Math.round(totalCost * 100) / 100
+      distance: returnDist,
+      tour,
+      tourEdges,
+      currentCost: Math.round(totalCost * 100) / 100
     }
   });
 
   return {
+    ok: true,
     tour,
     totalCost: Math.round(totalCost * 100) / 100,
+    tourEdges,
     steps
   };
 }

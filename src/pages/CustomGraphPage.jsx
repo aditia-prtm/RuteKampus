@@ -69,6 +69,7 @@ export default function CustomGraphPage() {
   const [currentMode, setCurrentMode] = useState('add-node'); // 'add-node' | 'add-edge' | 'drag' | 'delete'
   const [selectedNodeForEdge, setSelectedNodeForEdge] = useState(null);
   const [startNodeId, setStartNodeId] = useState('A');
+  const [algorithm, setAlgorithm] = useState('nearest-neighbor'); // 'nearest-neighbor' | 'brute-force'
 
   // Tambah simpul baru
   const handleAddNode = useCallback((x, y) => {
@@ -165,10 +166,11 @@ export default function CustomGraphPage() {
 
   // Jalankan algoritma solveTSP
   const currentGraph = useMemo(() => ({ nodes, edges }), [nodes, edges]);
+  const activeAlgorithm = nodes.length > 8 ? 'nearest-neighbor' : algorithm;
 
   const solverOutput = useMemo(() => {
-    return solveTSP(currentGraph, effectiveStartNode);
-  }, [currentGraph, effectiveStartNode]);
+    return solveTSP(currentGraph, effectiveStartNode, { algorithm: activeAlgorithm });
+  }, [currentGraph, effectiveStartNode, activeAlgorithm]);
 
   const stepPlayer = useStepPlayer(solverOutput.steps || [], 1200);
 
@@ -181,6 +183,8 @@ export default function CustomGraphPage() {
         nodes={nodes}
         effectiveStartNode={effectiveStartNode}
         onStartNodeChange={setStartNodeId}
+        algorithm={activeAlgorithm}
+        onAlgorithmChange={setAlgorithm}
         onSelectPreset={handleSelectPreset}
         onConnectAll={handleConnectAll}
         onClear={handleClear}

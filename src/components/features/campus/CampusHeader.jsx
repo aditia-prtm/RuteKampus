@@ -8,6 +8,8 @@ export default function CampusHeader({
   edgeCount,
   effectiveStartNode,
   onStartNodeChange,
+  algorithm = 'nearest-neighbor',
+  onAlgorithmChange,
   isEditing,
   onToggleEdit,
   onCopyJSON,
@@ -58,6 +60,46 @@ export default function CampusHeader({
             ))}
           </select>
         </div>
+
+        {/* Pilihan Algoritma: Nearest Neighbor vs Brute Force */}
+        {onAlgorithmChange && (
+          <div className="flex items-center gap-1 bg-[#062648]/85 p-1 rounded-xl border border-blue-300/25 w-full sm:w-auto justify-center">
+            <button
+              type="button"
+              onClick={() => onAlgorithmChange('nearest-neighbor')}
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                algorithm === 'nearest-neighbor'
+                  ? 'bg-amber-400 text-slate-950 font-bold shadow-sm'
+                  : 'text-blue-200 hover:text-white'
+              }`}
+              title="Heuristik Greedy (Cepat, efisien untuk n > 8)"
+            >
+              Nearest Neighbor
+            </button>
+            <button
+              type="button"
+              disabled={placeNodes.length > 8}
+              onClick={() => onAlgorithmChange('brute-force')}
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 ${
+                algorithm === 'brute-force'
+                  ? 'bg-amber-400 text-slate-950 font-bold shadow-sm'
+                  : placeNodes.length > 8
+                  ? 'text-blue-300/40 cursor-not-allowed opacity-60'
+                  : 'text-blue-200 hover:text-white cursor-pointer'
+              }`}
+              title={
+                placeNodes.length > 8
+                  ? `Brute Force dinonaktifkan (n = ${placeNodes.length} > 8) untuk mencegah browser crash`
+                  : 'Brute Force Eksak (100% Minimum mutlak, mencoba semua siklus)'
+              }
+            >
+              <span>Brute Force</span>
+              {placeNodes.length > 8 && (
+                <span className="text-[9px] bg-rose-500/25 text-rose-300 px-1 py-0.5 rounded font-mono">n&gt;8</span>
+              )}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Aksi: Kelola Peta, Salin JSON, Reset */}

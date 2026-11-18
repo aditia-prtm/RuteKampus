@@ -45,12 +45,12 @@ function MapLockController({ isLocked }) {
 }
 
 // Buat custom circular pin icon untuk Leaflet Marker agar mendukung draggable
-function createNodeIcon(isWaypoint, isStartNode, isHighlighted, isSelectedForEdge, isDeleteMode, isInTour) {
+function createNodeIcon(isWaypoint, isStartNode, isHighlighted, isSelectedForEdge, isDeleteMode, isInTour, tourColor = '#10b981') {
   let bg = isWaypoint ? '#64748b' : '#2563eb';
   if (isStartNode) bg = '#8b5cf6';
   else if (isHighlighted) bg = '#f59e0b';
   else if (isSelectedForEdge) bg = '#38bdf8';
-  else if (isInTour && !isWaypoint) bg = '#10b981';
+  else if (isInTour && !isWaypoint) bg = tourColor;
   else if (isDeleteMode) bg = '#f43f5e';
 
   const size = isWaypoint ? 12 : isStartNode || isSelectedForEdge ? 22 : 18;
@@ -339,16 +339,18 @@ export default function LeafletMapView({
           let strokeWeight = 3.5;
           let strokeOpacity = 0.5;
 
+          const stepColor = currentStep?.data?.color || '#10b981';
+
           if (isDeleteMode) {
             strokeColor = '#f43f5e';
             strokeWeight = 5;
             strokeOpacity = 0.85;
-          } else if (isHighlighted) {
+          } else if (isHighlighted && !isTourEdge) {
             strokeColor = '#f59e0b';
             strokeWeight = 6;
             strokeOpacity = 1;
           } else if (isTourEdge) {
-            strokeColor = '#10b981';
+            strokeColor = stepColor;
             strokeWeight = 4.5;
             strokeOpacity = 0.95;
           }
@@ -376,7 +378,7 @@ export default function LeafletMapView({
                   <strong>Jalan: {u.label || u.id} ↔ {v.label || v.id}</strong>
                   <div>Jarak: <span className="font-mono font-bold">{formatDist(weight)}</span></div>
                   {isHighlighted && <div className="text-amber-500 font-bold">● Sedang Diperiksa / Aktif</div>}
-                  {isTourEdge && !isHighlighted && <div className="text-emerald-500 font-bold">✓ Bagian Rute Tur Kampus</div>}
+                  {isTourEdge && !isHighlighted && <div className="font-bold" style={{ color: stepColor }}>✓ Bagian Rute Tur Kampus</div>}
                   {isDeleteMode && <div className="text-rose-600 font-bold">Klik untuk hapus jalan</div>}
                 </div>
               </Tooltip>
@@ -407,7 +409,7 @@ export default function LeafletMapView({
           <Polyline
             positions={tourPolylinePositions}
             pathOptions={{
-              color: '#10b981',
+              color: currentStep?.data?.color || '#10b981',
               weight: 5.5,
               opacity: 0.95,
               lineCap: 'round',
@@ -415,7 +417,7 @@ export default function LeafletMapView({
             }}
           >
             <Tooltip sticky>
-              <div className="font-sans text-xs font-bold text-emerald-700">
+              <div className="font-sans text-xs font-bold" style={{ color: currentStep?.data?.color || '#10b981' }}>
                 Rute Tur Keliling Kampus ({tourPolylinePositions.length} Titik)
               </div>
             </Tooltip>
@@ -432,6 +434,7 @@ export default function LeafletMapView({
           const isStartNode = startNodeId === node.id;
           const isInTour = currentTourNodes.includes(node.id);
           const isDeleteMode = isEditing && editTool === 'delete';
+          const stepColor = currentStep?.data?.color || '#10b981';
 
           const icon = createNodeIcon(
             isWaypoint,
@@ -439,7 +442,8 @@ export default function LeafletMapView({
             isHighlighted,
             isSelectedForEdge,
             isDeleteMode,
-            isInTour
+            isInTour,
+            stepColor
           );
 
           // Simpul bisa di-drag saat mode edit aktif

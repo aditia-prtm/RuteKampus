@@ -1,19 +1,26 @@
 import React from 'react';
-import { PSEUDOCODE } from '../../data/content.js';
+import { PSEUDOCODE, PSEUDOCODE_BRUTE_FORCE } from '../../data/content.js';
 import { Code2 } from 'lucide-react';
 
 export default function PseudocodePanel({ currentStep }) {
+  const isBruteForce = currentStep?.type?.startsWith('bf-') || currentStep?.data?.algorithm === 'brute-force';
   const activeLines = currentStep?.pseudocodeLines || [];
+  const codeList = isBruteForce ? PSEUDOCODE_BRUTE_FORCE : PSEUDOCODE;
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-2 pb-2 border-b border-blue-300/20 text-xs font-semibold text-blue-100">
-        <Code2 className="w-4 h-4 text-amber-400" />
-        <span>Pseudocode Logika TSP</span>
+      <div className="flex items-center justify-between pb-2 border-b border-blue-300/20 text-xs font-semibold text-blue-100">
+        <div className="flex items-center gap-2">
+          <Code2 className="w-4 h-4 text-amber-400" />
+          <span>Pseudocode {isBruteForce ? 'Brute Force' : 'Nearest Neighbor'}</span>
+        </div>
+        <span className="text-[10px] text-blue-200/60 font-mono">
+          {isBruteForce ? 'O(n!)' : 'O(n²)'}
+        </span>
       </div>
 
       <div className="font-mono text-xs space-y-1 overflow-x-auto bg-[#062648]/85 p-3 rounded-xl border border-blue-300/20 max-h-80">
-        {PSEUDOCODE.map((item) => {
+        {codeList.map((item) => {
           const isActive = activeLines.includes(item.line);
           return (
             <div
