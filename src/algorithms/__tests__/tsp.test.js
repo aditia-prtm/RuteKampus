@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { solveTSP } from '../solveTSP.js';
 import { SAMPLE_GRAPHS } from '../../data/sampleGraphs.js';
 
-describe('Traveling Salesperson Problem (TSP) - Topologi Sisi Graf Murni', () => {
-  it('1. Segitiga A-B-C -> Siklus Hamilton melewati 3 simpul dan kembali ke awal (1 siklus)', () => {
+describe('Traveling Salesperson Problem (TSP) - Nearest Neighbor Heuristic', () => {
+  it('1. Segitiga A-B-C -> Siklus Hamilton melewati 3 simpul dan kembali ke awal', () => {
     const graph = {
       nodes: [
         { id: 'A', x: 0, y: 0 },
@@ -17,37 +17,15 @@ describe('Traveling Salesperson Problem (TSP) - Topologi Sisi Graf Murni', () =>
       ]
     };
 
-    const res = solveTSP(graph, 'A', { algorithm: 'brute-force' });
+    const res = solveTSP(graph, 'A');
     expect(res.ok).toBe(true);
-    expect(res.result.totalCycles).toBe(1);
-    expect(res.result.totalWeight).toBe(30);
+    expect(res.result.tour.length).toBe(4);
     expect(res.result.tour[0]).toBe('A');
     expect(res.result.tour[res.result.tour.length - 1]).toBe('A');
+    expect(res.result.totalWeight).toBe(30);
   });
 
-  it('2. Persegi A-B-C-D hanya dengan sisi keliling -> Tepat 1 Siklus Hamilton', () => {
-    const graph = {
-      nodes: [
-        { id: 'A', x: 0, y: 0 },
-        { id: 'B', x: 10, y: 0 },
-        { id: 'C', x: 10, y: 10 },
-        { id: 'D', x: 0, y: 10 }
-      ],
-      edges: [
-        { from: 'A', to: 'B', weight: 10 },
-        { from: 'B', to: 'C', weight: 10 },
-        { from: 'C', to: 'D', weight: 10 },
-        { from: 'D', to: 'A', weight: 10 }
-      ]
-    };
-
-    const res = solveTSP(graph, 'A', { algorithm: 'brute-force' });
-    expect(res.ok).toBe(true);
-    expect(res.result.totalCycles).toBe(1);
-    expect(res.result.totalWeight).toBe(40);
-  });
-
-  it('3. Graf Lengkap K4 (Persegi + 2 Diagonal) -> Menghasilkan tepat 3 Siklus Hamilton', () => {
+  it('2. Persegi A-B-C-D -> Menghasilkan Siklus Hamilton valid', () => {
     const graph = {
       nodes: [
         { id: 'A', x: 0, y: 0 },
@@ -60,42 +38,60 @@ describe('Traveling Salesperson Problem (TSP) - Topologi Sisi Graf Murni', () =>
         { from: 'B', to: 'C', weight: 10 },
         { from: 'C', to: 'D', weight: 10 },
         { from: 'D', to: 'A', weight: 10 },
-        { from: 'A', to: 'C', weight: 20 },
-        { from: 'B', to: 'D', weight: 20 }
+        { from: 'A', to: 'C', weight: 14.14 },
+        { from: 'B', to: 'D', weight: 14.14 }
       ]
     };
 
-    const res = solveTSP(graph, 'A', { algorithm: 'brute-force' });
+    const res = solveTSP(graph, 'A');
     expect(res.ok).toBe(true);
-    expect(res.result.totalCycles).toBe(3); // Tepat 3 siklus di K4
-    expect(res.result.totalWeight).toBe(40); // Siklus keliling paling minimum
+    expect(res.result.tour.length).toBe(5);
+    expect(res.result.tour[0]).toBe('A');
+    expect(res.result.tour[res.result.tour.length - 1]).toBe('A');
   });
 
-  it('4. Error jika simpul buntu/derajat < 2 (NODE_DEGREE_TOO_LOW)', () => {
+  it('3. Error jika kurang dari 3 simpul (TOO_FEW_NODES)', () => {
     const graph = {
       nodes: [
         { id: 'A', x: 0, y: 0 },
-        { id: 'B', x: 10, y: 0 },
-        { id: 'C', x: 5, y: 10 }
+        { id: 'B', x: 10, y: 0 }
       ],
       edges: [
-        { from: 'A', to: 'B', weight: 10 },
-        { from: 'B', to: 'C', weight: 10 },
         { from: 'A', to: 'B', weight: 10 }
       ]
     };
 
     const res = solveTSP(graph, 'A');
     expect(res.ok).toBe(false);
-    expect(res.code).toBe('NODE_DEGREE_TOO_LOW');
+    expect(res.code).toBe('TOO_FEW_NODES');
   });
 
-  it('5. Graf Kampus Unsri Palembang -> Menghasilkan tepat 6 Siklus Hamilton nyata pada sisi jalan', () => {
-    const res = solveTSP(SAMPLE_GRAPHS[0], 'Terminal', { algorithm: 'brute-force' });
+  it('4. Error jika ada simpul yang terputus / terisolasi (DISCONNECTED_TARGETS)', () => {
+    const graph = {
+      nodes: [
+        { id: 'A', x: 0, y: 0 },
+        { id: 'B', x: 10, y: 0 },
+        { id: 'C', x: 20, y: 0 }
+      ],
+      edges: [
+        { from: 'A', to: 'B', weight: 10 }
+        // C terisolasi
+      ]
+    };
+
+    const res = solveTSP(graph, 'A');
+    expect(res.ok).toBe(false);
+    expect(res.code).toBe('DISCONNECTED_TARGETS');
+  });
+
+  it('5. Peta Kampus Unsri Palembang -> Berhasil menghasilkan rute tur keliling kampus', () => {
+    const res = solveTSP(SAMPLE_GRAPHS[0], 'Terminal');
     expect(res.ok).toBe(true);
-    expect(res.result.totalCycles).toBe(6);
-    expect(res.result.totalWeight).toBe(1284.7);
+    expect(res.result.algorithm).toBe('nearest-neighbor');
+    expect(res.result.tour.length).toBe(12); // 11 tempat (Terminal + 10 Gedung) + kembali ke awal = 12 titik
     expect(res.result.tour[0]).toBe('Terminal');
     expect(res.result.tour[res.result.tour.length - 1]).toBe('Terminal');
+    expect(res.result.fullTour.length).toBeGreaterThan(12); // melewati waypoints jalan fisik
+    expect(res.result.totalWeight).toBeGreaterThan(0);
   });
 });

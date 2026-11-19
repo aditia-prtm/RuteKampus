@@ -60,7 +60,7 @@ const PRESETS = {
 
 /**
  * CustomGraphPage
- * Sandbox pembuatan graf kustom interaktif (Simpul, Sisi Berbobot, 2-Opt TSP).
+ * Sandbox pembuatan graf kustom interaktif (Simpul, Sisi Berbobot, Nearest Neighbor TSP).
  * Direfactor dengan arsitektur fitur modular dan styling selaras Hero.
  */
 export default function CustomGraphPage() {
@@ -69,7 +69,6 @@ export default function CustomGraphPage() {
   const [currentMode, setCurrentMode] = useState('add-node'); // 'add-node' | 'add-edge' | 'drag' | 'delete'
   const [selectedNodeForEdge, setSelectedNodeForEdge] = useState(null);
   const [startNodeId, setStartNodeId] = useState('A');
-  const [algorithm, setAlgorithm] = useState('nearest-neighbor'); // 'nearest-neighbor' | 'brute-force'
 
   // Tambah simpul baru
   const handleAddNode = useCallback((x, y) => {
@@ -164,13 +163,12 @@ export default function CustomGraphPage() {
     return nodes[0]?.id || '';
   }, [startNodeId, nodes]);
 
-  // Jalankan algoritma solveTSP
+  // Jalankan algoritma solveTSP (Nearest Neighbor)
   const currentGraph = useMemo(() => ({ nodes, edges }), [nodes, edges]);
-  const activeAlgorithm = nodes.length > 8 ? 'nearest-neighbor' : algorithm;
 
   const solverOutput = useMemo(() => {
-    return solveTSP(currentGraph, effectiveStartNode, { algorithm: activeAlgorithm });
-  }, [currentGraph, effectiveStartNode, activeAlgorithm]);
+    return solveTSP(currentGraph, effectiveStartNode);
+  }, [currentGraph, effectiveStartNode]);
 
   const stepPlayer = useStepPlayer(solverOutput.steps || [], 1200);
 
@@ -183,8 +181,6 @@ export default function CustomGraphPage() {
         nodes={nodes}
         effectiveStartNode={effectiveStartNode}
         onStartNodeChange={setStartNodeId}
-        algorithm={activeAlgorithm}
-        onAlgorithmChange={setAlgorithm}
         onSelectPreset={handleSelectPreset}
         onConnectAll={handleConnectAll}
         onClear={handleClear}

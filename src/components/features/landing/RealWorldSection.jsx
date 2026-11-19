@@ -13,7 +13,7 @@ export default function RealWorldSection() {
     {
       icon: Fuel,
       title: 'Efisiensi Jarak & Bahan Bakar',
-      desc: 'Optimasi 2-Opt memangkas persilangan jalan sehingga total jarak tempuh diminimalkan hingga jarak paling ekonomis.'
+      desc: 'Heuristik Nearest Neighbor selalu memilih titik terdekat sehingga jarak tempuh antar fakultas terpangkas secara efisien dan konsisten.'
     },
     {
       icon: Clock,

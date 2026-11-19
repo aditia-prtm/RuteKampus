@@ -20,13 +20,20 @@ export function useGraphEditor(initialNodes = [], initialEdges = []) {
     const isGeo = coords.lat !== undefined;
     const count = nodes.length + 1;
     const defaultLabel = type === 'place' ? `Gedung ${count}` : `Tikungan ${count}`;
-    const id = label
-      ? label.trim().replace(/\s+/g, '_')
+    const baseId = label && label.trim()
+      ? label.trim().replace(/[^a-zA-Z0-9_-]/g, '_')
       : (type === 'place' ? `G_${count}` : `W_${count}`);
 
+    // Pastikan ID simpul selalu unik meskipun beberapa tikungan memiliki label sama
+    let uniqueId = baseId;
+    let counter = 1;
+    while (nodes.some((n) => n.id === uniqueId)) {
+      uniqueId = `${baseId}_${counter++}`;
+    }
+
     const newNode = {
-      id,
-      label: label || defaultLabel,
+      id: uniqueId,
+      label: label && label.trim() ? label.trim() : defaultLabel,
       type, // 'place' atau 'waypoint'
       ...(isGeo
         ? {
@@ -41,7 +48,7 @@ export function useGraphEditor(initialNodes = [], initialEdges = []) {
 
     setNodes((prev) => [...prev, newNode]);
     return newNode;
-  }, [nodes.length]);
+  }, [nodes]);
 
   const updateNodePosition = useCallback((nodeId, latOrX, lngOrY) => {
     setNodes((prev) =>

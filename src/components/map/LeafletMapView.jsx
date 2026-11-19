@@ -44,16 +44,17 @@ function MapLockController({ isLocked }) {
   return null;
 }
 
-// Buat custom circular pin icon untuk Leaflet Marker agar mendukung draggable
+// Buat custom circular pin icon untuk Leaflet Marker agar mendukung draggable & klik yang mudah
 function createNodeIcon(isWaypoint, isStartNode, isHighlighted, isSelectedForEdge, isDeleteMode, isInTour, tourColor = '#10b981') {
   let bg = isWaypoint ? '#64748b' : '#2563eb';
-  if (isStartNode) bg = '#8b5cf6';
+  if (isSelectedForEdge) bg = '#0284c7';
+  else if (isStartNode) bg = '#8b5cf6';
   else if (isHighlighted) bg = '#f59e0b';
-  else if (isSelectedForEdge) bg = '#38bdf8';
   else if (isInTour && !isWaypoint) bg = tourColor;
   else if (isDeleteMode) bg = '#f43f5e';
 
-  const size = isWaypoint ? 12 : isStartNode || isSelectedForEdge ? 22 : 18;
+  // Simpul yang sedang dipilih untuk disambung akan membesar agar terlihat jelas
+  const size = isSelectedForEdge ? 24 : isWaypoint ? 14 : isStartNode ? 22 : 18;
   const border = isSelectedForEdge
     ? '3px solid #38bdf8'
     : isStartNode
@@ -62,21 +63,34 @@ function createNodeIcon(isWaypoint, isStartNode, isHighlighted, isSelectedForEdg
     ? '2px solid #ffe4e6'
     : '2px solid #ffffff';
 
+  const shadow = isSelectedForEdge
+    ? '0 0 14px #38bdf8, 0 2px 8px rgba(0,0,0,0.6)'
+    : '0 2px 6px rgba(0,0,0,0.45)';
+
+  // Outer container dengan hit area 34px menjamin tikungan sangat mudah diklik
   return L.divIcon({
     className: 'custom-node-pin',
     html: `<div style="
-      width: ${size}px;
-      height: ${size}px;
-      background: ${bg};
-      border: ${border};
-      border-radius: 50%;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.45);
-      cursor: grab;
-      box-sizing: border-box;
-      transition: transform 0.15s ease;
-    "></div>`,
-    iconSize: [size, size],
-    iconAnchor: [size / 2, size / 2]
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    ">
+      <div style="
+        width: ${size}px;
+        height: ${size}px;
+        background: ${bg};
+        border: ${border};
+        border-radius: 50%;
+        box-shadow: ${shadow};
+        box-sizing: border-box;
+        transition: all 0.15s ease;
+      "></div>
+    </div>`,
+    iconSize: [34, 34],
+    iconAnchor: [17, 17]
   });
 }
 
@@ -288,11 +302,27 @@ export default function LeafletMapView({
             <span className="text-blue-200 truncate">◆ Klik peta untuk tambah Tikungan/Jalan</span>
           )}
           {editTool === 'connect' && (
-            <span className="text-sky-300 truncate">
-              {selectedNodeForEdge
-                ? `Pilih simpul ke-2 dari [${selectedNodeForEdge}]`
-                : 'Klik simpul pertama untuk menarik jalan'}
-            </span>
+            <div className="flex items-center gap-1.5 truncate">
+              {selectedNodeForEdge ? (
+                <>
+                  <span className="text-amber-300 font-bold truncate">
+                    [1/2] Terpilih: {selectedNodeForEdge}. Klik simpul atau tikungan ke-2!
+                  </span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSelectNodeForEdge(null);
+                    }}
+                    className="ml-1 text-[10px] bg-rose-500/80 hover:bg-rose-500 text-white px-2 py-0.5 rounded font-bold cursor-pointer transition"
+                  >
+                    Batal
+                  </button>
+                </>
+              ) : (
+                <span className="text-sky-300 truncate">Klik simpul/tikungan pertama untuk menyambung jalan</span>
+              )}
+            </div>
           )}
           {editTool === 'move' && (
             <span className="text-blue-100 truncate">✥ Tarik simpul untuk pindah posisi</span>
@@ -478,49 +508,52 @@ export default function LeafletMapView({
                 </div>
               </Tooltip>
 
-              <Popup>
-                <div className="text-xs space-y-2 p-1 min-w-[150px]">
-                  <div>
-                    <div className="flex items-center gap-1.5 font-bold text-sm text-slate-800">
-                      <span>{node.label || node.id}</span>
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-normal ${
-                        isWaypoint ? 'bg-slate-100 text-slate-600' : 'bg-emerald-100 text-emerald-700'
-                      }`}>
-                        {isWaypoint ? 'Tikungan' : 'Gedung'}
-                      </span>
+              {/* Popup informasi hanya muncul saat tidak dalam mode sambung/hapus agar tidak mengganggu klik */}
+              {(!isEditing || (editTool !== 'connect' && editTool !== 'delete')) && (
+                <Popup>
+                  <div className="text-xs space-y-2 p-1 min-w-[150px]">
+                    <div>
+                      <div className="flex items-center gap-1.5 font-bold text-sm text-slate-800">
+                        <span>{node.label || node.id}</span>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded font-normal ${
+                          isWaypoint ? 'bg-slate-100 text-slate-600' : 'bg-emerald-100 text-emerald-700'
+                        }`}>
+                          {isWaypoint ? 'Tikungan' : 'Gedung'}
+                        </span>
+                      </div>
+                      <p className="text-slate-500 font-mono text-[10px] mt-0.5">
+                        Lat: {node.lat.toFixed(5)}, Lng: {node.lng.toFixed(5)}
+                      </p>
                     </div>
-                    <p className="text-slate-500 font-mono text-[10px] mt-0.5">
-                      Lat: {node.lat.toFixed(5)}, Lng: {node.lng.toFixed(5)}
-                    </p>
+
+                    {/* Tombol Jadikan Titik Awal */}
+                    {!isWaypoint && onSetStartNode && (
+                      <button
+                        onClick={() => onSetStartNode(node.id)}
+                        className={`w-full flex items-center justify-center gap-1.5 px-2 py-1 rounded text-xs font-semibold cursor-pointer border transition ${
+                          isStartNode
+                            ? 'bg-purple-100 text-purple-700 border-purple-300'
+                            : 'bg-slate-100 hover:bg-purple-50 text-slate-700 hover:text-purple-700 border-slate-200'
+                        }`}
+                      >
+                        <Flag className="w-3.5 h-3.5 text-purple-600" />
+                        <span>{isStartNode ? 'Titik Awal Aktif' : 'Jadikan Titik Awal'}</span>
+                      </button>
+                    )}
+
+                    {/* Tombol Hapus Simpul */}
+                    {isEditing && onRemoveNode && (
+                      <button
+                        onClick={() => onRemoveNode(node.id)}
+                        className="w-full flex items-center justify-center gap-1.5 px-2 py-1 rounded bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold cursor-pointer border border-rose-200"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Hapus Simpul Ini</span>
+                      </button>
+                    )}
                   </div>
-
-                  {/* Tombol Jadikan Titik Awal */}
-                  {!isWaypoint && onSetStartNode && (
-                    <button
-                      onClick={() => onSetStartNode(node.id)}
-                      className={`w-full flex items-center justify-center gap-1.5 px-2 py-1 rounded text-xs font-semibold cursor-pointer border transition ${
-                        isStartNode
-                          ? 'bg-purple-100 text-purple-700 border-purple-300'
-                          : 'bg-slate-100 hover:bg-purple-50 text-slate-700 hover:text-purple-700 border-slate-200'
-                      }`}
-                    >
-                      <Flag className="w-3.5 h-3.5 text-purple-600" />
-                      <span>{isStartNode ? 'Titik Awal Aktif' : 'Jadikan Titik Awal'}</span>
-                    </button>
-                  )}
-
-                  {/* Tombol Hapus Simpul */}
-                  {isEditing && onRemoveNode && (
-                    <button
-                      onClick={() => onRemoveNode(node.id)}
-                      className="w-full flex items-center justify-center gap-1.5 px-2 py-1 rounded bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold cursor-pointer border border-rose-200"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      <span>Hapus Simpul Ini</span>
-                    </button>
-                  )}
-                </div>
-              </Popup>
+                </Popup>
+              )}
             </Marker>
           );
         })}

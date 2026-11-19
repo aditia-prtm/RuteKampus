@@ -22,7 +22,7 @@ Dokumen ini mencatat seluruh teknologi, pustaka (*library*), alat bantu (*tools*
 | **Lenis** | `^1.3.x` | Smooth Scrolling Engine | `src/App.jsx`, `src/index.css`, `src/components/map/LeafletMapView.jsx` | Memberikan pengalaman scrolling halus dengan inersia alami (*smooth scroll physics* berbasis requestAnimationFrame), otomatisasi scroll-ke-atas saat perpindahan rute (`ScrollToTop`), serta proteksi isolasi scroll `data-lenis-prevent` pada peta Leaflet dan kanvas graf. |
 | **Vitest** | `^5.1.x` | Unit Testing Framework | `src/algorithms/__tests__/tsp.test.js`, `package.json` | Menjalankan unit test otomatis untuk memvalidasi invariant matematika algoritma TSP secara independen dari UI. |
 | **Google Fonts (Poppins & Playfair Display)** | Web CDN | Tipografi & Web Font | `index.html`, `src/index.css` | Menyediakan font modern **Poppins** untuk tampilan UI/teks sans-serif utama dan **Playfair Display (Serif Italic)** untuk aksen tipografi hero section. |
-| **JavaScript Murni (ES Modules)** | ES2022+ | Algoritma & Logika | `src/algorithms/` (`geo.js`, `distanceMatrix.js`, `nearestNeighbor.js`, `twoOpt.js`, `solveTSP.js`) | Logika matematika murni (rumus Haversine, Floyd-Warshall, Heuristik Greedy, 2-Opt) tanpa dependensi React/browser. |
+| **JavaScript Murni (ES Modules)** | ES2022+ | Algoritma & Logika | `src/algorithms/` (`geo.js`, `distanceMatrix.js`, `nearestNeighbor.js`, `solveTSP.js`) | Logika matematika murni (rumus Haversine, Floyd-Warshall, Heuristik Greedy Nearest Neighbor) tanpa dependensi React/browser. |
 | **SVG Interaktif (Native HTML5)** | Native | Canvas Rendering Graf | `src/components/graph/InteractiveGraphCanvas.jsx` | Kanvas graf kustom dengan sistem koordinat viewBox, event drag-and-drop simpul, dan rendering garis sisi berbobot. |
 | **OpenStreetMap (OSM)** | Tile Service | Peta Eksternal | `LeafletMapView.jsx` | Penyedia ubin peta gratis untuk menampilkan topografi dan jalanan Kampus Unsri Bukit Besar Palembang. |
 
@@ -35,9 +35,8 @@ Dokumen ini mencatat seluruh teknologi, pustaka (*library*), alat bantu (*tools*
 * **File & Peran:**
   * `geo.js`: Rumus *Haversine* untuk menghitung jarak GPS lingkaran besar (meter/km).
   * `distanceMatrix.js`: Membangun matriks jarak jaringan jalan (*Road Network Shortest Path*) menggunakan *Floyd-Warshall* dan mendukung simpul perantara (*waypoints*).
-  * `nearestNeighbor.js`: Algoritma Greedy untuk menyusun Siklus Hamilton awal langkah demi langkah.
-  * `twoOpt.js`: Algoritma optimasi lokal 2-Opt untuk mengurai sisi persilangan dan memangkas jarak rute.
-  * `solveTSP.js`: Orkestrator tunggal yang menghasilkan objek `steps` (untuk playback stepper) dan `result`.
+  * `nearestNeighbor.js`: Algoritma Greedy Nearest Neighbor untuk menyusun Siklus Hamilton langkah demi langkah secara efisien O(n²).
+  * `solveTSP.js`: Orkestrator tunggal yang memproses matriks jarak dan menghasilkan objek `steps` (untuk playback stepper) dan `result`.
   * `__tests__/tsp.test.js`: Pengujian unit dengan **Vitest** untuk menjamin kebenaran invariant Siklus Hamilton.
 
 ### B. `src/components/map/` (Visualisasi Peta Nyata)

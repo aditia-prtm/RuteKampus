@@ -1,5 +1,5 @@
 import React from 'react';
-import { Network, CheckCircle, Code2 } from 'lucide-react';
+import { Network, CheckCircle, Code2, Zap } from 'lucide-react';
 import Card from '../../common/Card.jsx';
 import Badge from '../../common/Badge.jsx';
 
@@ -7,8 +7,8 @@ export default function GraphTheorySection() {
   const assumptions = [
     'Graf Terhubung & Berbobot: Setiap ruas jalan kampus memiliki bobot jarak dalam meter berbasis koordinat nyata.',
     'Siklus Hamilton: Setiap fakultas/lokasi dikunjungi tepat satu kali sebelum kendaraan kembali ke titik keberangkatan awal.',
-    'Heuristik Greedy (Nearest Neighbor): Menghasilkan rute awal secara cepat dengan selalu melangkah ke titik terdekat berikutnya.',
-    'Optimasi 2-Opt (Local Search): Menghilangkan simpul sisi yang saling bersilangan untuk memperpendek total jarak tempuh rute.'
+    'Heuristik Greedy (Nearest Neighbor): Menghasilkan rute secara cepat dan deterministik dengan selalu melangkah ke fasilitas terdekat berikutnya.',
+    'Kompleksitas Efisien O(n²): Berjalan instan tanpa membebani browser, sangat ideal untuk rute shuttle kampus harian.'
   ];
 
   return (
@@ -21,7 +21,7 @@ export default function GraphTheorySection() {
           Landasan Teori <span className="text-amber-400 font-serif italic">Struktur Diskrit 2</span>
         </h2>
         <p className="text-xs sm:text-sm text-blue-100/80 max-w-xl mx-auto leading-relaxed">
-          Penyelesaian Traveling Salesperson Problem (TSP) pada graf jalan menggunakan kombinasi algoritma konstruktif dan perbaikan lokal.
+          Penyelesaian Traveling Salesperson Problem (TSP) pada graf jalan menggunakan Algoritma Heuristik Greedy (Nearest Neighbor).
         </p>
       </div>
 
@@ -37,7 +37,7 @@ export default function GraphTheorySection() {
               Formulasi Masalah Tur Keliling Kampus (TSP)
             </h3>
             <p className="text-xs text-blue-100/90 leading-relaxed">
-              Diberikan himpunan simpul lokasi fasilitas kampus <code className="text-amber-300 font-mono font-bold bg-[#062447] px-1 py-0.5 rounded">V</code> dan matriks jarak <code className="text-amber-300 font-mono font-bold bg-[#062447] px-1 py-0.5 rounded">D[u][v]</code>. Algoritma mencari permutasi simpul <code className="text-sky-200 font-mono font-bold bg-[#062447] px-1 py-0.5 rounded">T = (v_1, v_2, ..., v_n, v_1)</code> yang meminimalkan total bobot jarak perjalanan.
+              Diberikan himpunan simpul lokasi fasilitas kampus <code className="text-amber-300 font-mono font-bold bg-[#062447] px-1 py-0.5 rounded">V</code> dan matriks jarak <code className="text-amber-300 font-mono font-bold bg-[#062447] px-1 py-0.5 rounded">D[u][v]</code>. Algoritma mencari urutan kunjungan simpul <code className="text-sky-200 font-mono font-bold bg-[#062447] px-1 py-0.5 rounded">T = (v_1, v_2, ..., v_n, v_1)</code> yang meminimalkan total bobot jarak perjalanan.
             </p>
           </div>
 
@@ -54,12 +54,12 @@ export default function GraphTheorySection() {
         {/* Kolom Kanan: Rangkuman Alur Algoritma */}
         <Card className="lg:col-span-5 space-y-4 flex flex-col justify-between bg-gradient-to-b from-[#0c447d]/90 to-[#072f59]/95 border-blue-300/30">
           <div className="space-y-3">
-            <div className="flex items-center gap-2 text-teal-300 text-xs font-bold uppercase tracking-wider">
-              <Code2 className="w-4 h-4 text-teal-300" />
-              <span>Pipeline Algoritma</span>
+            <div className="flex items-center gap-2 text-amber-300 text-xs font-bold uppercase tracking-wider">
+              <Code2 className="w-4 h-4 text-amber-400" />
+              <span>Alur Algoritma</span>
             </div>
             <h3 className="text-lg font-bold text-white">
-              Dua Tahap Solusi
+              Tahapan Solusi Nearest Neighbor
             </h3>
           </div>
 
@@ -70,27 +70,27 @@ export default function GraphTheorySection() {
                 <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-blue-900/60 text-blue-100">Floyd-Warshall</span>
               </div>
               <p className="text-blue-100/80 text-[11px] leading-relaxed">
-                Menghitung lintasan terpendek antar seluruh pasangan fasilitas kampus dengan mempertimbangkan tikungan jalan nyata.
+                Menghitung lintasan jarak terpendek antar seluruh fasilitas kampus berdasarkan ruas jalan dan tikungan fisik.
               </p>
             </div>
 
             <div className="p-3.5 rounded-xl bg-[#06294d]/90 border border-blue-300/25 space-y-1">
               <div className="font-bold text-amber-300 flex items-center justify-between">
-                <span>2. Konstruksi Tur Awal</span>
-                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-blue-900/60 text-blue-100">Nearest Neighbor</span>
+                <span>2. Langkah Greedy Lokal</span>
+                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-amber-400/20 text-amber-300">Nearest Step</span>
               </div>
               <p className="text-blue-100/80 text-[11px] leading-relaxed">
-                Menyusun siklus awal dengan memilih lokasi terdekat berikutnya secara greedy hingga kembali ke terminal awal.
+                Dari lokasi saat ini, kendaraan selalu memilih fasilitas terdekat berikutnya yang belum dikunjungi.
               </p>
             </div>
 
             <div className="p-3.5 rounded-xl bg-[#06294d]/90 border border-blue-300/25 space-y-1">
-              <div className="font-bold text-teal-300 flex items-center justify-between">
-                <span>3. Optimasi Persilangan</span>
-                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-teal-900/60 text-teal-100">2-Opt Swap</span>
+              <div className="font-bold text-emerald-300 flex items-center justify-between">
+                <span>3. Penutupan Siklus Hamilton</span>
+                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-900/60 text-emerald-100">Closed Circuit</span>
               </div>
               <p className="text-blue-100/80 text-[11px] leading-relaxed">
-                Mendeteksi sisi rute yang saling berpotongan dan menukarnya untuk mendapatkan rute tur dengan total jarak terpendek.
+                Setelah semua fasilitas selesai dikunjungi, kendaraan kembali ke titik awal untuk menutup sirkuit tur kampus.
               </p>
             </div>
           </div>
