@@ -88,8 +88,10 @@ export function solveTSP(graph, startNodeId) {
   allSteps.push({
     id: stepId++,
     type: 'matrix',
-    title: 'Matriks Jarak Terpendek Antar Lokasi',
-    explanation: `Menghitung jarak terpendek antar seluruh ${targetNodeIds.length} fasilitas kampus melalui jaringan jalan.`,
+    title: isRoadNetwork ? 'Matriks Jarak Terpendek Antar Lokasi' : 'Matriks Bobot Antar Simpul',
+    explanation: isRoadNetwork
+      ? `Menghitung matriks jarak terpendek (kilometer) antar seluruh ${targetNodeIds.length} fasilitas kampus melalui jaringan jalan.`
+      : `Menghitung matriks bobot terpendek antar seluruh ${targetNodeIds.length} simpul graf.`,
     highlight: {
       nodes: targetNodeIds,
       edges: []
@@ -130,7 +132,7 @@ export function solveTSP(graph, startNodeId) {
   }
 
   // 2. Eksekusi Algoritma Nearest Neighbor (Greedy)
-  const nnResult = solveNearestNeighbor(targetNodeIds, dist, start, nodeLabels);
+  const nnResult = solveNearestNeighbor(targetNodeIds, dist, start, nodeLabels, { isRoadNetwork });
 
   // Pada Graf Abstrak (Custom Graph), setiap perpindahan tur WAJIB berupa sisi langsung (direct edge)
   if (!isRoadNetwork) {
@@ -182,8 +184,12 @@ export function solveTSP(graph, startNodeId) {
   allSteps.push({
     id: stepId++,
     type: 'result',
-    title: 'Hasil Akhir Rute Siklus Hamilton (Nearest Neighbor)',
-    explanation: `Rute tur selesai! Seluruh ${targetNodeIds.length} fasilitas kampus berhasil dikunjungi tepat satu kali dan kembali ke [${getLabel(start)}] dengan total jarak ${nnResult.totalCost} meter.`,
+    title: isRoadNetwork
+      ? 'Hasil Akhir Rute Siklus Hamilton (Nearest Neighbor)'
+      : 'Hasil Akhir Siklus Hamilton (Nearest Neighbor)',
+    explanation: isRoadNetwork
+      ? `Rute tur selesai! Seluruh ${targetNodeIds.length} fasilitas kampus berhasil dikunjungi tepat satu kali dan kembali ke [${getLabel(start)}] dengan total jarak ${(nnResult.totalCost / 1000).toFixed(2)} km.`
+      : `Siklus Hamilton selesai! Seluruh ${targetNodeIds.length} simpul graf berhasil dikunjungi tepat satu kali dan kembali ke [${getLabel(start)}] dengan total bobot ${nnResult.totalCost}.`,
     highlight: {
       nodes: fullTour,
       edges: tourEdges

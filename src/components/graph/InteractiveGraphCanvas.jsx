@@ -225,7 +225,7 @@ export default function InteractiveGraphCanvas({
   }, [currentStep, currentTourNodes]);
 
   return (
-    <div className="w-full h-full min-h-[420px] bg-[#062648] rounded-2xl border border-blue-300/25 relative overflow-hidden flex flex-col shadow-xl shadow-[#021c38]/40 select-none">
+    <div className="w-full h-full min-h-[350px] bg-[#062648] rounded-2xl border border-blue-300/25 relative overflow-hidden flex flex-col shadow-xl shadow-[#021c38]/40 select-none">
       {/* Header Info Status Graf */}
       <div className="absolute top-2.5 sm:top-3 left-2.5 sm:left-3 right-2.5 sm:right-3 z-10 flex flex-wrap items-center justify-between gap-1.5 sm:gap-2 pointer-events-none">
         <div className="bg-[#0e4984]/95 backdrop-blur border border-blue-300/25 text-blue-100 text-[11px] sm:text-xs px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-xl shadow-md flex items-center gap-1.5 sm:gap-2">
@@ -262,15 +262,11 @@ export default function InteractiveGraphCanvas({
 
         <rect width="600" height="450" fill="url(#grid-custom)" />
 
-        {/* 1. Sisi (Edges) yang Dibuat Pengguna */}
+        {/* 1. Garis Sisi (Edges) Dasar */}
         {edges.map((edge) => {
           const u = nodeMap.get(edge.from);
           const v = nodeMap.get(edge.to);
           if (!u || !v) return null;
-
-          const midX = (u.x + v.x) / 2;
-          const midY = (u.y + v.y) / 2;
-          const weight = edge.weight !== undefined ? edge.weight : Math.round(Math.hypot(u.x - v.x, u.y - v.y));
 
           const edgeKey = edge.from < edge.to ? `${edge.from}--${edge.to}` : `${edge.to}--${edge.from}`;
           const isHighlighted = highlightEdgeKeys.has(edgeKey);
@@ -280,31 +276,21 @@ export default function InteractiveGraphCanvas({
           let strokeWidth = 2.5;
           let strokeOpacity = 0.55;
 
-          let badgeFill = '#051b36';
-          let badgeStroke = '#1e4976';
-          let badgeTextColor = '#94a3b8';
-
           const stepColor = currentStep?.data?.color || '#10b981';
 
           if (isHighlighted && !isTourEdge) {
             strokeColor = '#f59e0b';
             strokeWidth = 5;
             strokeOpacity = 1;
-            badgeFill = '#78350f';
-            badgeStroke = '#f59e0b';
-            badgeTextColor = '#fef08a';
           } else if (isTourEdge) {
             strokeColor = stepColor;
             strokeWidth = 4.5;
             strokeOpacity = 0.95;
-            badgeFill = '#062648';
-            badgeStroke = stepColor;
-            badgeTextColor = '#ffffff';
           }
 
           return (
             <g
-              key={edge.id || `${edge.from}-${edge.to}`}
+              key={`edge-line-${edge.id || `${edge.from}-${edge.to}`}`}
               className="cursor-pointer group"
               onClick={(e) => handleEdgeClick(e, edge)}
             >
@@ -329,36 +315,11 @@ export default function InteractiveGraphCanvas({
                 filter={isHighlighted ? 'url(#glow-custom-graph)' : undefined}
                 className="group-hover:stroke-amber-400 group-hover:stroke-[4px] transition-all duration-150"
               />
-              {/* Badge Bobot Sisi */}
-              <g>
-                <rect
-                  x={midX - 16}
-                  y={midY - 10}
-                  width={32}
-                  height={18}
-                  rx={5}
-                  fill={badgeFill}
-                  stroke={badgeStroke}
-                  strokeWidth={isHighlighted || isTourEdge ? 1.5 : 1}
-                  className="group-hover:stroke-amber-400 transition-colors"
-                />
-                <text
-                  x={midX}
-                  y={midY + 3}
-                  fill={badgeTextColor}
-                  fontSize="10"
-                  fontWeight={isHighlighted ? '900' : 'bold'}
-                  textAnchor="middle"
-                  className="font-mono select-none pointer-events-none"
-                >
-                  {weight}
-                </text>
-              </g>
             </g>
           );
         })}
 
-        {/* 2. Rute Siklus Hamilton yang Aktif */}
+        {/* 2. Rute Siklus Hamilton yang Aktif (Garis Hijau) */}
         {currentTourNodes.length > 1 &&
           currentTourNodes.slice(0, -1).map((uId, idx) => {
             const u = nodeMap.get(uId);
@@ -381,7 +342,69 @@ export default function InteractiveGraphCanvas({
             );
           })}
 
-        {/* 3. Simpul Interaktif (Bisa di-drag kapanpun atau diklik untuk buka menu) */}
+        {/* 3. Badge Bobot Sisi (Dirender SETELAH garis agar selalu di atas garis dan tidak pernah tertimpa) */}
+        {edges.map((edge) => {
+          const u = nodeMap.get(edge.from);
+          const v = nodeMap.get(edge.to);
+          if (!u || !v) return null;
+
+          const midX = (u.x + v.x) / 2;
+          const midY = (u.y + v.y) / 2;
+          const weight = edge.weight !== undefined ? edge.weight : Math.round(Math.hypot(u.x - v.x, u.y - v.y));
+
+          const edgeKey = edge.from < edge.to ? `${edge.from}--${edge.to}` : `${edge.to}--${edge.from}`;
+          const isHighlighted = highlightEdgeKeys.has(edgeKey);
+          const isTourEdge = tourEdgeKeys.has(edgeKey);
+
+          let badgeFill = '#051b36';
+          let badgeStroke = '#1e4976';
+          let badgeTextColor = '#94a3b8';
+
+          const stepColor = currentStep?.data?.color || '#10b981';
+
+          if (isHighlighted && !isTourEdge) {
+            badgeFill = '#78350f';
+            badgeStroke = '#f59e0b';
+            badgeTextColor = '#fef08a';
+          } else if (isTourEdge) {
+            badgeFill = '#062648';
+            badgeStroke = stepColor;
+            badgeTextColor = '#ffffff';
+          }
+
+          return (
+            <g
+              key={`edge-badge-${edge.id || `${edge.from}-${edge.to}`}`}
+              className="cursor-pointer group"
+              onClick={(e) => handleEdgeClick(e, edge)}
+            >
+              <rect
+                x={midX - 16}
+                y={midY - 10}
+                width={32}
+                height={18}
+                rx={5}
+                fill={badgeFill}
+                stroke={badgeStroke}
+                strokeWidth={isHighlighted || isTourEdge ? 1.5 : 1}
+                className="group-hover:stroke-amber-400 group-hover:scale-110 transition-transform origin-center"
+              />
+              <text
+                x={midX}
+                y={midY + 3.5}
+                fill={badgeTextColor}
+                fontSize="10"
+                fontWeight="bold"
+                textAnchor="middle"
+                className="font-mono select-none pointer-events-none"
+              >
+                {weight}
+              </text>
+            </g>
+          );
+        })}
+
+        {/* 4. Simpul Interaktif (Bisa di-drag kapanpun atau diklik untuk buka menu) */}
         {nodes.map((node) => {
           const isCurrentNode = (currentStep?.data?.from === node.id) || (currentStep?.data?.current === node.id);
           const isTargetNode = currentStep?.data?.to === node.id;
@@ -394,7 +417,7 @@ export default function InteractiveGraphCanvas({
           let color = '#3b82f6';
           if (isVisited) color = currentStep?.data?.color || '#10b981';
           if (isHighlighted || isTargetNode) color = '#f59e0b';
-          if (isCurrentNode) color = '#9333ea'; // Posisi node saat ini: Ungu
+          if (isCurrentNode) color = '#9333ea'; // Posisi node saat ini: Ungu Padat
           if (isSelected) color = '#0284c7';
 
           return (
@@ -408,18 +431,6 @@ export default function InteractiveGraphCanvas({
                 onRemoveNode(node.id);
               }}
             >
-              {/* Animasi Pulsing untuk Node Saat Ini (Warna Ungu) */}
-              {isCurrentNode && (
-                <circle
-                  cx={node.x}
-                  cy={node.y}
-                  r={30}
-                  fill="#9333ea"
-                  opacity={0.25}
-                  className="animate-ping pointer-events-none"
-                />
-              )}
-
               {/* Lingkaran penanda seleksi saat menyambungkan edge (statis dan bersih) */}
               {isSelected && (
                 <circle

@@ -24,10 +24,18 @@
  *   steps: Array<any>
  * }}
  */
-export function solveNearestNeighbor(nodeIds, distMatrix, startNode, nodeLabels = {}) {
+export function solveNearestNeighbor(nodeIds, distMatrix, startNode, nodeLabels = {}, options = {}) {
   if (!nodeIds || nodeIds.length === 0) {
     return { tour: [], totalCost: 0, steps: [] };
   }
+
+  const isRoadNetwork = options.isRoadNetwork ?? false;
+  const formatDist = (val) => {
+    if (isRoadNetwork) {
+      return `${(val / 1000).toFixed(2)} km`;
+    }
+    return `${Math.round(val * 10) / 10}`;
+  };
 
   const getLabel = (id) => nodeLabels[id] || id;
   const start = nodeIds.includes(startNode) ? startNode : nodeIds[0];
@@ -40,8 +48,10 @@ export function solveNearestNeighbor(nodeIds, distMatrix, startNode, nodeLabels 
   // Step 1: Titik Awal Keberangkatan
   steps.push({
     type: 'nn-start',
-    title: `Titik Awal Tur Kampus: [${getLabel(start)}]`,
-    explanation: `Perjalanan tur keliling kampus dimulai dari titik awal keberangkatan: [${getLabel(start)}].`,
+    title: isRoadNetwork ? `Titik Awal Tur Kampus: [${getLabel(start)}]` : `Simpul Awal: [${getLabel(start)}]`,
+    explanation: isRoadNetwork
+      ? `Perjalanan tur keliling kampus dimulai dari titik awal keberangkatan: [${getLabel(start)}].`
+      : `Penelusuran graf dimulai dari simpul awal: [${getLabel(start)}].`,
     highlight: {
       nodes: [start],
       edges: []
@@ -81,8 +91,10 @@ export function solveNearestNeighbor(nodeIds, distMatrix, startNode, nodeLabels 
 
     steps.push({
       type: 'nn-step',
-      title: `Pilih Lokasi Terdekat: [${getLabel(nearestNode)}]`,
-      explanation: `Dari [${getLabel(current)}], lokasi belum dikunjungi dengan jarak terpendek adalah [${getLabel(nearestNode)}] sejauh ${minDistance} meter.`,
+      title: isRoadNetwork ? `Pilih Lokasi Terdekat: [${getLabel(nearestNode)}]` : `Pilih Simpul Terdekat: [${getLabel(nearestNode)}]`,
+      explanation: isRoadNetwork
+        ? `Dari [${getLabel(current)}], lokasi belum dikunjungi dengan jarak terpendek adalah [${getLabel(nearestNode)}] sejauh ${formatDist(minDistance)}.`
+        : `Dari [${getLabel(current)}], simpul belum dikunjungi dengan bobot terkecil adalah [${getLabel(nearestNode)}] (bobot: ${formatDist(minDistance)}).`,
       highlight: {
         nodes: [current, nearestNode],
         edges: [edgeKey]
@@ -119,7 +131,9 @@ export function solveNearestNeighbor(nodeIds, distMatrix, startNode, nodeLabels 
   steps.push({
     type: 'nn-complete',
     title: 'Siklus Hamilton Terbentuk',
-    explanation: `Seluruh ${nodeIds.length} lokasi kampus telah dikunjungi tepat satu kali. Rute kembali ke lokasi awal [${getLabel(start)}] (+${returnDistance} m). Total jarak rute: ${Math.round(totalCost * 100) / 100} meter.`,
+    explanation: isRoadNetwork
+      ? `Seluruh ${nodeIds.length} lokasi kampus telah dikunjungi tepat satu kali. Rute kembali ke lokasi awal [${getLabel(start)}] (+${formatDist(returnDistance)}). Total jarak rute: ${formatDist(totalCost)}.`
+      : `Seluruh ${nodeIds.length} simpul graf telah dikunjungi tepat satu kali. Rute kembali ke simpul awal [${getLabel(start)}] (+${formatDist(returnDistance)}). Total bobot tur: ${formatDist(totalCost)}.`,
     highlight: {
       nodes: tour,
       edges: tourEdges

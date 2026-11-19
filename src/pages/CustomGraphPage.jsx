@@ -222,7 +222,7 @@ export default function CustomGraphPage() {
       {/* 3. Main Layout: Canvas (Kiri) & Stepper Inspector (Kanan) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 flex-1 items-start">
         <div className="lg:col-span-7 flex flex-col gap-4">
-          <div className="h-[340px] sm:h-[460px] lg:h-[540px] w-full">
+          <div className="h-[280px] sm:h-[370px] lg:h-[430px] w-full">
             <InteractiveGraphCanvas
               nodes={nodes}
               edges={edges}
@@ -252,7 +252,7 @@ export default function CustomGraphPage() {
         </div>
 
         <div className="lg:col-span-5 flex flex-col">
-          <StepperInspector currentStep={stepPlayer.currentStep} />
+          <StepperInspector currentStep={stepPlayer.currentStep} isCampusMode={false} />
         </div>
       </div>
     </div>

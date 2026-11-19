@@ -1,11 +1,23 @@
 import React from 'react';
 import { Table, CheckCircle2 } from 'lucide-react';
 
-export default function DataPanel({ currentStep }) {
+export default function DataPanel({ currentStep, isCampusMode = false }) {
   if (!currentStep || !currentStep.data) return null;
   const { type, data } = currentStep;
   const nodeLabels = data.nodeLabels || {};
   const getLabel = (id) => nodeLabels[id] || id;
+
+  // Format nilai jarak/bobot:
+  // - Campus mode: selalu dalam kilometer (km)
+  // - Custom mode: murni angka tanpa satuan
+  const formatValue = (val) => {
+    if (val === undefined || val === null) return '-';
+    if (!isCampusMode) {
+      return String(Math.round(val * 10) / 10);
+    }
+    const km = val / 1000;
+    return `${km.toFixed(2)} km`;
+  };
 
   return (
     <div className="space-y-3">
@@ -18,14 +30,20 @@ export default function DataPanel({ currentStep }) {
       {type === 'matrix' && data.distMatrix && (
         <div className="space-y-2 text-xs">
           <div className="flex items-center justify-between text-[11px] text-blue-200/80">
-            <span>Matriks Jarak Terpendek (Meter) Antar Fasilitas:</span>
+            <span>
+              {isCampusMode
+                ? 'Matriks Jarak Terpendek (Kilometer) Antar Fasilitas:'
+                : 'Matriks Bobot Sisi Antar Simpul:'}
+            </span>
             <span className="text-[10px] text-amber-300 sm:hidden font-medium">Geser ↔</span>
           </div>
           <div className="overflow-x-auto max-h-72 rounded-xl border border-blue-300/20 bg-[#062648]/85">
             <table className="w-full text-center font-mono text-[11px]">
               <thead>
                 <tr className="bg-[#093563] text-blue-100 border-b border-blue-300/20">
-                  <th className="p-2 border-r border-blue-300/20 whitespace-nowrap text-left pl-3">Lokasi</th>
+                  <th className="p-2 border-r border-blue-300/20 whitespace-nowrap text-left pl-3">
+                    {isCampusMode ? 'Lokasi' : 'Simpul'}
+                  </th>
                   {data.nodeIds.map((id) => (
                     <th
                       key={id}
@@ -53,7 +71,7 @@ export default function DataPanel({ currentStep }) {
                           u === v ? 'text-blue-300/30' : 'text-blue-100'
                         }`}
                       >
-                        {data.distMatrix[u]?.[v] ?? '-'}
+                        {formatValue(data.distMatrix[u]?.[v])}
                       </td>
                     ))}
                   </tr>
@@ -72,13 +90,17 @@ export default function DataPanel({ currentStep }) {
               Inisialisasi Keberangkatan Tur
             </span>
             <p className="text-blue-100/90 text-[11px] leading-relaxed">
-              Titik awal dipilih sebagai simpul awal tur keliling: <strong className="text-amber-400 font-mono font-bold">[{getLabel(data.current)}]</strong>. Kendaraan shuttle akan mengunjungi seluruh {data.unvisited?.length} lokasi lainnya sebelum kembali ke titik ini.
+              Titik awal dipilih sebagai simpul awal tur: <strong className="text-amber-400 font-mono font-bold">[{getLabel(data.current)}]</strong>. Seluruh {data.unvisited?.length} lokasi lainnya akan dikunjungi sebelum kembali ke titik ini.
             </p>
           </div>
 
           <div className="p-2.5 rounded-xl bg-[#062648]/85 border border-blue-300/20 text-center">
-            <span className="text-[10px] text-blue-200/70 block">Lokasi Belum Dikunjungi</span>
-            <span className="text-sm font-bold text-amber-400 font-mono">{data.unvisited?.length} Lokasi</span>
+            <span className="text-[10px] text-blue-200/70 block">
+              {isCampusMode ? 'Lokasi Belum Dikunjungi' : 'Simpul Belum Dikunjungi'}
+            </span>
+            <span className="text-sm font-bold text-amber-400 font-mono">
+              {data.unvisited?.length} {isCampusMode ? 'Lokasi' : 'Simpul'}
+            </span>
           </div>
         </div>
       )}
@@ -90,15 +112,20 @@ export default function DataPanel({ currentStep }) {
             <span className="text-blue-200/80 flex items-center gap-1.5">
               <span>Posisi Saat Ini:</span>
               <strong className="text-purple-300 font-semibold px-2 py-0.5 rounded bg-purple-500/20 border border-purple-400/40 inline-flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
+                <span className="w-2 h-2 rounded-full bg-purple-400"></span>
                 <span>{getLabel(data.from)}</span>
               </strong>
             </span>
-            <span className="text-blue-200/80">Total Jarak Tempuh: <strong className="text-white font-mono">{data.currentCost} m</strong></span>
+            <span className="text-blue-200/80">
+              Total {isCampusMode ? 'Jarak' : 'Bobot'}:{' '}
+              <strong className="text-white font-mono">{formatValue(data.currentCost)}</strong>
+            </span>
           </div>
 
           <p className="text-[11px] text-blue-200/80">
-            Kandidat Lokasi Belum Dikunjungi (Diurutkan dari Terdekat):
+            {isCampusMode
+              ? 'Kandidat Lokasi Belum Dikunjungi (Diurutkan dari Terdekat):'
+              : 'Kandidat Simpul Belum Dikunjungi (Bobot Terkecil):'}
           </p>
 
           <div className="space-y-1.5 max-h-60 overflow-y-auto pr-1">
@@ -121,11 +148,11 @@ export default function DataPanel({ currentStep }) {
                     )}
                   </div>
                   <div className="font-mono text-right flex items-center gap-1.5">
-                    <span>{c.distance} meter</span>
+                    <span>{formatValue(c.distance)}</span>
                     {isChosen && (
                       <span className="inline-flex items-center gap-1 text-amber-300 font-bold ml-1">
                         <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>Pilihan Terdekat</span>
+                        <span>{isCampusMode ? 'Pilihan Terdekat' : 'Bobot Minimum'}</span>
                       </span>
                     )}
                   </div>
@@ -141,7 +168,7 @@ export default function DataPanel({ currentStep }) {
         <div className="space-y-3 text-xs">
           <div>
             <span className="text-[11px] text-blue-200/80 block mb-1.5 font-medium">
-              Urutan Kunjungan Lokasi (Siklus Hamilton):
+              Urutan Kunjungan (Siklus Hamilton):
             </span>
             <div className="p-3 bg-[#062648]/85 border border-blue-300/20 rounded-xl font-mono text-amber-300 text-xs leading-relaxed break-words">
               {data.tour.map((id) => getLabel(id)).join(' → ')}
@@ -154,8 +181,12 @@ export default function DataPanel({ currentStep }) {
               <span className="text-[11px] sm:text-sm font-bold text-blue-100">Nearest Neighbor</span>
             </div>
             <div className="p-2 sm:p-2.5 rounded-xl bg-amber-400 text-slate-950 font-bold shadow-md shadow-black/25">
-              <span className="text-[10px] text-slate-900 block font-semibold">Total Jarak Tur</span>
-              <span className="text-[11px] sm:text-sm font-extrabold font-mono">{data.totalWeight || data.currentCost} m</span>
+              <span className="text-[10px] text-slate-900 block font-semibold">
+                {isCampusMode ? 'Total Jarak Tur' : 'Total Bobot Tur'}
+              </span>
+              <span className="text-[11px] sm:text-sm font-extrabold font-mono">
+                {formatValue(data.totalWeight || data.currentCost)}
+              </span>
             </div>
           </div>
         </div>

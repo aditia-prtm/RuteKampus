@@ -4,13 +4,11 @@ import L from 'leaflet';
 import { Trash2, Flag, Lock, Unlock, Link2 } from 'lucide-react';
 import { haversine } from '../../algorithms/geo.js';
 
-// Format jarak dalam meter atau km
+// Format jarak selalu dalam kilometer (km) untuk mode kampus
 function formatDist(meters) {
-  if (!meters) return '0 m';
-  if (meters >= 1000) {
-    return `${(meters / 1000).toFixed(2)} km`;
-  }
-  return `${Math.round(meters)} m`;
+  if (!meters) return '0.00 km';
+  const km = meters / 1000;
+  return `${km.toFixed(2)} km`;
 }
 
 // Controller untuk mengunci / membuka pergerakan dan zoom peta
@@ -109,18 +107,6 @@ function createNodeIcon(
       position: relative;
       cursor: pointer;
     ">
-      ${isPulsing ? `
-        <div style="
-          position: absolute;
-          width: ${size + 14}px;
-          height: ${size + 14}px;
-          border-radius: 50%;
-          background: rgba(147, 51, 234, 0.35);
-          box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
-          animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
-          pointer-events: none;
-        "></div>
-      ` : ''}
       <div style="
         width: ${size}px;
         height: ${size}px;
@@ -319,7 +305,7 @@ export default function LeafletMapView({
         type="button"
         onClick={() => setIsLocked((prev) => !prev)}
         title={isLocked ? 'Buka Kunci Peta (Izinkan Geser & Zoom)' : 'Kunci Peta (Bekukan Peta)'}
-        className={`absolute top-2.5 sm:top-3 right-2.5 sm:right-3 z-[1000] flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl shadow-lg border text-xs font-semibold backdrop-blur transition-all duration-200 cursor-pointer ${
+        className={`absolute top-2.5 sm:top-3 right-2.5 sm:right-3 z-[40] flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl shadow-lg border text-xs font-semibold backdrop-blur transition-all duration-200 cursor-pointer ${
           isLocked
             ? 'bg-amber-500 text-slate-950 border-amber-300 shadow-amber-500/25 hover:bg-amber-400'
             : 'bg-[#062648]/90 text-blue-100 border-blue-300/30 shadow-[#021c38]/40 hover:bg-[#0c3664] hover:text-white'
