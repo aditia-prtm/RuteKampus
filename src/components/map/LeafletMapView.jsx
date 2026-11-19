@@ -45,39 +45,82 @@ function MapLockController({ isLocked }) {
 }
 
 // Buat custom circular pin icon untuk Leaflet Marker agar mendukung draggable & klik yang mudah
-function createNodeIcon(isWaypoint, isStartNode, isHighlighted, isSelectedForEdge, isDeleteMode, isInTour, tourColor = '#10b981') {
+function createNodeIcon(
+  isWaypoint,
+  isStartNode,
+  isCurrentNode,
+  isTargetNode,
+  isHighlighted,
+  isSelectedForEdge,
+  isDeleteMode,
+  isInTour,
+  tourColor = '#10b981'
+) {
   let bg = isWaypoint ? '#64748b' : '#2563eb';
-  if (isSelectedForEdge) bg = '#0284c7';
-  else if (isStartNode) bg = '#8b5cf6';
-  else if (isHighlighted) bg = '#f59e0b';
-  else if (isInTour && !isWaypoint) bg = tourColor;
-  else if (isDeleteMode) bg = '#f43f5e';
+  let size = isWaypoint ? 14 : 18;
+  let border = '2px solid #ffffff';
+  let shadow = '0 2px 6px rgba(0,0,0,0.45)';
+  let isPulsing = false;
 
-  // Simpul yang sedang dipilih untuk disambung akan membesar agar terlihat jelas
-  const size = isSelectedForEdge ? 24 : isWaypoint ? 14 : isStartNode ? 22 : 18;
-  const border = isSelectedForEdge
-    ? '3px solid #38bdf8'
-    : isStartNode
-    ? '3px solid #c084fc'
-    : isDeleteMode
-    ? '2px solid #ffe4e6'
-    : '2px solid #ffffff';
+  if (isDeleteMode) {
+    bg = '#f43f5e';
+    border = '2px solid #ffe4e6';
+  } else if (isSelectedForEdge) {
+    bg = '#0284c7';
+    size = 24;
+    border = '3px solid #38bdf8';
+    shadow = '0 0 14px #38bdf8, 0 2px 8px rgba(0,0,0,0.6)';
+  } else if (isCurrentNode) {
+    // Posisi Node Saat Ini Ditandai Warna Ungu
+    bg = '#9333ea'; // Purple-600
+    size = isWaypoint ? 20 : 24;
+    border = '3px solid #f3e8ff';
+    shadow = '0 0 16px #a855f7, 0 2px 8px rgba(0,0,0,0.6)';
+    isPulsing = true;
+  } else if (isTargetNode) {
+    // Target pilihan berikutnya
+    bg = '#f59e0b'; // Amber-500
+    size = isWaypoint ? 18 : 22;
+    border = '3px solid #fef3c7';
+    shadow = '0 0 14px #f59e0b, 0 2px 8px rgba(0,0,0,0.6)';
+  } else if (isHighlighted) {
+    bg = '#f59e0b';
+    size = isWaypoint ? 16 : 20;
+    border = '2px solid #ffffff';
+    shadow = '0 0 10px #f59e0b, 0 2px 6px rgba(0,0,0,0.5)';
+  } else if (isInTour && !isWaypoint) {
+    bg = tourColor;
+    size = 18;
+  } else if (isStartNode) {
+    bg = '#8b5cf6';
+    size = 20;
+    border = '3px solid #e9d5ff';
+  }
 
-  const shadow = isSelectedForEdge
-    ? '0 0 14px #38bdf8, 0 2px 8px rgba(0,0,0,0.6)'
-    : '0 2px 6px rgba(0,0,0,0.45)';
-
-  // Outer container dengan hit area 34px menjamin tikungan sangat mudah diklik
+  // Outer container dengan hit area 36px
   return L.divIcon({
     className: 'custom-node-pin',
     html: `<div style="
-      width: 34px;
-      height: 34px;
+      width: 36px;
+      height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
       cursor: pointer;
     ">
+      ${isPulsing ? `
+        <div style="
+          position: absolute;
+          width: ${size + 14}px;
+          height: ${size + 14}px;
+          border-radius: 50%;
+          background: rgba(147, 51, 234, 0.35);
+          box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
+          animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+          pointer-events: none;
+        "></div>
+      ` : ''}
       <div style="
         width: ${size}px;
         height: ${size}px;
@@ -87,10 +130,12 @@ function createNodeIcon(isWaypoint, isStartNode, isHighlighted, isSelectedForEdg
         box-shadow: ${shadow};
         box-sizing: border-box;
         transition: all 0.15s ease;
+        position: relative;
+        z-index: 10;
       "></div>
     </div>`,
-    iconSize: [34, 34],
-    iconAnchor: [17, 17]
+    iconSize: [36, 36],
+    iconAnchor: [18, 18]
   });
 }
 
@@ -158,6 +203,8 @@ export default function LeafletMapView({
   }, [nodes]);
 
   const highlightNodes = new Set(currentStep?.highlight?.nodes || []);
+  const currentNodeId = currentStep?.data?.from || currentStep?.data?.current || null;
+  const targetNodeId = currentStep?.data?.to || null;
 
   // Simpul-simpul tur yang telah dikunjungi atau terbentuk pada langkah ini
   const currentTourNodes = useMemo(() => {
@@ -459,6 +506,8 @@ export default function LeafletMapView({
           if (typeof node.lat !== 'number' || typeof node.lng !== 'number') return null;
 
           const isWaypoint = node.type === 'waypoint';
+          const isCurrentNode = currentNodeId === node.id;
+          const isTargetNode = targetNodeId === node.id;
           const isHighlighted = highlightNodes.has(node.id);
           const isSelectedForEdge = selectedNodeForEdge === node.id;
           const isStartNode = startNodeId === node.id;
@@ -469,6 +518,8 @@ export default function LeafletMapView({
           const icon = createNodeIcon(
             isWaypoint,
             isStartNode,
+            isCurrentNode,
+            isTargetNode,
             isHighlighted,
             isSelectedForEdge,
             isDeleteMode,
@@ -498,13 +549,25 @@ export default function LeafletMapView({
               <Tooltip direction="top" offset={[0, -10]} opacity={1}>
                 <div className="text-xs font-semibold">
                   {node.label || node.id}
-                  {isStartNode && <span className="text-purple-600 block text-[10px]">★ Titik Awal Pilihan</span>}
-                  {isWaypoint ? (
-                    <span className="text-slate-500 block text-[10px]">(Tikungan/Waypoint)</span>
-                  ) : (
-                    <span className="text-emerald-600 block text-[10px]">(Lokasi Tujuan)</span>
+                  {isCurrentNode && (
+                    <span className="text-purple-400 font-bold block text-[10px]">
+                      ● Posisi Saat Ini (Warna Ungu)
+                    </span>
                   )}
-                  {isEditing && <span className="text-teal-600 block text-[10px]">Tarik (drag) untuk geser</span>}
+                  {isTargetNode && !isCurrentNode && (
+                    <span className="text-amber-400 font-bold block text-[10px]">
+                      ● Target Kunjungan Terdekat
+                    </span>
+                  )}
+                  {isStartNode && !isCurrentNode && (
+                    <span className="text-purple-300 block text-[10px]">★ Titik Awal Pilihan</span>
+                  )}
+                  {isWaypoint ? (
+                    <span className="text-slate-400 block text-[10px]">(Tikungan/Waypoint)</span>
+                  ) : (
+                    <span className="text-emerald-400 block text-[10px]">(Lokasi Tujuan)</span>
+                  )}
+                  {isEditing && <span className="text-teal-400 block text-[10px]">Tarik (drag) untuk geser</span>}
                 </div>
               </Tooltip>
 

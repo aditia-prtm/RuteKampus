@@ -16,7 +16,7 @@ export const SAMPLE_GRAPHS = [
       // ==========================================
       // 1. FASILITAS & GEDUNG KAMPUS (PLACES)
       // ==========================================
-      { id: 'Terminal', label: 'Terminal / Gerbang Utama', type: 'place', lat: -2.98698, lng: 104.73181 },
+      { id: 'Gerbang', label: 'Gerbang Utama', type: 'place', lat: -2.98698, lng: 104.73181 },
       { id: 'Gedung_1', label: 'POLSRI', type: 'place', lat: -2.98331, lng: 104.73297 }, // Ujung Utara (Akses Simpang 1)
       { id: 'Gedung_2', label: 'FH', type: 'place', lat: -2.98392, lng: 104.73312 }, // Utara Tengah (Akses Simpang 4)
       { id: 'Gedung_3', label: 'FK', type: 'place', lat: -2.98398, lng: 104.73205 }, // Barat Laut (Akses Simpang 3)
@@ -49,7 +49,7 @@ export const SAMPLE_GRAPHS = [
       { id: 'W_16', label: 'Tikungan 16', type: 'waypoint', lat: -2.98796, lng: 104.73354 }
     ],
     edges: [
-      // Ruas Penghubung Gedung/Terminal ke Akses Simpang Terdekat
+      // Ruas Penghubung Gedung/Gerbang ke Akses Simpang Terdekat
       { id: 'e1', from: 'Gedung_1', to: 'W_1' },
       { id: 'e2', from: 'Gedung_2', to: 'W_4' },
       { id: 'e3', from: 'Gedung_3', to: 'W_3' },
@@ -60,7 +60,7 @@ export const SAMPLE_GRAPHS = [
       { id: 'e8', from: 'Gedung_8', to: 'W_11' },
       { id: 'e9', from: 'Gedung_9', to: 'W_13' },
       { id: 'e10', from: 'Gedung_10', to: 'W_16' },
-      { id: 'e11', from: 'Terminal', to: 'W_15' },
+      { id: 'e11', from: 'Gerbang', to: 'W_15' },
 
       // Ruas Jalur Fisik Jalan Kampus Antar Simpang & Tikungan
       { id: 'e12', from: 'W_1', to: 'W_2' },

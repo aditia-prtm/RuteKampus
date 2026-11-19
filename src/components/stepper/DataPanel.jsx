@@ -87,7 +87,13 @@ export default function DataPanel({ currentStep }) {
       {type === 'nn-step' && data.candidates && (
         <div className="space-y-3 text-xs">
           <div className="flex items-center justify-between p-3 rounded-xl bg-[#062648]/85 border border-blue-300/20 text-xs">
-            <span className="text-blue-200/80">Posisi Saat Ini: <strong className="text-amber-400 font-semibold">{getLabel(data.from)}</strong></span>
+            <span className="text-blue-200/80 flex items-center gap-1.5">
+              <span>Posisi Saat Ini:</span>
+              <strong className="text-purple-300 font-semibold px-2 py-0.5 rounded bg-purple-500/20 border border-purple-400/40 inline-flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
+                <span>{getLabel(data.from)}</span>
+              </strong>
+            </span>
             <span className="text-blue-200/80">Total Jarak Tempuh: <strong className="text-white font-mono">{data.currentCost} m</strong></span>
           </div>
 

@@ -368,6 +368,8 @@ export default function InteractiveGraphCanvas({
 
         {/* 3. Simpul Interaktif */}
         {nodes.map((node) => {
+          const isCurrentNode = (currentStep?.data?.from === node.id) || (currentStep?.data?.current === node.id);
+          const isTargetNode = currentStep?.data?.to === node.id;
           const isHighlighted = highlightNodes.has(node.id);
           const isSelected = selectedNodeForEdge === node.id;
           const isVisited = currentTourNodes.includes(node.id);
@@ -375,7 +377,8 @@ export default function InteractiveGraphCanvas({
 
           let color = '#3b82f6';
           if (isVisited) color = currentStep?.data?.color || '#10b981';
-          if (isHighlighted) color = '#f59e0b';
+          if (isHighlighted || isTargetNode) color = '#f59e0b';
+          if (isCurrentNode) color = '#9333ea'; // Posisi node saat ini: Ditandai Warna Ungu
           if (isSelected) color = '#38bdf8';
           if (isDeleteMode) color = '#f43f5e';
 
@@ -399,11 +402,11 @@ export default function InteractiveGraphCanvas({
               <circle
                 cx={node.x}
                 cy={node.y}
-                r={isDragging ? 22 : isSelected || isHighlighted ? 20 : 16}
+                r={isDragging ? 22 : isCurrentNode ? 22 : isSelected || isHighlighted ? 20 : 16}
                 fill={color}
-                stroke={isDeleteMode ? '#ffe4e6' : isSelected ? '#38bdf8' : '#0f172a'}
-                strokeWidth={isDeleteMode ? 3 : isSelected ? 3 : 2}
-                filter={isHighlighted || isSelected || isDragging ? 'url(#glow-custom-graph)' : undefined}
+                stroke={isDeleteMode ? '#ffe4e6' : isCurrentNode ? '#f3e8ff' : isSelected ? '#38bdf8' : '#0f172a'}
+                strokeWidth={isDeleteMode ? 3 : isCurrentNode ? 3.5 : isSelected ? 3 : 2}
+                filter={isCurrentNode || isHighlighted || isSelected || isDragging ? 'url(#glow-custom-graph)' : undefined}
                 className="transition-transform duration-100"
               />
 

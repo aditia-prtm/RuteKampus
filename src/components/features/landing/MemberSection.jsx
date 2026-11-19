@@ -11,46 +11,46 @@ const MEMBERS = [
     tabLabel: 'RAFA',
     name: 'Rafa Rasyad Anfero',
     nim: '09021282530057',
-    role: 'null',
     prodi: 'Teknik Informatika',
     faculty: 'Fakultas Ilmu Komputer, Universitas Sriwijaya',
     quote: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et.',
+    image: '/member/adit.png',
     avatarColor: 'from-blue-600 via-indigo-700 to-blue-900',
-    initial: 'D1'
+    initial: 'RF'
   },
   {
     id: 2,
     tabLabel: 'SABIL',
     name: 'Sabil Alaudin',
     nim: '09021282530121',
-    role: 'null',
     prodi: 'Teknik Informatika',
     faculty: 'Fakultas Ilmu Komputer, Universitas Sriwijaya',
     quote: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et.',
+    image: '/member/adit.png',
     avatarColor: 'from-amber-500 via-amber-700 to-amber-950',
-    initial: 'D2'
+    initial: 'SB'
   },
   {
     id: 3,
     tabLabel: 'NAHES',
     name: 'Muhammad Syehan Fahrezi Prashya',
     nim: '09021282530051',
-    role: 'null',
     prodi: 'Teknik Informatika',
     faculty: 'Fakultas Ilmu Komputer, Universitas Sriwijaya',
     quote: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et.',
+    image: '/member/adit.png',
     avatarColor: 'from-teal-500 via-teal-700 to-teal-950',
-    initial: 'D3'
+    initial: 'SH'
   },
   {
     id: 4,
     tabLabel: 'ADIT',
     name: 'M. Aditia Putra Pratama',
     nim: '09021282530045',
-    role: 'null',
     prodi: 'Teknik Informatika',
     faculty: 'Fakultas Ilmu Komputer, Universitas Sriwijaya',
     quote: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et.',
+    image: '/member/adit.png',
     avatarColor: 'from-sky-600 via-blue-800 to-indigo-950',
     initial: 'AD'
   }
@@ -130,32 +130,24 @@ export default function MemberSection() {
               className="w-full"
             >
               <Card className="flex flex-col sm:flex-row items-center sm:items-stretch gap-6 sm:gap-8 p-6 sm:p-8 bg-gradient-to-r from-[#0c447d]/90 to-[#072f59]/95 border-blue-300/30 shadow-2xl">
-                {/* Sebelah Kiri: Foto / Avatar Developer */}
+                {/* Sebelah Kiri: Foto Asli Developer */}
                 <div className="shrink-0 flex flex-col items-center">
-                  <div
-                    className={`w-36 h-44 sm:w-44 sm:h-52 rounded-2xl bg-gradient-to-br ${activeMember.avatarColor} border-2 border-amber-400/50 shadow-2xl flex flex-col items-center justify-center relative overflow-hidden group`}
-                  >
-                    {/* Efek aksen visual */}
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.2),transparent_70%)]" />
+                  <div className="w-36 h-44 sm:w-44 sm:h-52 rounded-2xl bg-gradient-to-br from-[#062447] to-[#031c38] border-2 border-amber-400/60 shadow-2xl relative overflow-hidden group">
+                    <img
+                      src={activeMember.image || '/member/adit.png'}
+                      alt={activeMember.name}
+                      className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                    />
 
-                    <div className="w-16 h-16 rounded-full bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center text-white text-xl font-extrabold tracking-wider mb-2 shadow-inner">
-                      {activeMember.initial}
-                    </div>
-
-                    <span className="text-[10px] uppercase tracking-widest text-amber-300 font-bold px-2.5 py-0.5 rounded-full bg-black/40 border border-amber-400/40">
-                      UNSRI 2026
-                    </span>
+                    {/* Gradient overlay bawah agar teks/badge terbaca kontras */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
                   </div>
                 </div>
 
                 {/* Sebelah Kanan: Informasi Nama + NIM + Detail */}
                 <div className="flex-1 flex flex-col justify-center text-center sm:text-left space-y-3">
                   <div>
-                    <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/35 mb-2">
-                      <Sparkles className="w-3 h-3 text-amber-400" />
-                      <span>{activeMember.role}</span>
-                    </div>
-
                     <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
                       {activeMember.name}
                     </h3>
