@@ -64,11 +64,8 @@ export default function Navbar() {
           <div className="flex flex-col">
             <div className="flex items-center text-lg sm:text-2xl font-bold tracking-tight">
               <span className="text-white">Tour</span>
-              <span className="text-amber-400 font-extrabold tracking-wider">KAMPUS</span>
+              <span className="text-amber-400 font-extrabold">KAMPUS</span>
             </div>
-            <span className="text-[9px] uppercase tracking-widest text-blue-200/80 font-semibold -mt-1">
-              Navigasi & Tur Kampus Unsri
-            </span>
           </div>
         </Link>
 
@@ -120,7 +117,7 @@ export default function Navbar() {
                 to="/campus"
                 className="inline-flex items-center gap-1.5 px-6 py-2 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs font-poppins shadow-md shadow-black/25 transition-all transform hover:-translate-y-0.5 cursor-pointer"
               >
-                <span>Visualisasi</span>
+                <span>Mulai</span>
               </Link>
             </div>
 

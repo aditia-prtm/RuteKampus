@@ -207,7 +207,7 @@ export default function HeroSection() {
         </h1>
 
         {/* Subtitle font Poppins */}
-        <p className="max-w-2xl mx-auto text-sm sm:text-base lg:text-lg text-white drop-shadow-2xl leading-relaxed">
+        <p className="max-w-2xl mx-auto text-sm sm:text-base lg:text-lg text-amber-400 drop-shadow-2xl leading-relaxed">
           Temukan rute terpendek untuk mengunjungi setiap fakultas di Universitas Sriwijaya dan kembali ke titik awal dengan total jarak paling minimum.
         </p>
 

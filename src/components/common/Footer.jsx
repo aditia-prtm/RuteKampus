@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
           <div className="flex items-center text-xl font-bold tracking-tight text-white mb-1">
             <span>Tour</span>
-            <span className="text-amber-400 font-extrabold tracking-wider">KAMPUS</span>
+            <span className="text-amber-400 font-extrabold">KAMPUS</span>
           </div>
           <p className="text-xs text-blue-200/80 max-w-sm">
             Simulasi visual interaktif Traveling Salesperson Problem (TSP) dan Siklus Hamilton pada jaringan jalan Kampus Universitas Sriwijaya.
