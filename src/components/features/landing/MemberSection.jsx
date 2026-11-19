@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GraduationCap, Users, Sparkles } from 'lucide-react';
 import Card from '../../common/Card.jsx';
-import Badge from '../../common/Badge.jsx';
 
 // Data 4 Mahasiswa Pengembang (Tim Struktur Diskrit 2 UNSRI)
 const MEMBERS = [
@@ -14,7 +13,7 @@ const MEMBERS = [
     prodi: 'Teknik Informatika',
     faculty: 'Fakultas Ilmu Komputer, Universitas Sriwijaya',
     quote: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et.',
-    image: '/member/adit.png',
+    image: '/member/rafa.png',
     avatarColor: 'from-blue-600 via-indigo-700 to-blue-900',
     initial: 'RF'
   },
@@ -26,7 +25,7 @@ const MEMBERS = [
     prodi: 'Teknik Informatika',
     faculty: 'Fakultas Ilmu Komputer, Universitas Sriwijaya',
     quote: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et.',
-    image: '/member/adit.png',
+    image: '/member/sabil.png',
     avatarColor: 'from-amber-500 via-amber-700 to-amber-950',
     initial: 'SB'
   },
@@ -66,9 +65,6 @@ export default function MemberSection() {
     <section className="space-y-8">
       {/* Header Section */}
       <div className="text-center space-y-2">
-        <Badge variant="amber" dot className="mx-auto">
-          Tim Pengembang
-        </Badge>
         <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white font-['Poppins',sans-serif]">
           Meet our <span className="text-amber-400 font-serif italic ml-1">developer</span>
         </h2>

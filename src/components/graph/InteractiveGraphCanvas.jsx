@@ -2,16 +2,15 @@ import React, { useRef, useState, useCallback, useMemo } from 'react';
 
 /**
  * Kanvas Interaktif untuk Mode Bikin Graf Sendiri (Custom Graph Canvas).
- * Mendukung:
- * - Menambah simpul dengan klik kanvas.
- * - Menghubungkan dua simpul dengan sisi (edge) berbobot.
- * - Mode Hapus: langsung klik simpul atau garis sisi untuk menghapusnya.
- * - Menggeser (drag & drop) simpul.
+ * Sistem Interaksi Intuitif Langsung:
+ * 1. Klik area kosong kanvas = Menambah simpul baru.
+ * 2. Klik simpul = Muncul menu tepat di dekat simpul dengan 2 pilihan: [🔗 Sambung] dan [🗑 Hapus].
+ * 3. Drag simpul kapanpun untuk memindahkan posisi.
+ * 4. Klik sisi / bobot = Mengedit bobot sisi (atau ketik 'hapus' untuk membuang sisi).
  */
 export default function InteractiveGraphCanvas({
   nodes,
   edges,
-  currentMode = 'add-node', // 'add-node' | 'add-edge' | 'drag' | 'delete'
   selectedNodeForEdge,
   onSelectNodeForEdge,
   onAddNode,
@@ -23,8 +22,15 @@ export default function InteractiveGraphCanvas({
   currentStep
 }) {
   const svgRef = useRef(null);
+
+  // State untuk drag node kapanpun
   const [draggingId, setDraggingId] = useState(null);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const dragOffsetRef = useRef({ x: 0, y: 0 });
+  const pointerStartRef = useRef({ x: 0, y: 0 });
+  const hasDraggedRef = useRef(false);
+
+  // State untuk menu aksi simpul aktif (nodeId | null)
+  const [activeNodeMenu, setActiveNodeMenu] = useState(null);
 
   const getSVGCoordinates = useCallback((e) => {
     if (!svgRef.current) return { x: 0, y: 0 };
@@ -39,38 +45,88 @@ export default function InteractiveGraphCanvas({
     };
   }, []);
 
+  const nodeMap = useMemo(() => {
+    const map = new Map();
+    for (const n of nodes) {
+      map.set(n.id, n);
+    }
+    return map;
+  }, [nodes]);
+
+  // Klik kanvas kosong -> Tambah Simpul baru atau tutup menu aktif
   const handleSvgClick = (e) => {
-    if (draggingId || currentMode !== 'add-node') return;
+    if (hasDraggedRef.current) {
+      hasDraggedRef.current = false;
+      return;
+    }
+
+    // Jika menu sedang terbuka, klik kanvas kosong cukup menutup menu
+    if (activeNodeMenu) {
+      setActiveNodeMenu(null);
+      return;
+    }
+
     const { x, y } = getSVGCoordinates(e);
-    if (x >= 30 && x <= 570 && y >= 30 && y <= 420) {
+    if (x >= 35 && x <= 565 && y >= 35 && y <= 415) {
       onAddNode(x, y);
     }
   };
 
-  const handleNodeMouseDown = (e, nodeId, nodeX, nodeY) => {
+  // Pointer Down pada simpul -> Persiapan Drag
+  const handleNodePointerDown = (e, nodeId, nodeX, nodeY) => {
+    e.stopPropagation();
+    const { x, y } = getSVGCoordinates(e);
+
+    setDraggingId(nodeId);
+    dragOffsetRef.current = { x: x - nodeX, y: y - nodeY };
+    pointerStartRef.current = { x, y };
+    hasDraggedRef.current = false;
+  };
+
+  // Pointer Move pada kanvas -> Menggeser node jika sedang drag
+  const handlePointerMove = (e) => {
+    if (!draggingId) return;
+
+    const { x, y } = getSVGCoordinates(e);
+    const dist = Math.hypot(x - pointerStartRef.current.x, y - pointerStartRef.current.y);
+
+    if (dist > 4) {
+      hasDraggedRef.current = true;
+      if (activeNodeMenu) setActiveNodeMenu(null);
+    }
+
+    if (hasDraggedRef.current) {
+      const newX = Math.max(30, Math.min(570, x - dragOffsetRef.current.x));
+      const newY = Math.max(30, Math.min(420, y - dragOffsetRef.current.y));
+      onUpdateNodePosition(draggingId, newX, newY);
+    }
+  };
+
+  // Pointer Up -> Selesaikan drag
+  const handlePointerUp = () => {
+    setDraggingId(null);
+  };
+
+  // Klik pada simpul (dipanggil dari onClick elemen simpul dengan stopPropagation)
+  const handleNodeClick = (e, nodeId) => {
     e.stopPropagation();
 
-    // Jika sedang dalam mode Hapus, langsung hapus simpul tersebut
-    if (currentMode === 'delete') {
-      onRemoveNode(nodeId);
+    // Jika user baru saja menggeser/drag simpul, jangan buka menu
+    if (hasDraggedRef.current) {
+      hasDraggedRef.current = false;
       return;
     }
 
-    if (currentMode === 'drag') {
-      const { x, y } = getSVGCoordinates(e);
-      setDraggingId(nodeId);
-      setDragOffset({ x: x - nodeX, y: y - nodeY });
-    } else if (currentMode === 'add-edge') {
-      if (!selectedNodeForEdge) {
-        onSelectNodeForEdge(nodeId);
-      } else if (selectedNodeForEdge === nodeId) {
+    // 1. Jika sedang dalam proses menyambungkan sisi
+    if (selectedNodeForEdge) {
+      if (selectedNodeForEdge === nodeId) {
         onSelectNodeForEdge(null);
       } else {
         const u = nodeMap.get(selectedNodeForEdge);
         const v = nodeMap.get(nodeId);
         const defaultWeight = u && v ? Math.round(Math.hypot(u.x - v.x, u.y - v.y)) : 10;
         const inputWeight = window.prompt(
-          `Masukkan bobot sisi (${selectedNodeForEdge} ↔ ${nodeId}):`,
+          `Sambungkan Sisi: (${selectedNodeForEdge} ↔ ${nodeId})\nMasukkan bobot sisi (jarak):`,
           String(defaultWeight)
         );
         if (inputWeight !== null) {
@@ -79,22 +135,22 @@ export default function InteractiveGraphCanvas({
         }
         onSelectNodeForEdge(null);
       }
-    }
-  };
-
-  const handleEdgeClick = (e, edge) => {
-    e.stopPropagation();
-
-    // Jika sedang dalam mode Hapus, langsung hapus sisi tersebut
-    if (currentMode === 'delete') {
-      onRemoveEdge(edge.id);
+      setActiveNodeMenu(null);
       return;
     }
 
-    // Jika diklik pada mode biasa, tampilkan opsi ubah/hapus
+    // 2. Tampilkan menu aksi tepat di dekat simpul: Sambung Sisi & Hapus Node
+    setActiveNodeMenu((prev) => (prev === nodeId ? null : nodeId));
+  };
+
+  // Klik pada sisi atau badge bobot -> Mengedit bobot sisi atau menghapus
+  const handleEdgeClick = (e, edge) => {
+    e.stopPropagation();
+    setActiveNodeMenu(null);
+
     const weight = edge.weight !== undefined ? edge.weight : 10;
     const act = window.prompt(
-      `Sisi ${edge.from} ↔ ${edge.to} (Bobot: ${weight})\nKetik angka untuk ganti bobot, atau ketik 'hapus' untuk membuang sisi:`,
+      `Edit Sisi (${edge.from} ↔ ${edge.to}) — Bobot saat ini: ${weight}\nMasukkan angka baru untuk ganti bobot, atau ketik 'hapus' untuk membuang sisi:`,
       String(weight)
     );
     if (act !== null) {
@@ -102,27 +158,12 @@ export default function InteractiveGraphCanvas({
         onRemoveEdge(edge.id);
       } else {
         const newW = parseFloat(act);
-        if (!isNaN(newW)) onUpdateEdgeWeight(edge.id, newW);
+        if (!isNaN(newW) && newW > 0) {
+          onUpdateEdgeWeight(edge.id, Math.round(newW * 10) / 10);
+        }
       }
     }
   };
-
-  const handleMouseMove = (e) => {
-    if (!draggingId) return;
-    const { x, y } = getSVGCoordinates(e);
-    const newX = Math.max(30, Math.min(570, x - dragOffset.x));
-    const newY = Math.max(30, Math.min(420, y - dragOffset.y));
-    onUpdateNodePosition(draggingId, newX, newY);
-  };
-
-  const handleMouseUp = () => {
-    setDraggingId(null);
-  };
-
-  const nodeMap = new Map();
-  for (const n of nodes) {
-    nodeMap.set(n.id, n);
-  }
 
   const highlightNodes = new Set(currentStep?.highlight?.nodes || []);
   const currentTourNodes = useMemo(() => {
@@ -136,7 +177,7 @@ export default function InteractiveGraphCanvas({
     );
   }, [currentStep]);
 
-  // Kumpulan edge kunci aktif (highlight saat dieksplorasi/ditukar)
+  // Kumpulan edge kunci aktif (highlight saat dieksplorasi)
   const highlightEdgeKeys = useMemo(() => {
     const set = new Set();
     const rawEdges = currentStep?.highlight?.edges || [];
@@ -183,24 +224,16 @@ export default function InteractiveGraphCanvas({
     return set;
   }, [currentStep, currentTourNodes]);
 
-  const isDeleteMode = currentMode === 'delete';
-
   return (
-    <div
-      className="w-full h-full min-h-[420px] bg-[#062648] rounded-2xl border border-blue-300/25 relative overflow-hidden flex flex-col shadow-xl shadow-[#021c38]/40"
-    >
-      {/* Banner Keterangan Mode */}
+    <div className="w-full h-full min-h-[420px] bg-[#062648] rounded-2xl border border-blue-300/25 relative overflow-hidden flex flex-col shadow-xl shadow-[#021c38]/40 select-none">
+      {/* Header Info Status Graf */}
       <div className="absolute top-2.5 sm:top-3 left-2.5 sm:left-3 right-2.5 sm:right-3 z-10 flex flex-wrap items-center justify-between gap-1.5 sm:gap-2 pointer-events-none">
-        <div className="bg-[#0e4984]/95 backdrop-blur border border-blue-300/25 text-blue-100 text-[11px] sm:text-xs px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-xl shadow-md flex items-center gap-1.5 sm:gap-2 max-w-[calc(100%-6rem)] sm:max-w-none truncate">
-          <span className={`w-2 h-2 rounded-full shrink-0 ${isDeleteMode ? 'bg-rose-400' : 'bg-amber-400'} animate-pulse`} />
+        <div className="bg-[#0e4984]/95 backdrop-blur border border-blue-300/25 text-blue-100 text-[11px] sm:text-xs px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-xl shadow-md flex items-center gap-1.5 sm:gap-2">
+          <span className="w-2 h-2 rounded-full shrink-0 bg-amber-400 animate-pulse" />
           <span className="truncate">
-            {currentMode === 'add-node' && 'Tambah Simpul: Klik kanvas untuk simpul baru.'}
-            {currentMode === 'add-edge' &&
-              (selectedNodeForEdge
-                ? `Pilih simpul kedua dari [${selectedNodeForEdge}].`
-                : 'Sambung Sisi: Klik simpul 1 lalu simpul 2.')}
-            {currentMode === 'drag' && 'Mode Geser: Drag simpul untuk pindah posisi.'}
-            {currentMode === 'delete' && 'Mode Hapus: Klik simpul/sisi untuk menghapus.'}
+            {selectedNodeForEdge
+              ? `Pilih simpul kedua untuk sisi dari [${selectedNodeForEdge}]`
+              : 'Klik kanvas untuk tambah simpul • Klik simpul untuk opsi sambung/hapus'}
           </span>
         </div>
         <div className="bg-[#0e4984]/95 backdrop-blur border border-blue-300/25 text-[11px] sm:text-xs px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-amber-300 font-mono font-medium shrink-0">
@@ -212,21 +245,10 @@ export default function InteractiveGraphCanvas({
         ref={svgRef}
         viewBox="0 0 600 450"
         onClick={handleSvgClick}
-        onPointerDown={(e) => {
-          if (currentMode === 'add-node') handleSvgClick(e);
-        }}
-        onPointerMove={handleMouseMove}
-        onPointerUp={handleMouseUp}
-        onPointerCancel={handleMouseUp}
-        className={`w-full h-full select-none flex-1 touch-none ${
-          currentMode === 'add-node'
-            ? 'cursor-crosshair'
-            : currentMode === 'drag'
-            ? 'cursor-move'
-            : currentMode === 'delete'
-            ? 'cursor-not-allowed'
-            : 'cursor-pointer'
-        }`}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
+        className="w-full h-full flex-1 touch-none cursor-crosshair"
       >
         <defs>
           <pattern id="grid-custom" width="30" height="30" patternUnits="userSpaceOnUse">
@@ -240,7 +262,7 @@ export default function InteractiveGraphCanvas({
 
         <rect width="600" height="450" fill="url(#grid-custom)" />
 
-        {/* 1. Sisi (Edges) yang Dibuat Pengguna dengan Visualisasi Warna Dinamis */}
+        {/* 1. Sisi (Edges) yang Dibuat Pengguna */}
         {edges.map((edge) => {
           const u = nodeMap.get(edge.from);
           const v = nodeMap.get(edge.to);
@@ -256,7 +278,7 @@ export default function InteractiveGraphCanvas({
 
           let strokeColor = '#475569';
           let strokeWidth = 2.5;
-          let strokeOpacity = 0.5;
+          let strokeOpacity = 0.55;
 
           let badgeFill = '#051b36';
           let badgeStroke = '#1e4976';
@@ -264,14 +286,7 @@ export default function InteractiveGraphCanvas({
 
           const stepColor = currentStep?.data?.color || '#10b981';
 
-          if (isDeleteMode) {
-            strokeColor = '#f43f5e';
-            strokeWidth = 4;
-            strokeOpacity = 0.85;
-            badgeFill = '#881337';
-            badgeStroke = '#f43f5e';
-            badgeTextColor = '#fecdd3';
-          } else if (isHighlighted && !isTourEdge) {
+          if (isHighlighted && !isTourEdge) {
             strokeColor = '#f59e0b';
             strokeWidth = 5;
             strokeOpacity = 1;
@@ -300,7 +315,7 @@ export default function InteractiveGraphCanvas({
                 x2={v.x}
                 y2={v.y}
                 stroke="transparent"
-                strokeWidth={16}
+                strokeWidth={18}
               />
               <line
                 x1={u.x}
@@ -312,7 +327,7 @@ export default function InteractiveGraphCanvas({
                 strokeOpacity={strokeOpacity}
                 strokeLinecap="round"
                 filter={isHighlighted ? 'url(#glow-custom-graph)' : undefined}
-                className="group-hover:stroke-rose-400 transition-all duration-150"
+                className="group-hover:stroke-amber-400 group-hover:stroke-[4px] transition-all duration-150"
               />
               {/* Badge Bobot Sisi */}
               <g>
@@ -321,11 +336,11 @@ export default function InteractiveGraphCanvas({
                   y={midY - 10}
                   width={32}
                   height={18}
-                  rx={4}
+                  rx={5}
                   fill={badgeFill}
                   stroke={badgeStroke}
                   strokeWidth={isHighlighted || isTourEdge ? 1.5 : 1}
-                  className="group-hover:stroke-rose-400 transition-colors"
+                  className="group-hover:stroke-amber-400 transition-colors"
                 />
                 <text
                   x={midX}
@@ -366,7 +381,7 @@ export default function InteractiveGraphCanvas({
             );
           })}
 
-        {/* 3. Simpul Interaktif */}
+        {/* 3. Simpul Interaktif (Bisa di-drag kapanpun atau diklik untuk buka menu) */}
         {nodes.map((node) => {
           const isCurrentNode = (currentStep?.data?.from === node.id) || (currentStep?.data?.current === node.id);
           const isTargetNode = currentStep?.data?.to === node.id;
@@ -374,38 +389,68 @@ export default function InteractiveGraphCanvas({
           const isSelected = selectedNodeForEdge === node.id;
           const isVisited = currentTourNodes.includes(node.id);
           const isDragging = draggingId === node.id;
+          const isMenuOpen = activeNodeMenu === node.id;
 
           let color = '#3b82f6';
           if (isVisited) color = currentStep?.data?.color || '#10b981';
           if (isHighlighted || isTargetNode) color = '#f59e0b';
-          if (isCurrentNode) color = '#9333ea'; // Posisi node saat ini: Ditandai Warna Ungu
-          if (isSelected) color = '#38bdf8';
-          if (isDeleteMode) color = '#f43f5e';
+          if (isCurrentNode) color = '#9333ea'; // Posisi node saat ini: Ungu
+          if (isSelected) color = '#0284c7';
 
           return (
             <g
               key={node.id}
-              className={
-                currentMode === 'drag'
-                  ? 'cursor-grab active:cursor-grabbing'
-                  : currentMode === 'delete'
-                  ? 'cursor-pointer hover:opacity-80'
-                  : 'cursor-pointer'
-              }
-              onMouseDown={(e) => handleNodeMouseDown(e, node.id, node.x, node.y)}
-              onPointerDown={(e) => handleNodeMouseDown(e, node.id, node.x, node.y)}
+              className="cursor-grab active:cursor-grabbing"
+              onPointerDown={(e) => handleNodePointerDown(e, node.id, node.x, node.y)}
+              onClick={(e) => handleNodeClick(e, node.id)}
               onContextMenu={(e) => {
                 e.preventDefault();
                 onRemoveNode(node.id);
               }}
             >
+              {/* Animasi Pulsing untuk Node Saat Ini (Warna Ungu) */}
+              {isCurrentNode && (
+                <circle
+                  cx={node.x}
+                  cy={node.y}
+                  r={30}
+                  fill="#9333ea"
+                  opacity={0.25}
+                  className="animate-ping pointer-events-none"
+                />
+              )}
+
+              {/* Lingkaran penanda seleksi saat menyambungkan edge (statis dan bersih) */}
+              {isSelected && (
+                <circle
+                  cx={node.x}
+                  cy={node.y}
+                  r={24}
+                  fill="none"
+                  stroke="#38bdf8"
+                  strokeWidth={2.5}
+                />
+              )}
+
+              {/* Lingkaran penanda saat menu aktif terbuka */}
+              {isMenuOpen && (
+                <circle
+                  cx={node.x}
+                  cy={node.y}
+                  r={25}
+                  fill="none"
+                  stroke="#facc15"
+                  strokeWidth={2}
+                />
+              )}
+
               <circle
                 cx={node.x}
                 cy={node.y}
-                r={isDragging ? 22 : isCurrentNode ? 22 : isSelected || isHighlighted ? 20 : 16}
+                r={isDragging ? 22 : isCurrentNode ? 22 : isSelected || isHighlighted ? 20 : isMenuOpen ? 20 : 16}
                 fill={color}
-                stroke={isDeleteMode ? '#ffe4e6' : isCurrentNode ? '#f3e8ff' : isSelected ? '#38bdf8' : '#0f172a'}
-                strokeWidth={isDeleteMode ? 3 : isCurrentNode ? 3.5 : isSelected ? 3 : 2}
+                stroke={isCurrentNode ? '#f3e8ff' : isSelected ? '#38bdf8' : isMenuOpen ? '#facc15' : '#ffffff'}
+                strokeWidth={isCurrentNode ? 3.5 : isSelected ? 3 : isMenuOpen ? 3 : 2}
                 filter={isCurrentNode || isHighlighted || isSelected || isDragging ? 'url(#glow-custom-graph)' : undefined}
                 className="transition-transform duration-100"
               />
@@ -421,35 +466,112 @@ export default function InteractiveGraphCanvas({
               >
                 {node.id}
               </text>
+            </g>
+          );
+        })}
 
-              {/* Tombol Hapus Cepat (Tanda Silang Merah) saat mouse hover */}
+        {/* 4. Menu Aksi Simpul Tepat di Dekat Simpul: [🔗 Sambung] dan [🗑 Hapus] */}
+        {activeNodeMenu && (() => {
+          const targetNode = nodeMap.get(activeNodeMenu);
+          if (!targetNode) return null;
+
+          const isNearTop = targetNode.y < 85;
+          const menuY = isNearTop ? targetNode.y + 26 : targetNode.y - 48;
+          const menuX = Math.max(95, Math.min(505, targetNode.x));
+
+          return (
+            <g
+              className="select-none"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Drop shadow / glow box */}
+              <rect
+                x={menuX - 96}
+                y={menuY - 4}
+                width={192}
+                height={40}
+                rx={10}
+                fill="#031528"
+                stroke="#38bdf8"
+                strokeWidth={1.5}
+                filter="url(#glow-custom-graph)"
+              />
+              <rect
+                x={menuX - 96}
+                y={menuY - 4}
+                width={192}
+                height={40}
+                rx={10}
+                fill="#072343"
+                stroke="#38bdf8"
+                strokeWidth={1.5}
+              />
+
+              {/* Tombol 1: Sambung Sisi */}
               <g
-                className="opacity-0 hover:opacity-100 transition-opacity cursor-pointer"
+                className="cursor-pointer group/btn1"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onRemoveNode(node.id);
+                  onSelectNodeForEdge(targetNode.id);
+                  setActiveNodeMenu(null);
                 }}
               >
-                <circle cx={node.x + 14} cy={node.y - 14} r={8} fill="#f43f5e" />
+                <rect
+                  x={menuX - 90}
+                  y={menuY + 2}
+                  width={86}
+                  height={28}
+                  rx={7}
+                  fill="#0284c7"
+                  className="hover:fill-sky-400 transition-colors"
+                />
                 <text
-                  x={node.x + 14}
-                  y={node.y - 11}
+                  x={menuX - 47}
+                  y={menuY + 20}
                   fill="#ffffff"
-                  fontSize="10"
+                  fontSize="11"
                   fontWeight="bold"
                   textAnchor="middle"
+                  className="pointer-events-none font-sans"
                 >
-                  ×
+                  🔗 Sambung
+                </text>
+              </g>
+
+              {/* Tombol 2: Hapus Node */}
+              <g
+                className="cursor-pointer group/btn2"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemoveNode(targetNode.id);
+                  setActiveNodeMenu(null);
+                }}
+              >
+                <rect
+                  x={menuX + 4}
+                  y={menuY + 2}
+                  width={86}
+                  height={28}
+                  rx={7}
+                  fill="#e11d48"
+                  className="hover:fill-rose-500 transition-colors"
+                />
+                <text
+                  x={menuX + 47}
+                  y={menuY + 20}
+                  fill="#ffffff"
+                  fontSize="11"
+                  fontWeight="bold"
+                  textAnchor="middle"
+                  className="pointer-events-none font-sans"
+                >
+                  🗑 Hapus
                 </text>
               </g>
             </g>
           );
-        })}
+        })()}
       </svg>
     </div>
   );
-}
-
-function isInTour(nodeId, tour) {
-  return tour && tour.includes(nodeId);
 }

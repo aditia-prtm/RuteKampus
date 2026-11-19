@@ -103,6 +103,12 @@ export function useGraphEditor(initialNodes = [], initialEdges = []) {
     setEdges((prev) => prev.filter((e) => e.id !== edgeId));
   }, []);
 
+  const updateEdgeWeight = useCallback((edgeId, weight) => {
+    setEdges((prev) =>
+      prev.map((e) => (e.id === edgeId ? { ...e, weight } : e))
+    );
+  }, []);
+
   const exportJSON = useCallback(() => {
     return JSON.stringify({ nodes, edges }, null, 2);
   }, [nodes, edges]);
@@ -119,6 +125,7 @@ export function useGraphEditor(initialNodes = [], initialEdges = []) {
     removeNode,
     addEdge,
     removeEdge,
+    updateEdgeWeight,
     resetTo,
     exportJSON
   };

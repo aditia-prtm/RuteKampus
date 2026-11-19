@@ -1,7 +1,6 @@
 import React from 'react';
 import { Network, CheckCircle, Code2, Zap } from 'lucide-react';
 import Card from '../../common/Card.jsx';
-import Badge from '../../common/Badge.jsx';
 
 export default function GraphTheorySection() {
   const assumptions = [
@@ -14,9 +13,6 @@ export default function GraphTheorySection() {
   return (
     <section className="space-y-8 pt-4 pb-8">
       <div className="text-center space-y-2">
-        <Badge variant="amber" dot className="mx-auto">
-          Materi Kuliah
-        </Badge>
         <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
           Landasan Teori <span className="text-amber-400 font-serif italic">Struktur Diskrit 2</span>
         </h2>

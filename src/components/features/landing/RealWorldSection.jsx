@@ -1,7 +1,6 @@
 import React from 'react';
 import { Bus, Clock, Fuel } from 'lucide-react';
 import Card from '../../common/Card.jsx';
-import Badge from '../../common/Badge.jsx';
 
 export default function RealWorldSection() {
   const points = [
@@ -25,9 +24,6 @@ export default function RealWorldSection() {
   return (
     <section className="space-y-8 pt-4">
       <div className="text-center space-y-2">
-        <Badge variant="blue" dot className="mx-auto">
-          Relevansi Lapangan
-        </Badge>
         <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
           Mengapa <span className="text-amber-400 font-serif italic">Optimasi Rute Kampus</span> Krusial?
         </h2>

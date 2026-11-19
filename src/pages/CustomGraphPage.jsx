@@ -5,7 +5,6 @@ import InteractiveGraphCanvas from '../components/graph/InteractiveGraphCanvas.j
 import StepControls from '../components/stepper/StepControls.jsx';
 import StepperInspector from '../components/stepper/StepperInspector.jsx';
 import CustomGraphHeader from '../components/features/custom-graph/CustomGraphHeader.jsx';
-import CustomGraphToolbar from '../components/features/custom-graph/CustomGraphToolbar.jsx';
 import { AlertCircle } from 'lucide-react';
 
 const PRESETS = {
@@ -66,7 +65,6 @@ const PRESETS = {
 export default function CustomGraphPage() {
   const [nodes, setNodes] = useState(PRESETS.square.nodes);
   const [edges, setEdges] = useState(PRESETS.square.edges);
-  const [currentMode, setCurrentMode] = useState('add-node'); // 'add-node' | 'add-edge' | 'drag' | 'delete'
   const [selectedNodeForEdge, setSelectedNodeForEdge] = useState(null);
   const [startNodeId, setStartNodeId] = useState('A');
 
@@ -186,14 +184,30 @@ export default function CustomGraphPage() {
         onClear={handleClear}
       />
 
-      {/* 2. Toolbar Pilihan Alat Mode Interaksi */}
-      <CustomGraphToolbar
-        currentMode={currentMode}
-        onSelectMode={(mode) => {
-          setCurrentMode(mode);
-          setSelectedNodeForEdge(null);
-        }}
-      />
+      {/* Status banner saat menyambungkan edge atau petunjuk interaksi intuitif */}
+      {selectedNodeForEdge ? (
+        <div className="mb-4 px-4 py-3 rounded-2xl bg-sky-500/20 border border-sky-400/40 text-sky-100 flex items-center justify-between gap-3 text-xs sm:text-sm shadow-lg animate-pulse">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-sky-400 animate-ping shrink-0" />
+            <span>
+              <strong>Menyambungkan Sisi:</strong> Klik simpul tujuan untuk membuat sisi dari simpul <strong className="text-amber-300">[{selectedNodeForEdge}]</strong>
+            </span>
+          </div>
+          <button
+            onClick={() => setSelectedNodeForEdge(null)}
+            className="px-3 py-1 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs font-semibold border border-white/20 transition cursor-pointer"
+          >
+            Batal
+          </button>
+        </div>
+      ) : (
+        <div className="mb-4 px-3.5 py-2.5 rounded-2xl bg-[#062648]/85 border border-blue-300/25 text-blue-100/90 flex items-center gap-2.5 text-xs shadow-md">
+          <span className="text-amber-400 text-sm">💡</span>
+          <span className="leading-relaxed">
+            <strong>Cara Mengedit Graf:</strong> Klik area kosong kanvas untuk tambah simpul • Klik simpul untuk opsi sambung sisi / hapus • Drag simpul kapanpun untuk menggeser • Klik sisi untuk edit bobot.
+          </span>
+        </div>
+      )}
 
       {/* Warning jika graf belum terhubung atau simpul < 3 */}
       {!solverOutput.ok && (
@@ -212,7 +226,6 @@ export default function CustomGraphPage() {
             <InteractiveGraphCanvas
               nodes={nodes}
               edges={edges}
-              currentMode={currentMode}
               selectedNodeForEdge={selectedNodeForEdge}
               onSelectNodeForEdge={setSelectedNodeForEdge}
               onAddNode={handleAddNode}

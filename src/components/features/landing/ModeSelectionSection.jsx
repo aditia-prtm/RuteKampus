@@ -2,15 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Shapes, ArrowRight, Compass } from 'lucide-react';
 import Card from '../../common/Card.jsx';
-import Badge from '../../common/Badge.jsx';
 
 export default function ModeSelectionSection() {
   return (
     <section className="space-y-6">
       <div className="text-center space-y-2">
-        <Badge variant="amber" dot className="mx-auto">
-          Pilihan Simulasi
-        </Badge>
         <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
           Dua Mode Pembelajaran <span className="text-amber-400 font-serif italic">Siklus Hamilton</span>
         </h2>

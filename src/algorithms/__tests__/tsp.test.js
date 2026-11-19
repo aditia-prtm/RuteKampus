@@ -84,7 +84,28 @@ describe('Traveling Salesperson Problem (TSP) - Nearest Neighbor Heuristic', () 
     expect(res.code).toBe('DISCONNECTED_TARGETS');
   });
 
-  it('5. Peta Kampus Unsri Palembang -> Berhasil menghasilkan rute tur keliling kampus', () => {
+  it('5. Error jika terdapat simpul dengan derajat < 2 pada graf murni (LOW_DEGREE_NODES)', () => {
+    // Graf garis A-B-C-D: simpul A dan D berderajat 1 (mustahil membentuk Siklus Hamilton)
+    const graph = {
+      nodes: [
+        { id: 'A', x: 0, y: 0 },
+        { id: 'B', x: 10, y: 0 },
+        { id: 'C', x: 20, y: 0 },
+        { id: 'D', x: 30, y: 0 }
+      ],
+      edges: [
+        { from: 'A', to: 'B', weight: 10 },
+        { from: 'B', to: 'C', weight: 10 },
+        { from: 'C', to: 'D', weight: 10 }
+      ]
+    };
+
+    const res = solveTSP(graph, 'A');
+    expect(res.ok).toBe(false);
+    expect(res.code).toBe('LOW_DEGREE_NODES');
+  });
+
+  it('6. Peta Kampus Unsri Palembang -> Berhasil menghasilkan rute tur keliling kampus', () => {
     const startNode = SAMPLE_GRAPHS[0].nodes.find((n) => n.type === 'place')?.id || 'Gerbang';
     const res = solveTSP(SAMPLE_GRAPHS[0], startNode);
     expect(res.ok).toBe(true);

@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, Tooltip, Popup, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { Trash2, Flag, Lock, Unlock } from 'lucide-react';
+import { Trash2, Flag, Lock, Unlock, Link2 } from 'lucide-react';
 import { haversine } from '../../algorithms/geo.js';
 
 // Format jarak dalam meter atau km
@@ -140,28 +140,18 @@ function createNodeIcon(
 }
 
 // Subkomponen penangkap event klik pada kanvas peta
-function MapClickHandler({ isEditing, editTool, onAddNode }) {
+function MapClickHandler({ isEditing, onAddNode }) {
   useMapEvents({
     click(e) {
-      if (!isEditing || editTool === 'connect' || editTool === 'delete' || editTool === 'move' || !onAddNode) return;
+      if (!isEditing || !onAddNode) return;
       const { lat, lng } = e.latlng;
-
-      if (editTool === 'waypoint') {
-        const label = window.prompt(
-          'Nama Tikungan / Persimpangan Jalan (Waypoint):',
-          'Tikungan'
-        );
-        if (label !== null) {
-          onAddNode({ lat, lng }, label.trim(), 'waypoint');
-        }
-      } else if (editTool === 'place') {
-        const label = window.prompt(
-          'Nama Tempat / Gedung Tujuan Kampus:',
-          'Gedung Baru'
-        );
-        if (label && label.trim()) {
-          onAddNode({ lat, lng }, label.trim(), 'place');
-        }
+      const label = window.prompt(
+        'Tambah Simpul Baru di Peta:\nKetik nama gedung/tempat tujuan, atau ketik "tikungan" untuk persimpangan jalan:',
+        'Gedung Baru'
+      );
+      if (label !== null && label.trim()) {
+        const isWp = label.toLowerCase().includes('tikungan') || label.toLowerCase().includes('simpang');
+        onAddNode({ lat, lng }, label.trim(), isWp ? 'waypoint' : 'place');
       }
     }
   });
@@ -172,7 +162,6 @@ export default function LeafletMapView({
   graph,
   currentStep,
   isEditing = false,
-  editTool = 'place', // 'place' | 'waypoint' | 'connect' | 'move' | 'delete'
   selectedNodeForEdge,
   startNodeId,
   onSetStartNode,
@@ -181,7 +170,8 @@ export default function LeafletMapView({
   onUpdateNodePosition,
   onRemoveNode,
   onAddEdge,
-  onRemoveEdge
+  onRemoveEdge,
+  onUpdateEdgeWeight
 }) {
   const { nodes = [], edges = [] } = graph;
   const [isLocked, setIsLocked] = useState(false);
@@ -279,18 +269,12 @@ export default function LeafletMapView({
   }, [currentTourNodes, nodeMap]);
 
   const handleNodeClick = (e, nodeId) => {
-    L.DomEvent.stopPropagation(e);
     if (!isEditing) return;
 
-    if (editTool === 'delete') {
-      onRemoveNode(nodeId);
-      return;
-    }
-
-    if (editTool === 'connect') {
-      if (!selectedNodeForEdge) {
-        onSelectNodeForEdge(nodeId);
-      } else if (selectedNodeForEdge === nodeId) {
+    // Jika sedang dalam mode menyambung jalan
+    if (selectedNodeForEdge) {
+      L.DomEvent.stopPropagation(e);
+      if (selectedNodeForEdge === nodeId) {
         onSelectNodeForEdge(null);
       } else {
         onAddEdge(selectedNodeForEdge, nodeId);
@@ -299,10 +283,27 @@ export default function LeafletMapView({
     }
   };
 
-  const handleEdgeClick = (e, edgeId) => {
+  const handleEdgeClick = (e, edge) => {
     L.DomEvent.stopPropagation(e);
-    if (isEditing && editTool === 'delete') {
-      onRemoveEdge(edgeId);
+    if (!isEditing) return;
+
+    const u = nodeMap.get(edge.from);
+    const v = nodeMap.get(edge.to);
+    const currentWeight = edge.weight !== undefined ? edge.weight : Math.round(haversine(u, v));
+
+    const act = window.prompt(
+      `Ubah Bobot/Jarak Jalan ${u?.label || edge.from} ↔ ${v?.label || edge.to} (meter):\nKetik angka baru, atau ketik 'hapus' untuk membuang jalan:`,
+      String(currentWeight)
+    );
+    if (act !== null) {
+      if (act.trim().toLowerCase() === 'hapus') {
+        onRemoveEdge(edge.id);
+      } else {
+        const newW = parseFloat(act);
+        if (!isNaN(newW) && newW > 0 && onUpdateEdgeWeight) {
+          onUpdateEdgeWeight(edge.id, newW);
+        }
+      }
     }
   };
 
@@ -339,44 +340,23 @@ export default function LeafletMapView({
         )}
       </button>
 
-      {/* Banner Keterangan Mode Edit (Responsif di HP) */}
-      {isEditing && (
-        <div className="absolute top-2.5 sm:top-3 left-12 sm:left-14 right-24 sm:right-auto z-[1000] bg-[#062648]/95 text-white px-3 py-1.5 rounded-xl shadow-lg flex items-center gap-2 text-[11px] sm:text-xs font-semibold backdrop-blur border border-blue-300/30 max-w-[calc(100%-8rem)] sm:max-w-none truncate">
-          {editTool === 'place' && (
-            <span className="text-amber-300 truncate">● Klik peta untuk tambah Gedung/Tempat</span>
-          )}
-          {editTool === 'waypoint' && (
-            <span className="text-blue-200 truncate">◆ Klik peta untuk tambah Tikungan/Jalan</span>
-          )}
-          {editTool === 'connect' && (
-            <div className="flex items-center gap-1.5 truncate">
-              {selectedNodeForEdge ? (
-                <>
-                  <span className="text-amber-300 font-bold truncate">
-                    [1/2] Terpilih: {selectedNodeForEdge}. Klik simpul atau tikungan ke-2!
-                  </span>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onSelectNodeForEdge(null);
-                    }}
-                    className="ml-1 text-[10px] bg-rose-500/80 hover:bg-rose-500 text-white px-2 py-0.5 rounded font-bold cursor-pointer transition"
-                  >
-                    Batal
-                  </button>
-                </>
-              ) : (
-                <span className="text-sky-300 truncate">Klik simpul/tikungan pertama untuk menyambung jalan</span>
-              )}
-            </div>
-          )}
-          {editTool === 'move' && (
-            <span className="text-blue-100 truncate">✥ Tarik simpul untuk pindah posisi</span>
-          )}
-          {editTool === 'delete' && (
-            <span className="text-rose-300 truncate">✕ Klik simpul/garis untuk hapus</span>
-          )}
+      {/* Indikator Sambung Jalan Aktif pada Peta */}
+      {isEditing && selectedNodeForEdge && (
+        <div className="absolute top-2.5 sm:top-3 left-12 sm:left-14 right-24 sm:right-auto z-[1000] bg-sky-950/95 text-white px-3 py-1.5 rounded-xl shadow-lg flex items-center gap-2 text-[11px] sm:text-xs font-semibold backdrop-blur border border-sky-400/50 max-w-[calc(100%-8rem)] sm:max-w-none truncate animate-pulse">
+          <Link2 className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+          <span className="text-sky-200 truncate">
+            Menyambung dari: <strong className="text-white">[{selectedNodeForEdge}]</strong> (Klik simpul ke-2)
+          </span>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelectNodeForEdge(null);
+            }}
+            className="ml-1 text-[10px] bg-rose-500/90 hover:bg-rose-500 text-white px-2 py-0.5 rounded font-bold cursor-pointer transition"
+          >
+            Batal
+          </button>
         </div>
       )}
 
@@ -396,18 +376,16 @@ export default function LeafletMapView({
 
         <MapClickHandler
           isEditing={isEditing}
-          editTool={editTool}
           onAddNode={onAddNode}
         />
 
-        {/* 1. Garis Jalan (Edges) dengan Visualisasi Warna Dinamis */}
+        {/* 1. Garis Jalan (Edges) dengan Visualisasi Warna Dinamis & Klik untuk Edit Bobot */}
         {edges.map((edge) => {
           const u = nodeMap.get(edge.from);
           const v = nodeMap.get(edge.to);
           if (!u || !v || typeof u.lat !== 'number' || typeof v.lat !== 'number') return null;
 
           const weight = edge.weight || haversine(u, v);
-          const isDeleteMode = isEditing && editTool === 'delete';
           const edgeKey = edge.from < edge.to ? `${edge.from}--${edge.to}` : `${edge.to}--${edge.from}`;
           const isHighlighted = highlightEdgeKeys.has(edgeKey);
           const isTourEdge = tourEdgeKeys.has(edgeKey);
@@ -418,11 +396,7 @@ export default function LeafletMapView({
 
           const stepColor = currentStep?.data?.color || '#10b981';
 
-          if (isDeleteMode) {
-            strokeColor = '#f43f5e';
-            strokeWeight = 5;
-            strokeOpacity = 0.85;
-          } else if (isHighlighted && !isTourEdge) {
+          if (isHighlighted && !isTourEdge) {
             strokeColor = '#f59e0b';
             strokeWeight = 6;
             strokeOpacity = 1;
@@ -447,7 +421,7 @@ export default function LeafletMapView({
                 lineJoin: 'round'
               }}
               eventHandlers={{
-                click: (e) => handleEdgeClick(e, edge.id)
+                click: (e) => handleEdgeClick(e, edge)
               }}
             >
               <Tooltip sticky>
@@ -456,24 +430,34 @@ export default function LeafletMapView({
                   <div>Jarak: <span className="font-mono font-bold">{formatDist(weight)}</span></div>
                   {isHighlighted && <div className="text-amber-500 font-bold">● Sedang Diperiksa / Aktif</div>}
                   {isTourEdge && !isHighlighted && <div className="font-bold" style={{ color: stepColor }}>✓ Bagian Rute Tur Kampus</div>}
-                  {isDeleteMode && <div className="text-rose-600 font-bold">Klik untuk hapus jalan</div>}
+                  {isEditing && <div className="text-sky-400 font-bold">Klik untuk ubah bobot / hapus</div>}
                 </div>
               </Tooltip>
               <Popup>
-                <div className="text-xs space-y-2 p-1">
+                <div className="text-xs space-y-2 p-1 min-w-[170px]">
                   <div>
-                    <strong>Ruas Jalan:</strong>
-                    <div className="text-slate-600">{u.label || u.id} ↔ {v.label || v.id}</div>
-                    <div className="text-slate-500 font-mono text-[11px]">Jarak: {formatDist(weight)}</div>
+                    <strong>Ruas Jalan Kampus:</strong>
+                    <div className="text-slate-700 font-medium">{u.label || u.id} ↔ {v.label || v.id}</div>
+                    <div className="text-slate-500 font-mono text-[11px] mt-0.5">Jarak: {formatDist(weight)}</div>
                   </div>
                   {isEditing && (
-                    <button
-                      onClick={() => onRemoveEdge(edge.id)}
-                      className="w-full flex items-center justify-center gap-1.5 px-2.5 py-1 rounded bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold cursor-pointer border border-rose-200"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      <span>Hapus Ruas Jalan Ini</span>
-                    </button>
+                    <div className="space-y-1.5 pt-1 border-t border-slate-200">
+                      <button
+                        type="button"
+                        onClick={(e) => handleEdgeClick(e, edge)}
+                        className="w-full flex items-center justify-center gap-1.5 px-2.5 py-1 rounded bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold cursor-pointer border border-blue-200 transition"
+                      >
+                        <span>Ubah Jarak / Bobot</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onRemoveEdge(edge.id)}
+                        className="w-full flex items-center justify-center gap-1.5 px-2.5 py-1 rounded bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold cursor-pointer border border-rose-200 transition"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Hapus Jalan Ini</span>
+                      </button>
+                    </div>
                   )}
                 </div>
               </Popup>
@@ -501,7 +485,7 @@ export default function LeafletMapView({
           </Polyline>
         )}
 
-        {/* 3. Marker Simpul (Mendukung Draggable saat Mode Edit) */}
+        {/* 3. Marker Simpul (Bisa di-drag kapanpun saat Mode Edit aktif) */}
         {nodes.map((node) => {
           if (typeof node.lat !== 'number' || typeof node.lng !== 'number') return null;
 
@@ -512,7 +496,6 @@ export default function LeafletMapView({
           const isSelectedForEdge = selectedNodeForEdge === node.id;
           const isStartNode = startNodeId === node.id;
           const isInTour = currentTourNodes.includes(node.id);
-          const isDeleteMode = isEditing && editTool === 'delete';
           const stepColor = currentStep?.data?.color || '#10b981';
 
           const icon = createNodeIcon(
@@ -522,13 +505,13 @@ export default function LeafletMapView({
             isTargetNode,
             isHighlighted,
             isSelectedForEdge,
-            isDeleteMode,
+            false,
             isInTour,
             stepColor
           );
 
-          // Simpul bisa di-drag saat mode edit aktif
-          const canDrag = isEditing && (editTool === 'move' || editTool === 'place' || editTool === 'waypoint');
+          // Simpul bisa di-drag kapanpun saat mode edit aktif
+          const canDrag = isEditing;
 
           return (
             <Marker
@@ -571,27 +554,50 @@ export default function LeafletMapView({
                 </div>
               </Tooltip>
 
-              {/* Popup informasi hanya muncul saat tidak dalam mode sambung/hapus agar tidak mengganggu klik */}
-              {(!isEditing || (editTool !== 'connect' && editTool !== 'delete')) && (
-                <Popup>
-                  <div className="text-xs space-y-2 p-1 min-w-[150px]">
-                    <div>
-                      <div className="flex items-center gap-1.5 font-bold text-sm text-slate-800">
-                        <span>{node.label || node.id}</span>
-                        <span className={`text-[10px] px-1.5 py-0.5 rounded font-normal ${
-                          isWaypoint ? 'bg-slate-100 text-slate-600' : 'bg-emerald-100 text-emerald-700'
-                        }`}>
-                          {isWaypoint ? 'Tikungan' : 'Gedung'}
-                        </span>
-                      </div>
-                      <p className="text-slate-500 font-mono text-[10px] mt-0.5">
-                        Lat: {node.lat.toFixed(5)}, Lng: {node.lng.toFixed(5)}
-                      </p>
+              <Popup>
+                <div className="text-xs space-y-2 p-1 min-w-[170px]">
+                  <div>
+                    <div className="flex items-center gap-1.5 font-bold text-sm text-slate-800">
+                      <span>{node.label || node.id}</span>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-normal ${
+                        isWaypoint ? 'bg-slate-100 text-slate-600' : 'bg-emerald-100 text-emerald-700'
+                      }`}>
+                        {isWaypoint ? 'Tikungan' : 'Gedung'}
+                      </span>
                     </div>
+                    <p className="text-slate-500 font-mono text-[10px] mt-0.5">
+                      Lat: {node.lat.toFixed(5)}, Lng: {node.lng.toFixed(5)}
+                    </p>
+                  </div>
 
-                    {/* Tombol Jadikan Titik Awal */}
-                    {!isWaypoint && onSetStartNode && (
+                  {/* 2 Pilihan Utama saat Mode Edit: Sambung Sisi & Hapus Node */}
+                  {isEditing && (
+                    <div className="pt-2 border-t border-slate-200 space-y-1.5">
                       <button
+                        type="button"
+                        onClick={() => onSelectNodeForEdge(node.id)}
+                        className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold cursor-pointer text-xs shadow-sm transition"
+                      >
+                        <Link2 className="w-3.5 h-3.5" />
+                        <span>Sambung Sisi / Jalan</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => onRemoveNode(node.id)}
+                        className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-semibold cursor-pointer text-xs transition"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Hapus Node</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Tombol Jadikan Titik Awal */}
+                  {!isWaypoint && onSetStartNode && (
+                    <div className={isEditing ? 'pt-1.5 border-t border-slate-100' : ''}>
+                      <button
+                        type="button"
                         onClick={() => onSetStartNode(node.id)}
                         className={`w-full flex items-center justify-center gap-1.5 px-2 py-1 rounded text-xs font-semibold cursor-pointer border transition ${
                           isStartNode
@@ -602,21 +608,10 @@ export default function LeafletMapView({
                         <Flag className="w-3.5 h-3.5 text-purple-600" />
                         <span>{isStartNode ? 'Titik Awal Aktif' : 'Jadikan Titik Awal'}</span>
                       </button>
-                    )}
-
-                    {/* Tombol Hapus Simpul */}
-                    {isEditing && onRemoveNode && (
-                      <button
-                        onClick={() => onRemoveNode(node.id)}
-                        className="w-full flex items-center justify-center gap-1.5 px-2 py-1 rounded bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold cursor-pointer border border-rose-200"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        <span>Hapus Simpul Ini</span>
-                      </button>
-                    )}
-                  </div>
-                </Popup>
-              )}
+                    </div>
+                  )}
+                </div>
+              </Popup>
             </Marker>
           );
         })}

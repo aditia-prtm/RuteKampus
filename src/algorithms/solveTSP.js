@@ -43,6 +43,32 @@ export function solveTSP(graph, startNodeId) {
     };
   }
 
+  const isRoadNetwork = graph.nodes.some((n) => n.type === 'waypoint');
+
+  // Pada Graf Murni / Abstrak (tanpa tikungan/waypoint):
+  // Syarat mutlak Siklus Hamilton adalah setiap simpul wajib memiliki derajat (degree) >= 2.
+  // Simpul dengan derajat 0 atau 1 mustahil membentuk Siklus Hamilton karena tidak bisa dikunjungi dan ditinggalkan melalui sisi yang berbeda.
+  if (!isRoadNetwork) {
+    const degreeMap = {};
+    for (const node of graph.nodes) degreeMap[node.id] = 0;
+    for (const edge of (graph.edges || [])) {
+      if (degreeMap[edge.from] !== undefined) degreeMap[edge.from]++;
+      if (degreeMap[edge.to] !== undefined) degreeMap[edge.to]++;
+    }
+
+    const lowDegreeNodes = graph.nodes.filter((n) => (degreeMap[n.id] || 0) < 2);
+    if (lowDegreeNodes.length > 0) {
+      const list = lowDegreeNodes
+        .map((n) => `Simpul '${n.label || n.id}' (derajat: ${degreeMap[n.id] || 0})`)
+        .join(', ');
+      return {
+        ok: false,
+        error: `Graf tidak memiliki Siklus Hamilton! Terdapat simpul berderajat < 2: ${list}. Syarat Siklus Hamilton adalah setiap simpul memiliki derajat minimal 2.`,
+        code: "LOW_DEGREE_NODES"
+      };
+    }
+  }
+
   const { targetNodeIds, dist, getPath } = network;
   const start = startNodeId && targetNodeIds.includes(startNodeId)
     ? startNodeId
@@ -105,6 +131,24 @@ export function solveTSP(graph, startNodeId) {
 
   // 2. Eksekusi Algoritma Nearest Neighbor (Greedy)
   const nnResult = solveNearestNeighbor(targetNodeIds, dist, start, nodeLabels);
+
+  // Pada Graf Abstrak (Custom Graph), setiap perpindahan tur WAJIB berupa sisi langsung (direct edge)
+  if (!isRoadNetwork) {
+    for (let i = 0; i < nnResult.tour.length - 1; i++) {
+      const u = nnResult.tour[i];
+      const v = nnResult.tour[i + 1];
+      const hasDirectEdge = (graph.edges || []).some(
+        (e) => (e.from === u && e.to === v) || (e.from === v && e.to === u)
+      );
+      if (!hasDirectEdge) {
+        return {
+          ok: false,
+          error: `Graf tidak memiliki Siklus Hamilton! Tidak ada sisi langsung antara '${u}' dan '${v}'. Siklus Hamilton melarang pengulangan simpul untuk mencapai simpul lain.`,
+          code: "NO_DIRECT_HAMILTON_CYCLE"
+        };
+      }
+    }
+  }
 
   for (const step of nnResult.steps) {
     if (step.data?.visited && step.data.visited.length > 0) {
