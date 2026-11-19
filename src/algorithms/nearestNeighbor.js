@@ -130,9 +130,11 @@ export function solveNearestNeighbor(nodeIds, distMatrix, startNode, nodeLabels 
 
   steps.push({
     type: 'nn-complete',
-    title: 'Siklus Hamilton Terbentuk',
+    title: isRoadNetwork
+      ? `Kembali ke Titik Awal: [${getLabel(start)}]`
+      : 'Siklus Hamilton Terbentuk',
     explanation: isRoadNetwork
-      ? `Seluruh ${nodeIds.length} lokasi kampus telah dikunjungi tepat satu kali. Rute kembali ke lokasi awal [${getLabel(start)}] (+${formatDist(returnDistance)}). Total jarak rute: ${formatDist(totalCost)}.`
+      ? `Dari [${getLabel(current)}], rute kembali ke titik awal keberangkatan [${getLabel(start)}] (+${formatDist(returnDistance)}) untuk menutup Siklus Hamilton. Total jarak perjalanan: ${formatDist(totalCost)}.`
       : `Seluruh ${nodeIds.length} simpul graf telah dikunjungi tepat satu kali. Rute kembali ke simpul awal [${getLabel(start)}] (+${formatDist(returnDistance)}). Total bobot tur: ${formatDist(totalCost)}.`,
     highlight: {
       nodes: tour,

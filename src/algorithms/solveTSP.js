@@ -153,8 +153,9 @@ export function solveTSP(graph, startNodeId) {
   }
 
   for (const step of nnResult.steps) {
-    if (step.data?.visited && step.data.visited.length > 0) {
-      const { fullTour: stepFull, tourEdges: stepEdges } = expandTourToFullTour(step.data.visited);
+    const tourList = step.data?.tour || step.data?.visited;
+    if (tourList && tourList.length > 0) {
+      const { fullTour: stepFull, tourEdges: stepEdges } = expandTourToFullTour(tourList);
       step.data.fullTour = stepFull;
       step.data.tourEdges = stepEdges;
     }

@@ -163,8 +163,49 @@ export default function DataPanel({ currentStep, isCampusMode = false }) {
         </div>
       )}
 
-      {/* 4. Tipe: Rute Akhir (Tour / Result) */}
-      {(type === 'nn-complete' || type === 'result') && data.tour && (
+      {/* 4. Tipe: Penutupan Siklus Hamilton (Step n-1: Kembali ke Titik Awal) */}
+      {type === 'nn-complete' && (
+        <div className="space-y-3 text-xs">
+          <div className="flex items-center justify-between p-3 rounded-xl bg-[#062648]/85 border border-blue-300/20 text-xs">
+            <span className="text-blue-200/80 flex items-center gap-1.5">
+              <span>Posisi Saat Ini:</span>
+              <strong className="text-purple-300 font-semibold px-2 py-0.5 rounded bg-purple-500/20 border border-purple-400/40 inline-flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-purple-400"></span>
+                <span>{getLabel(data.from)}</span>
+              </strong>
+            </span>
+            <span className="text-blue-200/80">
+              Total {isCampusMode ? 'Jarak' : 'Bobot'}:{' '}
+              <strong className="text-white font-mono">{formatValue(data.currentCost)}</strong>
+            </span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-amber-500/15 border border-amber-400/30 text-amber-200 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-white block">
+                Menutup Siklus Hamilton
+              </span>
+              <span className="font-mono text-amber-300 font-bold text-xs">
+                +{formatValue(data.distance)}
+              </span>
+            </div>
+            <p className="text-blue-100/90 text-[11px] leading-relaxed">
+              Seluruh simpul telah dikunjungi tepat satu kali. Dari lokasi terakhir <strong className="text-purple-300">[{getLabel(data.from)}]</strong>, rute bergerak kembali ke lokasi awal keberangkatan <strong className="text-amber-400">[{getLabel(data.to)}]</strong> untuk melengkapi siklus tertutup.
+            </p>
+          </div>
+
+          <div className="p-2.5 rounded-xl bg-[#062648]/85 border border-blue-300/20 flex items-center justify-between text-xs">
+            <span className="text-blue-200/70">Tujuan Akhir (Titik Awal):</span>
+            <span className="font-bold text-amber-400 font-mono flex items-center gap-1">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span>[{getLabel(data.to)}]</span>
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* 5. Tipe: Rute Akhir (Step n: Tour Final & Evaluasi Result) */}
+      {type === 'result' && data.tour && (
         <div className="space-y-3 text-xs">
           <div>
             <span className="text-[11px] text-blue-200/80 block mb-1.5 font-medium">

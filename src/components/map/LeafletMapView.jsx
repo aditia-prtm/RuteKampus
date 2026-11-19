@@ -296,7 +296,7 @@ export default function LeafletMapView({
   return (
     <div
       {...(!isLocked ? { 'data-lenis-prevent': '' } : {})}
-      className={`w-full h-full min-h-[400px] rounded-2xl overflow-hidden border border-blue-300/25 shadow-xl shadow-[#021c38]/40 relative ${
+      className={`w-full h-full min-h-[260px] sm:min-h-[350px] lg:min-h-[420px] rounded-2xl overflow-hidden border border-blue-300/25 shadow-xl shadow-[#021c38]/40 relative ${
         isLocked ? 'touch-pan-y' : ''
       }`}
     >
