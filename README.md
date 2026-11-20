@@ -103,8 +103,8 @@ chinese-postman/
 
 ### 1. Klon Repositori & Masuk ke Direktori
 ```bash
-git clone https://github.com/aditia-prtm/RuteKampus.git
-cd RuteKampus
+git clone https://github.com/aditia-prtm/TourKampus.git
+cd TourKampus
 ```
 
 ### 2. Pasang Dependensi
