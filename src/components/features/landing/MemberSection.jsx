@@ -12,7 +12,6 @@ const MEMBERS = [
     nim: '09021282530057',
     prodi: 'Teknik Informatika',
     faculty: 'Fakultas Ilmu Komputer, Universitas Sriwijaya',
-    quote: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et.',
     image: '/member/rafa.png',
     avatarColor: 'from-blue-600 via-indigo-700 to-blue-900',
     initial: 'RF'
@@ -24,7 +23,6 @@ const MEMBERS = [
     nim: '09021282530121',
     prodi: 'Teknik Informatika',
     faculty: 'Fakultas Ilmu Komputer, Universitas Sriwijaya',
-    quote: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et.',
     image: '/member/sabil.png',
     avatarColor: 'from-amber-500 via-amber-700 to-amber-950',
     initial: 'SB'
@@ -36,8 +34,7 @@ const MEMBERS = [
     nim: '09021282530051',
     prodi: 'Teknik Informatika',
     faculty: 'Fakultas Ilmu Komputer, Universitas Sriwijaya',
-    quote: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et.',
-    image: '/member/adit.png',
+    image: '/member/nahes.png',
     avatarColor: 'from-teal-500 via-teal-700 to-teal-950',
     initial: 'SH'
   },
@@ -48,7 +45,6 @@ const MEMBERS = [
     nim: '09021282530045',
     prodi: 'Teknik Informatika',
     faculty: 'Fakultas Ilmu Komputer, Universitas Sriwijaya',
-    quote: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et.',
     image: '/member/adit.png',
     avatarColor: 'from-sky-600 via-blue-800 to-indigo-950',
     initial: 'AD'
@@ -114,7 +110,7 @@ export default function MemberSection() {
       </div>
 
       {/* Konten Informasi Member */}
-      <div className="max-w-3xl mx-auto min-h-[260px] flex items-center justify-center">
+      <div className="max-w-2xl mx-auto min-h-[260px] flex items-center justify-center">
         <AnimatePresence mode="wait">
           {activeMember ? (
             <motion.div
@@ -166,10 +162,6 @@ export default function MemberSection() {
                       {activeMember.faculty}
                     </div>
                   </div>
-
-                  <p className="text-xs text-blue-50/90 italic bg-[#062447]/75 p-3 rounded-xl border border-blue-400/25 leading-relaxed">
-                    &ldquo;{activeMember.quote}&rdquo;
-                  </p>
                 </div>
               </Card>
             </motion.div>
