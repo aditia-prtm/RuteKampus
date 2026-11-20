@@ -82,6 +82,17 @@ export function solveNearestNeighbor(nodeIds, distMatrix, startNode, nodeLabels 
 
     candidates.sort((a, b) => a.distance - b.distance);
 
+    if (!nearestNode || minDistance === Infinity) {
+      return {
+        ok: false,
+        error: `Algoritma Nearest Neighbor terjebak di simpul '${getLabel(current)}'. Tidak ada sisi langsung menuju simpul yang belum dikunjungi (${Array.from(unvisited).map(id => getLabel(id)).join(', ')}).`,
+        code: "NO_DIRECT_EDGE",
+        tour,
+        totalCost,
+        steps
+      };
+    }
+
     totalCost += minDistance;
     tour.push(nearestNode);
     unvisited.delete(nearestNode);
@@ -114,7 +125,18 @@ export function solveNearestNeighbor(nodeIds, distMatrix, startNode, nodeLabels 
   }
 
   // Step 3: Kembali ke Titik Awal (Menutup Siklus Hamilton)
-  const returnDistance = distMatrix[current]?.[start] ?? 0;
+  const returnDistance = distMatrix[current]?.[start] ?? Infinity;
+  if (returnDistance === Infinity) {
+    return {
+      ok: false,
+      error: `Siklus Hamilton tidak dapat ditutup! Tidak ada sisi langsung dari simpul terakhir '${getLabel(current)}' kembali ke simpul awal '${getLabel(start)}'.`,
+      code: "NO_RETURN_EDGE",
+      tour,
+      totalCost,
+      steps
+    };
+  }
+
   totalCost += returnDistance;
   tour.push(start);
 
@@ -150,6 +172,7 @@ export function solveNearestNeighbor(nodeIds, distMatrix, startNode, nodeLabels 
   });
 
   return {
+    ok: true,
     tour,
     totalCost: Math.round(totalCost * 100) / 100,
     tourEdges,

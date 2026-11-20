@@ -33,22 +33,58 @@ export function solveTSP(graph, startNodeId) {
     };
   }
 
-  // 1. Bangun matriks jarak shortest-path jaringan jalan (Floyd-Warshall)
-  const network = buildRoadNetworkDistanceMatrix(graph.nodes, graph.edges || []);
-  if (!network.ok) {
-    return {
-      ok: false,
-      error: network.error,
-      code: network.code
-    };
-  }
-
   const isRoadNetwork = graph.nodes.some((n) => n.type === 'waypoint');
+  let targetNodeIds = [];
+  let dist = {};
+  let getPath = () => [];
 
-  // Pada Graf Murni / Abstrak (tanpa tikungan/waypoint):
-  // Syarat mutlak Siklus Hamilton adalah setiap simpul wajib memiliki derajat (degree) >= 2.
-  // Simpul dengan derajat 0 atau 1 mustahil membentuk Siklus Hamilton karena tidak bisa dikunjungi dan ditinggalkan melalui sisi yang berbeda.
-  if (!isRoadNetwork) {
+  if (isRoadNetwork) {
+    // 1. Pada Jaringan Jalan Kampus: gunakan Floyd-Warshall untuk mencari shortest path melalui tikungan/waypoint
+    const network = buildRoadNetworkDistanceMatrix(graph.nodes, graph.edges || []);
+    if (!network.ok) {
+      return {
+        ok: false,
+        error: network.error,
+        code: network.code
+      };
+    }
+    targetNodeIds = network.targetNodeIds;
+    dist = network.dist;
+    getPath = network.getPath;
+  } else {
+    // Pada Graf Murni / Abstrak (Custom Graph):
+    targetNodeIds = graph.nodes.map((n) => n.id);
+
+    // 1. Validasi keterhubungan graf (BFS)
+    const adj = {};
+    for (const id of targetNodeIds) adj[id] = [];
+    for (const edge of (graph.edges || [])) {
+      if (adj[edge.from] && adj[edge.to]) {
+        adj[edge.from].push(edge.to);
+        adj[edge.to].push(edge.from);
+      }
+    }
+    const visitedBFS = new Set();
+    const queue = [targetNodeIds[0]];
+    visitedBFS.add(targetNodeIds[0]);
+    while (queue.length > 0) {
+      const curr = queue.shift();
+      for (const nbr of (adj[curr] || [])) {
+        if (!visitedBFS.has(nbr)) {
+          visitedBFS.add(nbr);
+          queue.push(nbr);
+        }
+      }
+    }
+    if (visitedBFS.size < targetNodeIds.length) {
+      return {
+        ok: false,
+        error: "Terdapat simpul yang terputus atau terisolasi. Seluruh simpul harus saling terhubung.",
+        code: "DISCONNECTED_TARGETS"
+      };
+    }
+
+    // 2. Syarat mutlak Siklus Hamilton: setiap simpul wajib memiliki derajat (degree) >= 2.
     const degreeMap = {};
     for (const node of graph.nodes) degreeMap[node.id] = 0;
     for (const edge of (graph.edges || [])) {
@@ -67,9 +103,39 @@ export function solveTSP(graph, startNodeId) {
         code: "LOW_DEGREE_NODES"
       };
     }
-  }
 
-  const { targetNodeIds, dist, getPath } = network;
+    // Matriks Jarak Sisi Langsung (Direct Edges Only - Tanpa Multi-hop Floyd-Warshall)
+    // Pada graf murni, setiap sisi tur adalah sisi langsung. Jarak tidak boleh dihitung
+    // melewati simpul perantara karena akan melanggar aturan Siklus Hamilton (mengunjungi ulang simpul).
+    for (const u of targetNodeIds) {
+      dist[u] = {};
+      for (const v of targetNodeIds) {
+        dist[u][v] = u === v ? 0 : Infinity;
+      }
+    }
+    for (const edge of (graph.edges || [])) {
+      const u = edge.from;
+      const v = edge.to;
+      if (dist[u] && dist[v]) {
+        let weight = edge.weight;
+        if (typeof weight !== 'number' || isNaN(weight)) {
+          const nodeU = graph.nodes.find((n) => n.id === u);
+          const nodeV = graph.nodes.find((n) => n.id === v);
+          if (nodeU && nodeV && typeof nodeU.x === 'number' && typeof nodeV.x === 'number') {
+            const dx = nodeU.x - nodeV.x;
+            const dy = nodeU.y - nodeV.y;
+            weight = Math.round(Math.sqrt(dx * dx + dy * dy));
+          } else {
+            weight = 10;
+          }
+        }
+        weight = Math.round(weight * 100) / 100;
+        dist[u][v] = Math.min(dist[u][v], weight);
+        dist[v][u] = Math.min(dist[v][u], weight);
+      }
+    }
+    getPath = (u, v) => (dist[u]?.[v] < Infinity ? [u, v] : []);
+  }
   const start = startNodeId && targetNodeIds.includes(startNodeId)
     ? startNodeId
     : targetNodeIds[0];
@@ -132,23 +198,12 @@ export function solveTSP(graph, startNodeId) {
 
   // 2. Eksekusi Algoritma Nearest Neighbor (Greedy)
   const nnResult = solveNearestNeighbor(targetNodeIds, dist, start, nodeLabels, { isRoadNetwork });
-
-  // Pada Graf Abstrak (Custom Graph), setiap perpindahan tur WAJIB berupa sisi langsung (direct edge)
-  if (!isRoadNetwork) {
-    for (let i = 0; i < nnResult.tour.length - 1; i++) {
-      const u = nnResult.tour[i];
-      const v = nnResult.tour[i + 1];
-      const hasDirectEdge = (graph.edges || []).some(
-        (e) => (e.from === u && e.to === v) || (e.from === v && e.to === u)
-      );
-      if (!hasDirectEdge) {
-        return {
-          ok: false,
-          error: `Graf tidak memiliki Siklus Hamilton! Tidak ada sisi langsung antara '${u}' dan '${v}'. Siklus Hamilton melarang pengulangan simpul untuk mencapai simpul lain.`,
-          code: "NO_DIRECT_HAMILTON_CYCLE"
-        };
-      }
-    }
+  if (!nnResult.ok) {
+    return {
+      ok: false,
+      error: nnResult.error,
+      code: nnResult.code
+    };
   }
 
   for (const step of nnResult.steps) {

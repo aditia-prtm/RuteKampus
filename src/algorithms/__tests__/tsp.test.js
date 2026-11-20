@@ -117,4 +117,35 @@ describe('Traveling Salesperson Problem (TSP) - Nearest Neighbor Heuristic', () 
     expect(res.result.fullTour.length).toBeGreaterThan(placeCount + 1); // melewati waypoints jalan fisik
     expect(res.result.totalWeight).toBeGreaterThan(0);
   });
+
+  it('7. Graf Kustom: sisi penutup harus menggunakan bobot sisi langsung (tidak boleh jalan pintas multi-hop)', () => {
+    // Topologi pentagon yang sama persis seperti pengujian pengguna:
+    // A-E: 10, E-D: 7, D-C: 11, C-B: 9, A-C: 14, B-A: 80
+    const graph = {
+      nodes: [
+        { id: 'A', x: 300, y: 80 },
+        { id: 'B', x: 470, y: 200 },
+        { id: 'C', x: 410, y: 370 },
+        { id: 'D', x: 190, y: 370 },
+        { id: 'E', x: 130, y: 200 }
+      ],
+      edges: [
+        { from: 'A', to: 'B', weight: 80 },
+        { from: 'B', to: 'C', weight: 9 },
+        { from: 'C', to: 'D', weight: 11 },
+        { from: 'D', to: 'E', weight: 7 },
+        { from: 'E', to: 'A', weight: 10 },
+        { from: 'A', to: 'C', weight: 14 },
+        { from: 'B', to: 'D', weight: 15 },
+        { from: 'C', to: 'E', weight: 12 }
+      ]
+    };
+
+    const res = solveTSP(graph, 'A');
+    expect(res.ok).toBe(true);
+    // Tur yang sah: A -> E (10) -> D (7) -> C (11) -> B (9) -> A (80)
+    expect(res.result.tour).toEqual(['A', 'E', 'D', 'C', 'B', 'A']);
+    // Total bobot wajib 10 + 7 + 11 + 9 + 80 = 117 (BUKAN 60 karena tidak boleh jalan pintas lewat C lagi)
+    expect(res.result.totalWeight).toBe(117);
+  });
 });
