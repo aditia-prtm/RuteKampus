@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, CheckCircle2 } from 'lucide-react';
+import { Table, CheckCircle2, Fuel, Car, Bike } from 'lucide-react';
 
 export default function DataPanel({ currentStep, isCampusMode = false }) {
   if (!currentStep || !currentStep.data) return null;
@@ -200,33 +200,75 @@ export default function DataPanel({ currentStep, isCampusMode = false }) {
       )}
 
       {/* 5. Tipe: Rute Akhir (Step n: Tour Final & Evaluasi Result) */}
-      {type === 'result' && data.tour && (
-        <div className="space-y-3 text-xs">
-          <div>
-            <span className="text-[11px] text-blue-200/80 block mb-1.5 font-medium">
-              Urutan Kunjungan (Siklus Hamilton):
-            </span>
-            <div className="p-3 bg-[#062648]/85 border border-blue-300/20 rounded-xl font-mono text-amber-300 text-xs leading-relaxed break-words">
-              {data.tour.map((id) => getLabel(id)).join(' → ')}
-            </div>
-          </div>
+      {type === 'result' && data.tour && (() => {
+        const totalMeters = data.totalWeight || data.currentCost || 0;
+        const totalKm = totalMeters / 1000;
+        // Asumsi konsumsi BBM perkotaan: Motor ~40 km/L, Mobil ~10 km/L
+        const literMotor = totalKm / 40;
+        const literCar = totalKm / 10;
+        const formatLiters = (val) => (val < 0.1 ? val.toFixed(3) : val.toFixed(2));
 
-          <div className="grid grid-cols-2 gap-1.5 sm:gap-2 pt-2 border-t border-blue-300/20 text-center">
-            <div className="p-2 sm:p-2.5 rounded-xl bg-[#062648]/85 border border-blue-300/20">
-              <span className="text-[10px] text-blue-200/70 block">Algoritma</span>
-              <span className="text-[11px] sm:text-sm font-bold text-blue-100">Nearest Neighbor</span>
+        return (
+          <div className="space-y-3 text-xs">
+            <div>
+              <span className="text-[11px] text-blue-200/80 block mb-1.5 font-medium">
+                Urutan Kunjungan (Siklus Hamilton):
+              </span>
+              <div className="p-3 bg-[#062648]/85 border border-blue-300/20 rounded-xl font-mono text-amber-300 text-xs leading-relaxed break-words">
+                {data.tour.map((id) => getLabel(id)).join(' → ')}
+              </div>
             </div>
-            <div className="p-2 sm:p-2.5 rounded-xl bg-amber-400 text-slate-950 font-bold shadow-md shadow-black/25">
-              <span className="text-[10px] text-slate-900 block font-semibold">
-                {isCampusMode ? 'Total Jarak Tur' : 'Total Bobot Tur'}
-              </span>
-              <span className="text-[11px] sm:text-sm font-extrabold font-mono">
-                {formatValue(data.totalWeight || data.currentCost)}
-              </span>
+
+            <div className="grid grid-cols-2 gap-1.5 sm:gap-2 pt-2 border-t border-blue-300/20">
+              {isCampusMode ? (
+                <div className="p-2 sm:p-2.5 rounded-xl bg-[#062648]/85 border border-blue-300/20 flex flex-col justify-between text-left">
+                  <div className="flex items-center justify-between pb-1 border-b border-blue-300/15">
+                    <span className="text-[10px] text-blue-200 font-semibold flex items-center gap-1">
+                      <Fuel className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                      <span>Bensin Terpakai</span>
+                    </span>
+                    <span className="text-[9px] text-amber-300/90 font-mono">Est. Liter</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1 mt-1.5">
+                    <div className="bg-[#0b3664]/60 px-1.5 py-1 rounded-lg border border-blue-300/10">
+                      <span className="text-[9px] text-blue-200/70 flex items-center gap-1">
+                        <Bike className="w-3 h-3 text-emerald-400 shrink-0" />
+                        <span>Motor</span>
+                      </span>
+                      <span className="font-bold font-mono text-emerald-300 text-[11px] sm:text-xs block mt-0.5">
+                        {formatLiters(literMotor)} L
+                      </span>
+                    </div>
+                    <div className="bg-[#0b3664]/60 px-1.5 py-1 rounded-lg border border-blue-300/10">
+                      <span className="text-[9px] text-blue-200/70 flex items-center gap-1">
+                        <Car className="w-3 h-3 text-sky-400 shrink-0" />
+                        <span>Mobil</span>
+                      </span>
+                      <span className="font-bold font-mono text-sky-300 text-[11px] sm:text-xs block mt-0.5">
+                        {formatLiters(literCar)} L
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-2 sm:p-2.5 rounded-xl bg-[#062648]/85 border border-blue-300/20 flex flex-col justify-center text-center">
+                  <span className="text-[10px] text-blue-200/70 block">Algoritma</span>
+                  <span className="text-[11px] sm:text-sm font-bold text-blue-100">Nearest Neighbor</span>
+                </div>
+              )}
+
+              <div className="p-2 sm:p-2.5 rounded-xl bg-amber-400 text-slate-950 font-bold shadow-md shadow-black/25 flex flex-col justify-center text-center">
+                <span className="text-[10px] text-slate-900 block font-semibold">
+                  {isCampusMode ? 'Total Jarak Tur' : 'Total Bobot Tur'}
+                </span>
+                <span className="text-[11px] sm:text-base font-extrabold font-mono mt-0.5">
+                  {formatValue(data.totalWeight || data.currentCost)}
+                </span>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 }
