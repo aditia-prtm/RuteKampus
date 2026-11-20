@@ -23,4 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
+ARCHITECTURE.md
+AGENTS.md
+TECH_STACK.md
+
 scripts/

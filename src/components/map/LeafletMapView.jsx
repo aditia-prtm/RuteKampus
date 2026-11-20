@@ -125,6 +125,117 @@ function createNodeIcon(
   });
 }
 
+// Subkomponen untuk menganimasikan pergerakan mulus penanda kendaraan/traveler di atas peta
+function SmoothTravelerMarker({ path, stepId }) {
+  const [currentPos, setCurrentPos] = useState(() => (path && path.length > 0 ? path[0] : null));
+
+  useEffect(() => {
+    if (!path || path.length < 2) {
+      if (path && path.length === 1) setCurrentPos(path[0]);
+      return;
+    }
+
+    // Hitung panjang tiap segmen jalan
+    const segmentLengths = [];
+    let totalLength = 0;
+    for (let i = 0; i < path.length - 1; i++) {
+      const dLat = path[i + 1][0] - path[i][0];
+      const dLng = path[i + 1][1] - path[i][1];
+      const len = Math.hypot(dLat, dLng);
+      segmentLengths.push(len);
+      totalLength += len;
+    }
+
+    if (totalLength === 0) {
+      setCurrentPos(path[path.length - 1]);
+      return;
+    }
+
+    let animId;
+    const startTime = performance.now();
+    const duration = 750; // ms
+
+    const animate = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(1, elapsed / duration);
+      // Easing cubic easeOut: 1 - (1 - t)^3
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const targetDist = eased * totalLength;
+
+      let accumulated = 0;
+      let interpolated = path[path.length - 1];
+
+      for (let i = 0; i < segmentLengths.length; i++) {
+        const segLen = segmentLengths[i];
+        if (accumulated + segLen >= targetDist || i === segmentLengths.length - 1) {
+          const segProgress = segLen > 0 ? (targetDist - accumulated) / segLen : 1;
+          const clamped = Math.max(0, Math.min(1, segProgress));
+          const lat = path[i][0] + (path[i + 1][0] - path[i][0]) * clamped;
+          const lng = path[i][1] + (path[i + 1][1] - path[i][1]) * clamped;
+          interpolated = [lat, lng];
+          break;
+        }
+        accumulated += segLen;
+      }
+
+      setCurrentPos(interpolated);
+
+      if (progress < 1) {
+        animId = requestAnimationFrame(animate);
+      }
+    };
+
+    animId = requestAnimationFrame(animate);
+
+    return () => {
+      if (animId) cancelAnimationFrame(animId);
+    };
+  }, [path, stepId]);
+
+  if (!currentPos) return null;
+
+  const travelerIcon = L.divIcon({
+    className: 'smooth-traveler-pin',
+    html: `<div style="
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      pointer-events: none;
+    ">
+      <div style="
+        position: absolute;
+        width: 38px;
+        height: 38px;
+        background: rgba(147, 51, 234, 0.45);
+        border-radius: 50%;
+        box-shadow: 0 0 16px rgba(168, 85, 247, 0.7);
+      "></div>
+      <div style="
+        width: 22px;
+        height: 22px;
+        background: #9333ea;
+        border: 3px solid #ffffff;
+        border-radius: 50%;
+        box-shadow: 0 0 14px #a855f7, 0 3px 8px rgba(0,0,0,0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 20;
+      ">
+        <div style="width: 6px; height: 6px; background: #ffffff; border-radius: 50%;"></div>
+      </div>
+    </div>`,
+    iconSize: [44, 44],
+    iconAnchor: [22, 22]
+  });
+
+  return <Marker position={currentPos} icon={travelerIcon} zIndexOffset={1000} />;
+}
+
 // Subkomponen penangkap event klik pada kanvas peta
 function MapClickHandler({ isEditing, onAddNode }) {
   useMapEvents({
@@ -253,6 +364,22 @@ export default function LeafletMapView({
     }
     return positions;
   }, [currentTourNodes, nodeMap]);
+
+  // Koordinat lintasan jalan aktif pada langkah saat ini
+  const activePathCoordinates = useMemo(() => {
+    const pathNodeIds = currentStep?.data?.activePath || 
+      (currentStep?.data?.from && currentStep?.data?.to ? [currentStep.data.from, currentStep.data.to] : []);
+    if (!pathNodeIds || pathNodeIds.length < 2) return [];
+
+    const coords = [];
+    for (const id of pathNodeIds) {
+      const node = nodeMap.get(id);
+      if (node && typeof node.lat === 'number' && typeof node.lng === 'number') {
+        coords.push([node.lat, node.lng]);
+      }
+    }
+    return coords.length >= 2 ? coords : [];
+  }, [currentStep, nodeMap]);
 
   const handleNodeClick = (e, nodeId) => {
     if (!isEditing) return;
@@ -469,6 +596,30 @@ export default function LeafletMapView({
               </div>
             </Tooltip>
           </Polyline>
+        )}
+
+        {/* 2b. Garis Jalan Aktif Mengalir (Animated Dash Flow) saat langkah berpindah */}
+        {activePathCoordinates.length >= 2 && (
+          <Polyline
+            key={`active-flow-${currentStep?.id}`}
+            positions={activePathCoordinates}
+            pathOptions={{
+              color: '#f59e0b',
+              weight: 6.5,
+              opacity: 0.95,
+              lineCap: 'round',
+              lineJoin: 'round',
+              className: 'active-travel-flow'
+            }}
+          />
+        )}
+
+        {/* 2c. Penanda Kendaraan / Traveler Bergerak Mulus (Smooth Traveler Marker) */}
+        {activePathCoordinates.length >= 2 && (
+          <SmoothTravelerMarker
+            path={activePathCoordinates}
+            stepId={currentStep?.id}
+          />
         )}
 
         {/* 3. Marker Simpul (Bisa di-drag kapanpun saat Mode Edit aktif) */}

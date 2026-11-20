@@ -223,6 +223,7 @@ export function solveTSP(graph, startNodeId) {
         }
         step.highlight.edges = Array.from(new Set([...(step.highlight?.edges || []), ...physicalActiveEdges]));
         step.highlight.nodes = Array.from(new Set([...(step.highlight?.nodes || []), ...activeSeg]));
+        step.data.activePath = activeSeg;
       }
     }
 

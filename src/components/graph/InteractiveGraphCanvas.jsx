@@ -1,4 +1,5 @@
 import React, { useRef, useState, useCallback, useMemo } from 'react';
+import { motion } from 'framer-motion';
 
 /**
  * Kanvas Interaktif untuk Mode Bikin Graf Sendiri (Custom Graph Canvas).
@@ -224,6 +225,10 @@ export default function InteractiveGraphCanvas({
     return set;
   }, [currentStep, currentTourNodes]);
 
+  const fromNode = currentStep?.data?.from ? nodeMap.get(currentStep.data.from) : null;
+  const toNode = currentStep?.data?.to ? nodeMap.get(currentStep.data.to) : null;
+  const isStepTransition = Boolean(fromNode && toNode && fromNode.id !== toNode.id);
+
   return (
     <div className="w-full h-full min-h-[350px] bg-[#062648] rounded-2xl border border-blue-300/25 relative overflow-hidden flex flex-col shadow-xl shadow-[#021c38]/40 select-none">
       {/* Header Info Status Graf */}
@@ -319,15 +324,16 @@ export default function InteractiveGraphCanvas({
           );
         })}
 
-        {/* 2. Rute Siklus Hamilton yang Aktif (Garis Hijau) */}
+        {/* 2. Rute Siklus Hamilton yang Aktif (Garis Hijau yang Menggambar Mulus) */}
         {currentTourNodes.length > 1 &&
           currentTourNodes.slice(0, -1).map((uId, idx) => {
             const u = nodeMap.get(uId);
             const v = nodeMap.get(currentTourNodes[idx + 1]);
             if (!u || !v) return null;
+            const isLatest = idx === currentTourNodes.length - 2;
 
             return (
-              <line
+              <motion.line
                 key={`tour-active-${uId}-${v.id}-${idx}`}
                 x1={u.x}
                 y1={u.y}
@@ -336,11 +342,50 @@ export default function InteractiveGraphCanvas({
                 stroke={currentStep?.data?.color || '#10b981'}
                 strokeWidth={4.5}
                 strokeLinecap="round"
-                opacity={0.9}
-                className="transition-all duration-200 pointer-events-none"
+                initial={isLatest ? { pathLength: 0, opacity: 0.3 } : { pathLength: 1, opacity: 0.95 }}
+                animate={{ pathLength: 1, opacity: 0.95 }}
+                transition={isLatest ? { duration: 0.55, ease: "easeOut" } : { duration: 0.15 }}
+                className="pointer-events-none"
               />
             );
           })}
+
+        {/* 2b. Sorotan Sinar Aktif pada Sisi yang Sedang Ditelusuri */}
+        {isStepTransition && (
+          <motion.line
+            key={`beam-${currentStep?.id}-${fromNode.id}-${toNode.id}`}
+            x1={fromNode.x}
+            y1={fromNode.y}
+            x2={toNode.x}
+            y2={toNode.y}
+            stroke="#f59e0b"
+            strokeWidth={5}
+            strokeLinecap="round"
+            initial={{ pathLength: 0, opacity: 0.9 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 0.55, ease: "easeInOut" }}
+            filter="url(#glow-custom-graph)"
+            className="pointer-events-none"
+          />
+        )}
+
+        {/* 2c. Partikel Pelari (Traveler Runner) yang Bergerak Mulus Antarsimpul */}
+        {isStepTransition && (
+          <motion.g
+            key={`traveler-custom-${currentStep?.id}-${fromNode.id}-${toNode.id}`}
+            initial={{ x: fromNode.x, y: fromNode.y, scale: 0.8 }}
+            animate={{ x: toNode.x, y: toNode.y, scale: [0.8, 1.25, 1] }}
+            transition={{ duration: 0.65, ease: [0.25, 1, 0.5, 1] }}
+            className="pointer-events-none"
+          >
+            {/* Aura pendar ungu */}
+            <circle r={22} fill="#9333ea" opacity={0.4} filter="url(#glow-custom-graph)" />
+            {/* Cincin inti voyager */}
+            <circle r={11} fill="#9333ea" stroke="#ffffff" strokeWidth={2.5} />
+            {/* Titik pusat putih bersinar */}
+            <circle r={4} fill="#ffffff" />
+          </motion.g>
+        )}
 
         {/* 3. Badge Bobot Sisi (Dirender SETELAH garis agar selalu di atas garis dan tidak pernah tertimpa) */}
         {edges.map((edge) => {
@@ -463,6 +508,9 @@ export default function InteractiveGraphCanvas({
                 stroke={isCurrentNode ? '#f3e8ff' : isSelected ? '#38bdf8' : isMenuOpen ? '#facc15' : '#ffffff'}
                 strokeWidth={isCurrentNode ? 3.5 : isSelected ? 3 : isMenuOpen ? 3 : 2}
                 filter={isCurrentNode || isHighlighted || isSelected || isDragging ? 'url(#glow-custom-graph)' : undefined}
+                style={{
+                  transition: 'fill 0.35s ease, stroke 0.35s ease, r 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), stroke-width 0.3s ease'
+                }}
                 className="transition-transform duration-100"
               />
 

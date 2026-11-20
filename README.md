@@ -135,8 +135,8 @@ npm run build
 
 Proyek ini disusun oleh mahasiswa Program Studi **Teknik Informatika**, Fakultas Ilmu Komputer, **Universitas Sriwijaya**:
 
-| Nama | NIM |  |
-| :--- | :---: | :--- |
+| Nama | NIM | 
+| :--- | :---: |
 | **Rafa Rasyad Anfero** | `09021282530057` | 
 | **Sabil Alaudin** | `09021282530121` | 
 | **Muhammad Syehan Fahrezi Prashya** | `09021282530051` | 
