@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b3668"/>
+      <stop offset="100%" stop-color="#03162c"/>
+    </linearGradient>
+
+    <!-- Path Glow & Stroke Gradient -->
+    <linearGradient id="tourGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="50%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+
+    <linearGradient id="purpleGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc"/>
+      <stop offset="100%" stop-color="#9333ea"/>
+    </linearGradient>
+
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3.5" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Squircle Base with border -->
+  <rect x="6" y="6" width="116" height="116" rx="30" fill="url(#bgGrad)" stroke="#38bdf8" stroke-opacity="0.35" stroke-width="2.5"/>
+
+  <!-- Closed Tour Loop (Hamiltonian Cycle) -->
+  <path d="M 64 26 L 98 62 L 82 98 L 38 92 L 28 52 Z" 
+        fill="none" 
+        stroke="url(#tourGrad)" 
+        stroke-width="7" 
+        stroke-linejoin="round" 
+        stroke-linecap="round"
+        filter="url(#softGlow)"/>
+
+  <!-- Subtle inner area fill -->
+  <path d="M 64 26 L 98 62 L 82 98 L 38 92 L 28 52 Z" 
+        fill="#38bdf8" 
+        fill-opacity="0.08"/>
+
+  <!-- Node 1: Left Node (Visited Emerald) -->
+  <circle cx="28" cy="52" r="8" fill="#10b981" stroke="#ffffff" stroke-width="2.5"/>
+
+  <!-- Node 2: Bottom-Left Node (Visited Emerald) -->
+  <circle cx="38" cy="92" r="8" fill="#10b981" stroke="#ffffff" stroke-width="2.5"/>
+
+  <!-- Node 3: Bottom-Right Node (Visited Emerald) -->
+  <circle cx="82" cy="98" r="8" fill="#10b981" stroke="#ffffff" stroke-width="2.5"/>
+
+  <!-- Node 4: Right Node (Active Purple Traveler Node) -->
+  <circle cx="98" cy="62" r="14" fill="#9333ea" fill-opacity="0.4" filter="url(#softGlow)"/>
+  <circle cx="98" cy="62" r="9.5" fill="url(#purpleGlow)" stroke="#ffffff" stroke-width="2.5"/>
+  <circle cx="98" cy="62" r="3.5" fill="#ffffff"/>
+
+  <!-- Node 5: Top Node (Start / Campus Landmark Beacon - Gold) -->
+  <circle cx="64" cy="26" r="13" fill="#f59e0b" fill-opacity="0.4" filter="url(#softGlow)"/>
+  <circle cx="64" cy="26" r="9.5" fill="#f59e0b" stroke="#ffffff" stroke-width="2.5"/>
+  <circle cx="64" cy="26" r="3.5" fill="#ffffff"/>
+</svg>

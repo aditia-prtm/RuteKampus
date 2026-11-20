@@ -67,9 +67,8 @@ export default function DataPanel({ currentStep, isCampusMode = false }) {
                     {data.nodeIds.map((v) => (
                       <td
                         key={v}
-                        className={`p-2 border-r border-blue-300/10 last:border-r-0 whitespace-nowrap ${
-                          u === v ? 'text-blue-300/30' : 'text-blue-100'
-                        }`}
+                        className={`p-2 border-r border-blue-300/10 last:border-r-0 whitespace-nowrap ${u === v ? 'text-blue-300/30' : 'text-blue-100'
+                          }`}
                       >
                         {formatValue(data.distMatrix[u]?.[v])}
                       </td>
@@ -134,18 +133,14 @@ export default function DataPanel({ currentStep, isCampusMode = false }) {
               return (
                 <div
                   key={c.node}
-                  className={`p-2.5 rounded-xl border flex items-center justify-between text-xs transition ${
-                    isChosen
-                      ? 'bg-amber-400/20 border-amber-400/40 text-amber-300 font-semibold shadow-sm'
-                      : 'bg-[#062648]/60 border-blue-300/15 text-blue-100/80'
-                  }`}
+                  className={`p-2.5 rounded-xl border flex items-center justify-between text-xs transition ${isChosen
+                    ? 'bg-amber-400/20 border-amber-400/40 text-amber-300 font-semibold shadow-sm'
+                    : 'bg-[#062648]/60 border-blue-300/15 text-blue-100/80'
+                    }`}
                 >
                   <div className="flex items-center gap-2">
                     <span className="w-4 text-blue-300/50 font-mono text-[10px]">#{idx + 1}</span>
                     <span className="font-mono text-white font-bold">{getLabel(c.node)}</span>
-                    {c.node !== getLabel(c.node) && (
-                      <span className="text-[10px] text-blue-300/50 font-mono">({c.node})</span>
-                    )}
                   </div>
                   <div className="font-mono text-right flex items-center gap-1.5">
                     <span>{formatValue(c.distance)}</span>

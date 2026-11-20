@@ -367,7 +367,7 @@ export default function LeafletMapView({
 
   // Koordinat lintasan jalan aktif pada langkah saat ini
   const activePathCoordinates = useMemo(() => {
-    const pathNodeIds = currentStep?.data?.activePath || 
+    const pathNodeIds = currentStep?.data?.activePath ||
       (currentStep?.data?.from && currentStep?.data?.to ? [currentStep.data.from, currentStep.data.to] : []);
     if (!pathNodeIds || pathNodeIds.length < 2) return [];
 
@@ -423,20 +423,18 @@ export default function LeafletMapView({
   return (
     <div
       {...(!isLocked ? { 'data-lenis-prevent': '' } : {})}
-      className={`w-full h-full min-h-[260px] sm:min-h-[350px] lg:min-h-[420px] rounded-2xl overflow-hidden border border-blue-300/25 shadow-xl shadow-[#021c38]/40 relative ${
-        isLocked ? 'touch-pan-y' : ''
-      }`}
+      className={`w-full h-full min-h-[260px] sm:min-h-[350px] lg:min-h-[420px] rounded-2xl overflow-hidden border border-blue-300/25 shadow-xl shadow-[#021c38]/40 relative ${isLocked ? 'touch-pan-y' : ''
+        }`}
     >
       {/* Tombol Kunci / Buka Peta */}
       <button
         type="button"
         onClick={() => setIsLocked((prev) => !prev)}
         title={isLocked ? 'Buka Kunci Peta (Izinkan Geser & Zoom)' : 'Kunci Peta (Bekukan Peta)'}
-        className={`absolute top-2.5 sm:top-3 right-2.5 sm:right-3 z-[40] flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl shadow-lg border text-xs font-semibold backdrop-blur transition-all duration-200 cursor-pointer ${
-          isLocked
-            ? 'bg-amber-500 text-slate-950 border-amber-300 shadow-amber-500/25 hover:bg-amber-400'
-            : 'bg-[#062648]/90 text-blue-100 border-blue-300/30 shadow-[#021c38]/40 hover:bg-[#0c3664] hover:text-white'
-        }`}
+        className={`absolute top-2.5 sm:top-3 right-2.5 sm:right-3 z-[40] flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl shadow-lg border text-xs font-semibold backdrop-blur transition-all duration-200 cursor-pointer ${isLocked
+          ? 'bg-amber-500 text-slate-950 border-amber-300 shadow-amber-500/25 hover:bg-amber-400'
+          : 'bg-[#062648]/90 text-blue-100 border-blue-300/30 shadow-[#021c38]/40 hover:bg-[#0c3664] hover:text-white'
+          }`}
       >
         {isLocked ? (
           <>
@@ -696,9 +694,8 @@ export default function LeafletMapView({
                   <div>
                     <div className="flex items-center gap-1.5 font-bold text-sm text-slate-800">
                       <span>{node.label || node.id}</span>
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-normal ${
-                        isWaypoint ? 'bg-slate-100 text-slate-600' : 'bg-emerald-100 text-emerald-700'
-                      }`}>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-normal ${isWaypoint ? 'bg-slate-100 text-slate-600' : 'bg-emerald-100 text-emerald-700'
+                        }`}>
                         {isWaypoint ? 'Tikungan' : 'Gedung'}
                       </span>
                     </div>
@@ -736,11 +733,10 @@ export default function LeafletMapView({
                       <button
                         type="button"
                         onClick={() => onSetStartNode(node.id)}
-                        className={`w-full flex items-center justify-center gap-1.5 px-2 py-1 rounded text-xs font-semibold cursor-pointer border transition ${
-                          isStartNode
-                            ? 'bg-purple-100 text-purple-700 border-purple-300'
-                            : 'bg-slate-100 hover:bg-purple-50 text-slate-700 hover:text-purple-700 border-slate-200'
-                        }`}
+                        className={`w-full flex items-center justify-center gap-1.5 px-2 py-1 rounded text-xs font-semibold cursor-pointer border transition ${isStartNode
+                          ? 'bg-purple-100 text-purple-700 border-purple-300'
+                          : 'bg-slate-100 hover:bg-purple-50 text-slate-700 hover:text-purple-700 border-slate-200'
+                          }`}
                       >
                         <Flag className="w-3.5 h-3.5 text-purple-600" />
                         <span>{isStartNode ? 'Titik Awal Aktif' : 'Jadikan Titik Awal'}</span>

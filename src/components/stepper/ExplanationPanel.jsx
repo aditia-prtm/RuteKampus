@@ -17,9 +17,6 @@ export default function ExplanationPanel({ currentStep }) {
         <span className="text-xs font-semibold px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/35">
           {meta.badge}
         </span>
-        <span className="text-xs text-blue-200/60 font-mono">
-          ID: {currentStep.type}
-        </span>
       </div>
 
       <div>
