@@ -96,7 +96,6 @@ export function solveTSP(graph, startNodeId) {
       nodes: targetNodeIds,
       edges: []
     },
-    pseudocodeLines: [1, 2],
     data: {
       nodeIds: targetNodeIds,
       distMatrix: dist,
@@ -195,7 +194,6 @@ export function solveTSP(graph, startNodeId) {
       nodes: fullTour,
       edges: tourEdges
     },
-    pseudocodeLines: [8],
     data: {
       algorithm: 'nearest-neighbor',
       tour: nnResult.tour,

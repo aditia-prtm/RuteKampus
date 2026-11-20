@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shapes, Flag, Trash2, Sparkles, Zap } from 'lucide-react';
+import { Shapes, Flag, Trash2, Sparkles } from 'lucide-react';
 
 export default function CustomGraphHeader({
   nodeCount,
@@ -82,13 +82,6 @@ export default function CustomGraphHeader({
               </option>
             ))}
           </select>
-        </div>
-
-        {/* Badge Algoritma Tunggal: Nearest Neighbor */}
-        <div className="flex items-center gap-1.5 bg-[#062648]/85 px-3 py-1.5 rounded-xl border border-blue-300/25 text-xs">
-          <Zap className="w-3.5 h-3.5 text-amber-400" />
-          <span className="text-blue-200/70 text-[11px]">Algoritma:</span>
-          <span className="text-amber-300 font-semibold text-[11px]">Nearest Neighbor</span>
         </div>
 
         <button

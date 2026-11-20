@@ -31,17 +31,6 @@ export const APP_INFO = {
   ]
 };
 
-export const PSEUDOCODE = [
-  { line: 1, text: 'function solveTSP_NearestNeighbor(locations, startNode):' },
-  { line: 2, text: '  distMatrix = computeDistanceMatrix(locations)' },
-  { line: 3, text: '  current = startNode; tour = [startNode]' },
-  { line: 4, text: '  while unvisited locations exist:' },
-  { line: 5, text: '    next = nearestUnvisited(current, distMatrix)' },
-  { line: 6, text: '    tour.append(next); current = next' },
-  { line: 7, text: '  tour.append(startNode) // Kembali ke titik awal' },
-  { line: 8, text: '  return tour, totalDistance' }
-];
-
 export const STEP_EXPLANATIONS = {
   matrix: {
     badge: 'Langkah 1: Matriks Jarak',

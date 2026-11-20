@@ -197,19 +197,14 @@ export default function HeroSection() {
       </div>
 
       {/* LAYER 4: KONTEN TEKS & TOMBOL (Mobile & Tab: Vertikal Center; Desktop: Pas di Langit Atas) */}
-      <div className="relative z-30 max-w-4xl mx-auto px-4 text-center space-y-3 sm:space-y-4 pt-0 lg:pt-36 select-text my-auto lg:my-0">
+      <div className="relative z-30 max-w-4xl mx-auto px-4 text-center space-y-3 sm:space-y-4 pt-0 lg:pt-56 xl:pt-44 select-text my-auto lg:my-0">
         {/* Heading persis gaya laporUNSRI: Font Poppins + Serif Italic */}
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl pt-7 font-extrabold tracking-tight text-white drop-shadow-xl leading-tight font-['Poppins',sans-serif]">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl pt-7 font-extrabold tracking-tight text-white drop-shadow-2xl leading-tight font-['Poppins',sans-serif]">
           Travelling Salesman {' '}
-          <span className="text-amber-400 italic font-serif font-extrabold text-3xl sm:text-4xl lg:text-5xl ml-1">
+          <span className="text-amber-400 italic font-serif font-extrabold drop-shadow-2xl text-3xl sm:text-4xl lg:text-5xl ml-1">
             Visualization
           </span>
         </h1>
-
-        {/* Subtitle font Poppins */}
-        <p className="max-w-2xl mx-auto text-sm sm:text-base lg:text-lg text-amber-400 drop-shadow-2xl leading-relaxed">
-          Temukan rute terpendek untuk mengunjungi setiap fakultas di Universitas Sriwijaya dan kembali ke titik awal dengan total jarak paling minimum.
-        </p>
 
         {/* Tombol Aksi Persis Style LaporUNSRI */}
         <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
@@ -223,9 +218,9 @@ export default function HeroSection() {
 
           <Link
             to="/custom"
-            className="inline-flex items-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3 rounded-full bg-white/15 hover:bg-white/25 text-white font-semibold text-xs sm:text-sm backdrop-blur-md border border-white/30 shadow-lg transition-all transform hover:-translate-y-0.5 cursor-pointer"
+            className="inline-flex items-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3 rounded-full bg-white/15 hover:bg-white/25 text-white font-semibold text-xs sm:text-sm backdrop-blur-md border border-white/30 drop-shadow-2xl transition-all transform hover:-translate-y-0.5 cursor-pointer"
           >
-            <span>Bikin Graf Sendiri</span>
+            <span>Buat Graf Kustom</span>
           </Link>
         </div>
       </div>

@@ -184,31 +184,6 @@ export default function CustomGraphPage() {
         onClear={handleClear}
       />
 
-      {/* Status banner saat menyambungkan edge atau petunjuk interaksi intuitif */}
-      {selectedNodeForEdge ? (
-        <div className="mb-4 px-4 py-3 rounded-2xl bg-sky-500/20 border border-sky-400/40 text-sky-100 flex items-center justify-between gap-3 text-xs sm:text-sm shadow-lg animate-pulse">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-sky-400 animate-ping shrink-0" />
-            <span>
-              <strong>Menyambungkan Sisi:</strong> Klik simpul tujuan untuk membuat sisi dari simpul <strong className="text-amber-300">[{selectedNodeForEdge}]</strong>
-            </span>
-          </div>
-          <button
-            onClick={() => setSelectedNodeForEdge(null)}
-            className="px-3 py-1 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs font-semibold border border-white/20 transition cursor-pointer"
-          >
-            Batal
-          </button>
-        </div>
-      ) : (
-        <div className="mb-4 px-3.5 py-2.5 rounded-2xl bg-[#062648]/85 border border-blue-300/25 text-blue-100/90 flex items-center gap-2.5 text-xs shadow-md">
-          <span className="text-amber-400 text-sm">💡</span>
-          <span className="leading-relaxed">
-            <strong>Cara Mengedit Graf:</strong> Klik area kosong kanvas untuk tambah simpul • Klik simpul untuk opsi sambung sisi / hapus • Drag simpul kapanpun untuk menggeser • Klik sisi untuk edit bobot.
-          </span>
-        </div>
-      )}
-
       {/* Warning jika graf belum terhubung atau simpul < 3 */}
       {!solverOutput.ok && (
         <div className="mb-4 p-3.5 sm:p-4 rounded-2xl bg-amber-500/15 border border-amber-400/35 text-amber-200 flex items-center gap-3 text-xs sm:text-sm shadow-lg">

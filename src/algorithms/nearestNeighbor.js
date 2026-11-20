@@ -56,7 +56,6 @@ export function solveNearestNeighbor(nodeIds, distMatrix, startNode, nodeLabels 
       nodes: [start],
       edges: []
     },
-    pseudocodeLines: [2, 3],
     data: {
       current,
       visited: [...tour],
@@ -99,7 +98,6 @@ export function solveNearestNeighbor(nodeIds, distMatrix, startNode, nodeLabels 
         nodes: [current, nearestNode],
         edges: [edgeKey]
       },
-      pseudocodeLines: [4, 5, 6],
       data: {
         from: current,
         to: nearestNode,
@@ -140,7 +138,6 @@ export function solveNearestNeighbor(nodeIds, distMatrix, startNode, nodeLabels 
       nodes: tour,
       edges: tourEdges
     },
-    pseudocodeLines: [7],
     data: {
       from: current,
       to: start,

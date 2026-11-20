@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Flag, PlusCircle, Lock, Copy, Check, RotateCcw, Zap } from 'lucide-react';
+import { MapPin, Flag, PlusCircle, Lock, Copy, Check, RotateCcw } from 'lucide-react';
 import { APP_CONFIG } from '../../../data/config.js';
 
 export default function CampusHeader({
@@ -57,13 +57,6 @@ export default function CampusHeader({
               </option>
             ))}
           </select>
-        </div>
-
-        {/* Badge Algoritma Tunggal: Nearest Neighbor */}
-        <div className="flex items-center gap-1.5 bg-[#062648]/85 px-3 py-1.5 rounded-xl border border-blue-300/25 text-xs">
-          <Zap className="w-3.5 h-3.5 text-amber-400" />
-          <span className="text-blue-200/70 text-[11px]">Algoritma:</span>
-          <span className="text-amber-300 font-semibold text-[11px]">Nearest Neighbor</span>
         </div>
       </div>
 

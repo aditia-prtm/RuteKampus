@@ -107,13 +107,14 @@ describe('Traveling Salesperson Problem (TSP) - Nearest Neighbor Heuristic', () 
 
   it('6. Peta Kampus Unsri Palembang -> Berhasil menghasilkan rute tur keliling kampus', () => {
     const startNode = SAMPLE_GRAPHS[0].nodes.find((n) => n.type === 'place')?.id || 'Gerbang';
+    const placeCount = SAMPLE_GRAPHS[0].nodes.filter((n) => n.type === 'place').length;
     const res = solveTSP(SAMPLE_GRAPHS[0], startNode);
     expect(res.ok).toBe(true);
     expect(res.result.algorithm).toBe('nearest-neighbor');
-    expect(res.result.tour.length).toBe(12); // 11 tempat (Gerbang + 10 Gedung) + kembali ke awal = 12 titik
+    expect(res.result.tour.length).toBe(placeCount + 1); // Setiap lokasi dikunjungi tepat satu kali + kembali ke titik awal
     expect(res.result.tour[0]).toBe(startNode);
     expect(res.result.tour[res.result.tour.length - 1]).toBe(startNode);
-    expect(res.result.fullTour.length).toBeGreaterThan(12); // melewati waypoints jalan fisik
+    expect(res.result.fullTour.length).toBeGreaterThan(placeCount + 1); // melewati waypoints jalan fisik
     expect(res.result.totalWeight).toBeGreaterThan(0);
   });
 });

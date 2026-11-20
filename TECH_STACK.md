@@ -52,22 +52,21 @@ Dokumen ini mencatat seluruh teknologi, pustaka (*library*), alat bantu (*tools*
 ### C. `src/components/graph/` (Visualisasi Graf Kustom)
 * **Teknologi:** SVG Interaktif, Tailwind CSS.
 * **File & Peran:**
-  * `InteractiveGraphCanvas.jsx`: Kanvas interaktif berbasis SVG untuk mode bikin graf sendiri. Mendukung drag-and-drop simpul, penarikan sisi berbobot, pengeditan bobot sisi, dan visualisasi rute Siklus Hamilton.
-  * `AbstractGraphView.jsx`: Renderer graf abstrak statis.
+  * `InteractiveGraphCanvas.jsx`: Kanvas interaktif berbasis SVG untuk mode bikin graf sendiri. Mendukung drag-and-drop simpul langsung, penarikan sisi berbobot, pengeditan bobot sisi, dan visualisasi rute Siklus Hamilton.
 
 ### D. `src/components/stepper/` (Kontrol Langkah & Analisis)
 * **Teknologi:** React Hooks, Lucide Icons, Tailwind CSS.
 * **File & Peran:**
   * `StepControls.jsx`: Progress bar, tombol Play, Pause, Step Next/Prev, Restart, dan pengatur kecepatan (*speed*).
   * `ExplanationPanel.jsx`: Kartu penjelasan konsep matematis langkah aktif dalam Bahasa Indonesia.
-  * `DataPanel.jsx`: Tabel dinamis (matriks jarak, kandidat halte terdekat, detail pemotongan 2-Opt, urutan akhir rute bus).
-  * `PseudocodePanel.jsx`: Penyorotan baris pseudocode algoritma TSP yang sinkron dengan langkah aktif.
+  * `DataPanel.jsx`: Tabel dinamis (matriks jarak, kandidat halte terdekat, urutan akhir rute bus).
+  * `StepperInspector.jsx`: Orkestrator inspektur langkah yang memadukan `ExplanationPanel` dan `DataPanel`.
 
-### E. `src/pages/` & `src/components/layout/` (Routing & Navigasi)
+### E. `src/pages/` & `src/components/common/` (Routing & Navigasi)
 * **Teknologi:** `react-router-dom`, Tailwind CSS, `lenis`.
 * **File & Peran:**
   * `App.jsx`: Root router yang memetakan rute `/`, `/campus`, dan `/custom`. Menginisialisasi instance global **Lenis** dengan requestAnimationFrame, serta komponen `ScrollToTop` agar setiap navigasi halaman kembali ke bagian paling atas secara mulus.
-  * `Navbar.jsx`: Header navigasi responsif dengan highlight rute aktif.
+  * `Navbar.jsx`: Header navigasi responsif dengan highlight rute aktif di `src/components/common/Navbar.jsx`.
   * `LandingPage.jsx`: Halaman beranda dengan 2 kartu pilihan mode utama (Peta Kampus vs Graf Sendiri) dan teori graf.
   * `CampusVisualizerPage.jsx`: Halaman simulasi Peta Kampus Unsri dengan sakelar izin edit (`APP_CONFIG.ALLOW_CAMPUS_EDIT`).
   * `CustomGraphPage.jsx`: Halaman simulasi Bikin Graf Sendiri dengan preset segitiga, persegi, pentagon K5, dan alat sambung sisi berbobot.
