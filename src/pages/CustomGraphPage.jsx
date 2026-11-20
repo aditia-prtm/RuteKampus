@@ -145,13 +145,65 @@ export default function CustomGraphPage() {
     setSelectedNodeForEdge(null);
   };
 
-  const handleSelectPreset = (key) => {
-    if (PRESETS[key]) {
-      setNodes(PRESETS[key].nodes);
-      setEdges(PRESETS[key].edges);
-      setSelectedNodeForEdge(null);
+  const handleRandomize = useCallback(() => {
+    // Generate 4 sampai 6 simpul acak dalam kanvas
+    const count = 4 + Math.floor(Math.random() * 3); // 4, 5, atau 6
+    const cx = 300;
+    const cy = 230;
+    const rx = 170 + Math.random() * 30;
+    const ry = 120 + Math.random() * 25;
+
+    const newNodes = [];
+    for (let i = 0; i < count; i++) {
+      const angle = (2 * Math.PI * i) / count - Math.PI / 2 + (Math.random() - 0.5) * 0.35;
+      const x = Math.round(cx + rx * Math.cos(angle));
+      const y = Math.round(cy + ry * Math.sin(angle));
+      newNodes.push({
+        id: String.fromCharCode(65 + i),
+        x: Math.max(80, Math.min(520, x)),
+        y: Math.max(70, Math.min(370, y))
+      });
     }
-  };
+
+    const newEdges = [];
+    const edgeMap = new Set();
+    const addEdge = (u, v) => {
+      const key = u < v ? `${u}-${v}` : `${v}-${u}`;
+      if (edgeMap.has(key)) return;
+      edgeMap.add(key);
+      const nodeU = newNodes.find((n) => n.id === u);
+      const nodeV = newNodes.find((n) => n.id === v);
+      const rawDist = Math.round(Math.hypot(nodeU.x - nodeV.x, nodeU.y - nodeV.y) / 15);
+      const weight = Math.max(6, Math.min(45, rawDist + Math.floor(Math.random() * 5)));
+      newEdges.push({
+        id: `e_${u}_${v}`,
+        from: u,
+        to: v,
+        weight
+      });
+    };
+
+    // 1. Buat siklus keliling untuk menjamin ada Siklus Hamilton
+    for (let i = 0; i < count; i++) {
+      const next = (i + 1) % count;
+      addEdge(newNodes[i].id, newNodes[next].id);
+    }
+
+    // 2. Tambahkan 1-3 sisi diagonal (chord) agar graf bervariasi dan heuristik diuji
+    const chordCount = 1 + Math.floor(Math.random() * 3);
+    for (let k = 0; k < chordCount; k++) {
+      const uIdx = Math.floor(Math.random() * count);
+      const vIdx = Math.floor(Math.random() * count);
+      if (vIdx !== uIdx && (vIdx + 1) % count !== uIdx && (uIdx + 1) % count !== vIdx) {
+        addEdge(newNodes[uIdx].id, newNodes[vIdx].id);
+      }
+    }
+
+    setNodes(newNodes);
+    setEdges(newEdges);
+    setStartNodeId(newNodes[0].id);
+    setSelectedNodeForEdge(null);
+  }, []);
 
   // Pastikan simpul awal valid
   const effectiveStartNode = useMemo(() => {
@@ -179,7 +231,7 @@ export default function CustomGraphPage() {
         nodes={nodes}
         effectiveStartNode={effectiveStartNode}
         onStartNodeChange={setStartNodeId}
-        onSelectPreset={handleSelectPreset}
+        onRandomize={handleRandomize}
         onConnectAll={handleConnectAll}
         onClear={handleClear}
       />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shapes, Flag, Trash2, Sparkles } from 'lucide-react';
+import { Shapes, Flag, Trash2, Sparkles, Shuffle } from 'lucide-react';
 
 export default function CustomGraphHeader({
   nodeCount,
@@ -7,7 +7,7 @@ export default function CustomGraphHeader({
   nodes,
   effectiveStartNode,
   onStartNodeChange,
-  onSelectPreset,
+  onRandomize,
   onConnectAll,
   onClear
 }) {
@@ -32,25 +32,15 @@ export default function CustomGraphHeader({
 
         <div className="h-6 w-px bg-blue-300/20 hidden lg:block" />
 
-        {/* Preset Graf Cepat */}
+        {/* Aksi Graf Cepat */}
         <div className="flex items-center gap-1.5 bg-[#062648]/85 p-1 rounded-xl border border-blue-300/20 text-xs w-full sm:w-auto overflow-x-auto">
           <button
-            onClick={() => onSelectPreset('triangle')}
-            className="px-2.5 sm:px-3 py-1.5 rounded-lg text-blue-200/90 hover:text-white hover:bg-white/10 transition cursor-pointer font-medium whitespace-nowrap shrink-0"
+            onClick={onRandomize}
+            title="Bangun graf acak baru secara otomatis"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-blue-200 hover:text-white hover:bg-white/10 transition cursor-pointer font-medium whitespace-nowrap shrink-0"
           >
-            Segitiga (3)
-          </button>
-          <button
-            onClick={() => onSelectPreset('square')}
-            className="px-2.5 sm:px-3 py-1.5 rounded-lg text-blue-200/90 hover:text-white hover:bg-white/10 transition cursor-pointer font-medium whitespace-nowrap shrink-0"
-          >
-            Persegi (4)
-          </button>
-          <button
-            onClick={() => onSelectPreset('k5')}
-            className="px-2.5 sm:px-3 py-1.5 rounded-lg text-blue-200/90 hover:text-white hover:bg-white/10 transition cursor-pointer font-medium whitespace-nowrap shrink-0"
-          >
-            Pentagon (5)
+            <Shuffle className="w-3.5 h-3.5 text-amber-400" />
+            <span>Acak Graf</span>
           </button>
           <button
             onClick={onConnectAll}

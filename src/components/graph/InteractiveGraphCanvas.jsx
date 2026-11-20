@@ -369,24 +369,6 @@ export default function InteractiveGraphCanvas({
           />
         )}
 
-        {/* 2c. Partikel Pelari (Traveler Runner) yang Bergerak Mulus Antarsimpul */}
-        {isStepTransition && (
-          <motion.g
-            key={`traveler-custom-${currentStep?.id}-${fromNode.id}-${toNode.id}`}
-            initial={{ x: fromNode.x, y: fromNode.y, scale: 0.8 }}
-            animate={{ x: toNode.x, y: toNode.y, scale: [0.8, 1.25, 1] }}
-            transition={{ duration: 0.65, ease: [0.25, 1, 0.5, 1] }}
-            className="pointer-events-none"
-          >
-            {/* Aura pendar ungu */}
-            <circle r={22} fill="#9333ea" opacity={0.4} filter="url(#glow-custom-graph)" />
-            {/* Cincin inti voyager */}
-            <circle r={11} fill="#9333ea" stroke="#ffffff" strokeWidth={2.5} />
-            {/* Titik pusat putih bersinar */}
-            <circle r={4} fill="#ffffff" />
-          </motion.g>
-        )}
-
         {/* 3. Badge Bobot Sisi (Dirender SETELAH garis agar selalu di atas garis dan tidak pernah tertimpa) */}
         {edges.map((edge) => {
           const u = nodeMap.get(edge.from);
@@ -500,6 +482,20 @@ export default function InteractiveGraphCanvas({
                 />
               )}
 
+              {/* Shadow / Aura pendar ungu di sekeliling simpul aktif */}
+              {isCurrentNode && (
+                <circle
+                  cx={node.x}
+                  cy={node.y}
+                  r={26}
+                  fill="none"
+                  stroke="#a855f7"
+                  strokeWidth={2}
+                  strokeOpacity={0.65}
+                  filter="url(#glow-custom-graph)"
+                />
+              )}
+
               <circle
                 cx={node.x}
                 cy={node.y}
@@ -529,7 +525,22 @@ export default function InteractiveGraphCanvas({
           );
         })}
 
-        {/* 4. Menu Aksi Simpul Tepat di Dekat Simpul: [🔗 Sambung] dan [🗑 Hapus] */}
+        {/* 5. Shadow / Aura Pendar Pelari yang Meluncur Halus Masuk ke Simpul Tujuan */}
+        {isStepTransition && (
+          <motion.g
+            key={`traveler-custom-trans-${currentStep?.id}-${fromNode.id}-${toNode.id}`}
+            initial={{ x: fromNode.x, y: fromNode.y, scale: 0.85 }}
+            animate={{ x: toNode.x, y: toNode.y, scale: [0.85, 1.25, 1] }}
+            transition={{ duration: 0.65, ease: [0.25, 1, 0.5, 1] }}
+            className="pointer-events-none"
+          >
+            {/* Cukup shadow dan cincin pendar aura ungu tanpa menimpa huruf simpul */}
+            <circle r={26} fill="#9333ea" opacity={0.35} filter="url(#glow-custom-graph)" />
+            <circle r={22} fill="none" stroke="#f3e8ff" strokeWidth={2} strokeOpacity={0.7} filter="url(#glow-custom-graph)" />
+          </motion.g>
+        )}
+
+        {/* 6. Menu Aksi Simpul Tepat di Dekat Simpul: [🔗 Sambung] dan [🗑 Hapus] */}
         {activeNodeMenu && (() => {
           const targetNode = nodeMap.get(activeNodeMenu);
           if (!targetNode) return null;
